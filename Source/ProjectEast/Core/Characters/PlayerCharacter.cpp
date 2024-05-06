@@ -1,6 +1,40 @@
 ﻿#include "PlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "ProjectEast/Core/Components/Movement/PlayerMovementComponent.h"
+
+APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(
+	ObjectInitializer.SetDefaultSubobjectClass<UPlayerMovementComponent>(CharacterMovementComponentName))
+{
+	PlayerMovementComponent = StaticCast<UPlayerMovementComponent*>(GetCharacterMovement());
+
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	PlayerMovementComponent->bOrientRotationToMovement = true;
+	PlayerMovementComponent->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+
+	PlayerMovementComponent->JumpZVelocity = 700.f;
+	PlayerMovementComponent->AirControl = 0.35f;
+	PlayerMovementComponent->MaxWalkSpeed = 270.0f;
+	PlayerMovementComponent->MinAnalogWalkSpeed = 20.f;
+	PlayerMovementComponent->BrakingDecelerationWalking = 2000.f;
+	PlayerMovementComponent->BrakingDecelerationFalling = 1500.0f;
+
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArmComponent->SetupAttachment(RootComponent);
+	SpringArmComponent->bUsePawnControlRotation = true;
+
+	PlayerMovementComponent->Initialize(SpringArmComponent);
+
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraComponent->SetupAttachment(SpringArmComponent);
+	CameraComponent->bUsePawnControlRotation = false;
+}
 
 void APlayerCharacter::BeginPlay()
 {
@@ -33,6 +67,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+
+		// Sprinting
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &APlayerCharacter::StartSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprint);
 	}
 }
 
@@ -61,5 +99,25 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 	{
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void APlayerCharacter::StartSprint(const FInputActionValue& Value)
+{
+	if (GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.0f &&
+		!PlayerMovementComponent->IsSprinting())
+	{
+		PlayerMovementComponent->StartSprint();
+		OnSprintStart();
+	}
+}
+
+void APlayerCharacter::StopSprint(const FInputActionValue& Value)
+{
+	if (GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.0f &&
+		PlayerMovementComponent->IsSprinting())
+	{
+		PlayerMovementComponent->StopSprint();
+		OnSprintEnd();
 	}
 }
