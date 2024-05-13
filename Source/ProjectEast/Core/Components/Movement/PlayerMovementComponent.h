@@ -1,11 +1,17 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "Components/TimelineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerMovementComponent.generated.h"
 
-class USpringArmComponent;
+// UENUM(BlueprintType)
+// enum class ECustomMovementMode :uint8
+// {
+// 	CMOVE_None UMETA(DisplayName="None"),
+// 	CMOVE_Sliding UMETA(DisplayName="Sliding"),
+// 	CMOVE_Max UMETA(Hidden),
+// };
+
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTEAST_API UPlayerMovementComponent : public UCharacterMovementComponent
@@ -13,34 +19,44 @@ class PROJECTEAST_API UPlayerMovementComponent : public UCharacterMovementCompon
 	GENERATED_BODY()
 
 public:
-virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual float GetMaxSpeed() const override;
+protected:
+	//	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
 
-	void Initialize(USpringArmComponent* SpringArmComponent);
+#pragma region Sprint
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement: Sprint", meta = (ClampMin = 0.0f, UIMin = 0.0f))
 	float SprintSpeed = 570.0f;
-
-	virtual float GetMaxSpeed() const override;
 
 	void StartSprint();
 	void StopSprint();
 	FORCEINLINE bool IsSprinting() const { return bIsSprinting; }
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chatacter | Camera")
-	UCurveFloat* CameraTargetArmUpdateCurve;
-
 private:
-
 	bool bIsSprinting;
 
-	USpringArmComponent* SpringArmComponent;
-	
-	FTimeline CameraArmChangeTimeline;
-	float TimelineValue;
-	float CurveFloatValue;
-	
-	UFUNCTION()
-	void OnCameraArmChange(float Value) const;
+#pragma endregion Sprint
+
+
+#pragma region Sliding
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement: Sliding", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+	float SlidingSpeed = 800.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement: Sliding", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+	float CapsuleRadius = 34.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement: Sliding", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+	float CapsuleHalfHeight = 60.0f;
+
+	void StartSliding();
+	void StopSliding();
+	FORCEINLINE bool IsSliding() const { return bIsSliding; }
+
+private:
+	bool bIsSliding;
+
+#pragma endregion Sliding
 };
