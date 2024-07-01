@@ -5,6 +5,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "ProjectEast/Core/Components/WallRunComponent.h"
 #include "ProjectEast/Core/Components/Movement/PlayerMovementComponent.h"
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(
@@ -34,6 +36,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
 	CameraComponent->bUsePawnControlRotation = false;
+
+	WallRunComponent = CreateDefaultSubobject<UWallRunComponent>(TEXT("WallRun"));
 }
 
 FRotator APlayerCharacter::GetAimOffset() const
@@ -68,8 +72,15 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	UpdateIKSettings(DeltaSeconds);
 	TryChangeSprintState();
 	TryChangeTargetArmLength();
+	//
+	// PlayerMovementComponent->GravityScale = GetIsWallRun() ? 0.1f : 1.5f;
+	//
+	// PlayerMovementComponent->SetPlaneConstraintNormal(GetIsWallRun()
+	// 	                                                  ? FVector(0, 0, 1)
+	// 	                                                  : FVector(0, 0, 0));
 }
 
 
@@ -163,11 +174,15 @@ void APlayerCharacter::Jump()
 	if (PlayerMovementComponent->IsCrouching() && !CheckHeightForUncrouch())
 	{
 		bIsCrouchRequested = false;
+		SetTargetArmLength();
 		UnCrouch();
 	}
 	else if (PlayerMovementComponent->IsSliding())
 	{
 		OnEndSliding();
+	}
+	else if (WallRunComponent->StartWallJump())
+	{
 	}
 	else
 	{
@@ -186,7 +201,7 @@ void APlayerCharacter::StartSprint(const FInputActionValue& Value)
 			UnCrouch();
 		}
 
-		SetStateAiming(false);
+		//SetStateAiming(false);
 		bIsSprintRequested = true;
 	}
 }
@@ -343,6 +358,57 @@ void APlayerCharacter::OnEndSliding()
 
 
 	SetTargetArmLength();
+}
+
+void APlayerCharacter::RegisterInteractiveActor(AInteractiveActor* InteractiveActor)
+{
+	AvailableInteractiveActors.Add(InteractiveActor);
+}
+
+void APlayerCharacter::UnregisterInteractiveActor(AInteractiveActor* InteractiveActor)
+{
+	AvailableInteractiveActors.Remove(InteractiveActor);
+}
+
+void APlayerCharacter::UpdateIKSettings(float DeltaSeconds)
+{
+	IKRightFootOffset = FMath::FInterpTo(IKRightFootOffset, CalculateIKParametersForSocketName(RightFootSocketName),
+	                                     DeltaSeconds, IKInterpSpeed);
+	IKLeftFootOffset = FMath::FInterpTo(IKLeftFootOffset, CalculateIKParametersForSocketName(LeftFootSocketName),
+	                                    DeltaSeconds, IKInterpSpeed);
+	IKPelvisOffset = FMath::FInterpTo(IKPelvisOffset, CalculateIKPelvisOffset(), DeltaSeconds, IKInterpSpeed);
+}
+
+float APlayerCharacter::CalculateIKPelvisOffset() const
+{
+	return IKRightFootOffset > IKLeftFootOffset ? -IKRightFootOffset : -IKLeftFootOffset;
+}
+
+float APlayerCharacter::CalculateIKParametersForSocketName(const FName& SocketName) const
+{
+	float Result = 0.0f;
+
+	float CapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+	const FVector SocketLocation = GetMesh()->GetSocketLocation(SocketName);
+	const FVector TraceStart(SocketLocation.X, SocketLocation.Y, GetActorLocation().Z);
+	const FVector TraceEnd = TraceStart - (CapsuleHalfHeight + IKTraceDistance) * FVector::UpVector;
+
+	FHitResult HitResult;
+	const ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_Visibility);
+
+
+	const FVector FootSizeBox = FVector(1.f, .15f, 7.f);
+	if (UKismetSystemLibrary::BoxTraceSingle(GetWorld(), TraceStart, TraceEnd, FootSizeBox,
+	                                         GetMesh()->GetSocketRotation(SocketName), TraceType, true,
+	                                         TArray<AActor*>(), EDrawDebugTrace::None, HitResult, true,
+	                                         FLinearColor::Red, FLinearColor::Blue, 1))
+	{
+		float CharacterBottom = TraceStart.Z - CapsuleHalfHeight;
+		Result = CharacterBottom - HitResult.Location.Z;
+	}
+
+	return Result;
 }
 
 float APlayerCharacter::GetTargetArm() const

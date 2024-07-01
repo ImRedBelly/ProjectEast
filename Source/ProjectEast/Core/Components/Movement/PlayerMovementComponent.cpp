@@ -1,6 +1,7 @@
 ﻿#include "PlayerMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
+#include "ProjectEast/Core/Characters/PlayerCharacter.h"
 
 float UPlayerMovementComponent::GetMaxSpeed() const
 {
@@ -13,20 +14,31 @@ float UPlayerMovementComponent::GetMaxSpeed() const
 	return Result;
 }
 
+// APlayerCharacter* UPlayerMovementComponent::GetBaseCharacterOwner() const
+// {
+// 	return StaticCast<APlayerCharacter*>(CharacterOwner);
+// }
+//
+// void UPlayerMovementComponent::PhysCustom(float deltaTime, int32 Iterations)
+// {
+// 	switch (CustomMovementMode)
+// 	{
+// 	default: ;
+// 	}
+// 	Super::PhysCustom(deltaTime, Iterations);
+// }
+//
 // void UPlayerMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode)
 // {
 // 	Super::OnMovementModeChanged(PreviousMovementMode, PreviousCustomMode);
 //
-// 	auto a = FString::FromInt(PreviousCustomMode);
-// 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Red, a);
-//
-// 	if (MovementMode == MOVE_Walking && (ECustomMovementMode)PreviousCustomMode == ECustomMovementMode::CMOVE_Sliding)
+// 	if (MovementMode == MOVE_Custom)
 // 	{
-// 	}
-//
-// 	else if (PreviousMovementMode == MOVE_Walking && (ECustomMovementMode)PreviousCustomMode ==
-// 		ECustomMovementMode::CMOVE_Sliding)
-// 	{
+// 		switch (CustomMovementMode)
+// 		{
+// 		default:
+// 			break;
+// 		}
 // 	}
 // }
 
@@ -45,6 +57,7 @@ void UPlayerMovementComponent::StopSprint()
 void UPlayerMovementComponent::StartSliding()
 {
 	CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
+	CharacterOwner->GetMesh()->SetRelativeLocation(FVector(0,0,-58));
 	bIsSliding = true;
 	bForceMaxAccel = 1;
 }
@@ -55,8 +68,8 @@ void UPlayerMovementComponent::StopSliding()
 	CharacterOwner->GetCapsuleComponent()->SetCapsuleSize(
 		DefaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleRadius(),
 		DefaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(), true);
-	
+	CharacterOwner->GetMesh()->SetRelativeLocation(FVector(0,0,-88));
+
 	bIsSliding = false;
 	bForceMaxAccel = 0;
 }
-

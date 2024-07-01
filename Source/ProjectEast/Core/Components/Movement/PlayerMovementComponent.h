@@ -4,14 +4,15 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerMovementComponent.generated.h"
 
-// UENUM(BlueprintType)
-// enum class ECustomMovementMode :uint8
-// {
-// 	CMOVE_None UMETA(DisplayName="None"),
-// 	CMOVE_Sliding UMETA(DisplayName="Sliding"),
-// 	CMOVE_Max UMETA(Hidden),
-// };
+class APlayerCharacter;
 
+UENUM(BlueprintType)
+enum class ECustomMovementMode :uint8
+{
+	CMOVE_None UMETA(DisplayName="None"),
+	CMOVE_Sliding UMETA(DisplayName="Sliding"),
+	CMOVE_Max UMETA(Hidden),
+};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTEAST_API UPlayerMovementComponent : public UCharacterMovementComponent
@@ -21,7 +22,10 @@ class PROJECTEAST_API UPlayerMovementComponent : public UCharacterMovementCompon
 public:
 	virtual float GetMaxSpeed() const override;
 protected:
-	//	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
+	APlayerCharacter* GetBaseCharacterOwner() const;
+
+	// virtual void PhysCustom(float deltaTime, int32 Iterations) override;
+	// virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
 
 #pragma region Sprint
 
