@@ -86,7 +86,7 @@ void UInteractableComponent::OnPreInteraction(AActor* Interactor)
 		OnDurationPress();
 		break;
 	case EInteractionInputType::Multiple:
-		//OnMultiplePress();
+		OnMultiplePress();
 		break;
 	}
 }
@@ -100,19 +100,35 @@ void UInteractableComponent::OnDurationPress()
 	FindPressedKeyByActionName();
 }
 
-// void UInteractableComponent::OnMultiplePress()
-// {
-// 	TTuple<bool, float> Tuple = MashingInput(10); 
-//
-// 	FillInteractionWidgetBorder(Tuple.Get<1>());
-// 	if (Tuple.Get<0>())
-// 	{
-// 		FLatentActionInfo ActionInfo;
-// 		ActionInfo.CallbackTarget = this;
-// 		ActionInfo.ExecutionFunction = "StartInteraction";		
-// 		UKismetSystemLibrary::RetriggerableDelay(GetWorld(), 0.2f, ActionInfo);
-// 	}
-// }
+void UInteractableComponent::OnMultiplePress()
+{
+	CurrentClickCount++;
+	FillInteractionWidgetBorder(CurrentClickCount * SpeedFillBorder);
+	GetWorld()->GetTimerManager().ClearTimer(ClickResetTimerHandle);
+
+	if (CurrentClickCount >= MaxClickCount)
+	{
+		if (IObjectInteraction* ObjectInteractable = Cast<IObjectInteraction>(CachedInteractor))
+			ObjectInteractable->StartInteractionWithObject(this);
+		CurrentClickCount = 0;
+	}
+	else if (CurrentClickCount > 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(ClickResetTimerHandle, this,
+		                                       &UInteractableComponent::ResetClickCounter, MashingKeyRetriggerableTime,
+		                                       true, FirstDelayResetClick);
+	}
+}
+
+
+void UInteractableComponent::ResetClickCounter()
+{
+	if (CurrentClickCount > 0)
+	{
+		CurrentClickCount--;
+		FillInteractionWidgetBorder(CurrentClickCount * SpeedFillBorder);
+	}
+}
 
 void UInteractableComponent::StartInteraction()
 {
@@ -130,8 +146,10 @@ void UInteractableComponent::Interaction(AActor* Interactor)
 {
 	CachedInteractor = Interactor;
 	bIsAlreadyInteracted = true;
+
 	if (IInteractable* ObjectInteractable = Cast<IInteractable>(GetOwner()))
-		ObjectInteractable->Interaction(CachedInteractor);
+		ObjectInteractable->Interaction(Interactor);
+	
 	RemoveInteractionByResponse();
 }
 
@@ -183,6 +201,8 @@ void UInteractableComponent::SetupInteractableReferences(UBoxComponent* BoxCompo
 
 void UInteractableComponent::OnClientInteraction(AActor* Interactor)
 {
+	
+	GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "C");
 	if (IInteractable* ObjectInteractable = Cast<IInteractable>(GetOwner()))
 		ObjectInteractable->ClientStartInteraction(Interactor);
 }
@@ -424,21 +444,28 @@ void UInteractableComponent::ToggleIsInteractable(bool Condition)
 		bIsInteractable = Condition;
 }
 
-
 void UInteractableComponent::IsKeyDown()
 {
 	UInteractableComponent* InteractableComponent = InventoryUtility::GetCurrentInteractableObject(CachedInteractor);
 
-	GetWorld()->GetTimerManager().ClearTimer(KeyDownTimer);
-
 	if (IsValid(InteractableComponent) && InteractableComponent == this)
 	{
-		if (HoldingInput())
+		bool IsCompleted = HoldingInput().Get<0>();
+		bool IsReset = HoldingInput().Get<1>();
+
+		if (IsCompleted)
 		{
 			if (IObjectInteraction* ObjectInteractable = Cast<IObjectInteraction>(CachedInteractor))
+			{
+				GetWorld()->GetTimerManager().ClearTimer(KeyDownTimer);
 				ObjectInteractable->StartInteractionWithObject(this);
+			}
 		}
+		if (IsReset)
+			GetWorld()->GetTimerManager().ClearTimer(KeyDownTimer);
 	}
+	else
+		GetWorld()->GetTimerManager().ClearTimer(KeyDownTimer);
 }
 
 void UInteractableComponent::FindPressedKeyByActionName()
@@ -477,8 +504,11 @@ void UInteractableComponent::FillInteractionWidgetBorder(float Value) const
 	}
 }
 
-bool UInteractableComponent::HoldingInput() const
+TTuple<bool, bool> UInteractableComponent::HoldingInput() const
 {
+	bool IsCompleted = false;
+	bool IsReset = false;
+
 	APlayerController* PlayerController = Cast<APlayerController>(CachedInteractor);
 	float InputTimeValue = PlayerController->GetInputKeyTimeDown(PressedInteractionKey.Key);
 
@@ -487,29 +517,17 @@ bool UInteractableComponent::HoldingInput() const
 	if (InputTimeValue > MaxKeyTimeDown)
 	{
 		CachedInteractionWidget->SetFillDecimalValue(0.05f);
-		return true;
+		IsCompleted = true;
+	}
+	else
+	{
+		if (InputTimeValue <= 0.0f)
+			IsReset = true;
 	}
 
-	if (InputTimeValue <= 0.0f)
-		return false;
-
-	return false;
+	return MakeTuple(IsCompleted, IsReset);
 }
 
-// TTuple<bool, float> UInteractableComponent::MashingInput(int MashingAmount)
-// {
-// 	Delta = (1.0f / MashingAmount);
-// 	LocalFloat += Delta;
-//
-// 	if (LocalFloat >= 1.0f)
-// 	{
-// 		LocalFloat = 0.0f;
-// 		bCompleted = true;
-// 	}
-// 	else
-// 	{
-// 		bCompleted = false;
-// 	}
 //
 //
 // 	HandleRetriggerableDelay();

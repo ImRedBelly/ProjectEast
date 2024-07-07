@@ -140,8 +140,13 @@ public:
 	void IsKeyDown();
 	void FindPressedKeyByActionName();
 	void FillInteractionWidgetBorder(float Value) const;
-	bool HoldingInput() const;
+	TTuple<bool, bool> HoldingInput() const;
 	void StartInteraction();
+
+	void OnMultiplePress();
+	void ResetClickCounter();
+
+	
 #pragma endregion BeforeInteraction
 
 #pragma region OnInteraction
@@ -173,15 +178,12 @@ public:
 	bool IsTargetInteractableValue();
 	void ToggleCanBeReInitialized(bool Condition);
 	void ToggleIsInteractable(bool Condition);
+	
+	
+	int32 CurrentClickCount;
+	int32 MaxClickCount = 15;
+	float SpeedFillBorder = 0.075f;
+	float FirstDelayResetClick = 0.5f;
+	FTimerHandle ClickResetTimerHandle;
 
-
-	//After
-	//TODO multi input
-	// float Delta;
-	// float LocalFloat;
-	// FTimerHandle TimerHandle;
-	// bool bCompleted = false;
-	//void OnMultiplePress();
-	//TTuple<bool, float> MashingInput(int MashingAmount);
-	//void HandleRetriggerableDelay();
 };

@@ -1,9 +1,14 @@
 ﻿#include "BaseItemPickUp.h"
+#include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
+
+ABaseItemPickUp::ABaseItemPickUp()
+{
+	InventoryCore = CreateDefaultSubobject<UInventoryCore>(TEXT("InventoryCore"));
+}
 
 void ABaseItemPickUp::Interaction(AActor* Interactor)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "FFFFFFFFFFFFFFF");
 	Super::Interaction(Interactor);
 	if (IsValid(Interactor))
 		CachedInteractor = Interactor;
@@ -22,18 +27,16 @@ void ABaseItemPickUp::ClientStartInteraction(AActor* Interactor)
 	if (IsValid(Interactor))
 		CachedLocalInteractor = Interactor;
 
-	if(InteractableComponent->IsShowLootBar())
+	if (InteractableComponent->IsShowLootBar())
 	{
 		InteractableComponent->ToggleInteractionWidget(false);
-		// if(IsValid(CachedLocalInteractor->GetPlayerInventory()))
-		// {
-		// 	CachedLocalInteractor->GetPlayerInventory()->OpenLocalBarWidget();
-		// }
+		
+		auto PlayerInventory = InventoryUtility::GetPlayerInventory(CachedLocalInteractor);
+		if (IsValid(PlayerInventory))
+			PlayerInventory->OpenLootBarWidget();
 	}
 	else
-	{
-	//	InteractableComponent->TakeAllItemsFromInventory();
-	}
+		InventoryUtility::TakeAllItemsFromInventory(CachedLocalInteractor, InventoryCore);
 }
 
 void ABaseItemPickUp::ClientEndInteraction(AActor* Interactor)
@@ -41,13 +44,13 @@ void ABaseItemPickUp::ClientEndInteraction(AActor* Interactor)
 	if (IsValid(Interactor))
 		CachedLocalInteractor = Interactor;
 
-	if(InteractableComponent->IsShowLootBar())
+	if (InteractableComponent->IsShowLootBar())
 	{
 		InteractableComponent->ToggleInteractionWidget(true);
-		// if(IsValid(CachedLocalInteractor->GetPlayerInventory()))
-		// {
-		// 	CachedLocalInteractor->GetPlayerInventory()->CloseLocalBarWidget();
-		// }
+
+		auto PlayerInventory = InventoryUtility::GetPlayerInventory(CachedLocalInteractor);
+		if (IsValid(PlayerInventory))
+			PlayerInventory->CloseLootBarWidget();
 	}
 }
 
@@ -81,11 +84,11 @@ void ABaseItemPickUp::SetPhysicsSimulationAndCollision() const
 	SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void ABaseItemPickUp::OnRemoveInteraction()
+void ABaseItemPickUp::OnRemoveInteraction() const
 {
 	InteractableComponent->ToggleInteractionWidget(false);
-	// if(IsValid(CachedLocalInteractor->GetPlayerInventory()))
-	// {
-	// 	CachedLocalInteractor->GetPlayerInventory()->CloseLocalBarWidget();
-	// }
+	auto PlayerInventory = InventoryUtility::GetPlayerInventory(CachedLocalInteractor);
+
+	if (InteractableComponent->IsShowLootBar() && IsValid(PlayerInventory))
+		PlayerInventory->CloseLootBarWidget();
 }

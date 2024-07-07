@@ -1,6 +1,7 @@
 ﻿#include "PlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "MainPlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -21,7 +22,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
 	PlayerMovementComponent->bOrientRotationToMovement = true;
 	PlayerMovementComponent->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 
-	PlayerMovementComponent->CrouchedHalfHeight = 60.f;
+	PlayerMovementComponent->SetCrouchedHalfHeight(60.f);
 	PlayerMovementComponent->JumpZVelocity = 700.f;
 	PlayerMovementComponent->AirControl = 0.35f;
 	PlayerMovementComponent->MaxWalkSpeed = 270.0f;
@@ -124,10 +125,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed,
 		                                   this, &APlayerCharacter::OnEndAiming);
 		// SlidingAction
-		EnhancedInputComponent->BindAction(SlidingAction, ETriggerEvent::Started,
-		                                   this, &APlayerCharacter::OnStartSliding);
+		EnhancedInputComponent->BindAction(SlidingAction, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::OnStartSliding);
 		// EnhancedInputComponent->BindAction(SlidingAction, ETriggerEvent::Completed,
 		//                                    this, &APlayerCharacter::OnEndSliding);
+
+		//Interaction
+		
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &APlayerCharacter::OnInteractive);
+		//
 	}
 }
 
@@ -360,14 +366,10 @@ void APlayerCharacter::OnEndSliding()
 	SetTargetArmLength();
 }
 
-void APlayerCharacter::RegisterInteractiveActor(AInteractiveActor* InteractiveActor)
+void APlayerCharacter::OnInteractive()
 {
-	AvailableInteractiveActors.Add(InteractiveActor);
-}
-
-void APlayerCharacter::UnregisterInteractiveActor(AInteractiveActor* InteractiveActor)
-{
-	AvailableInteractiveActors.Remove(InteractiveActor);
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->OnInteraction();
 }
 
 void APlayerCharacter::UpdateIKSettings(float DeltaSeconds)

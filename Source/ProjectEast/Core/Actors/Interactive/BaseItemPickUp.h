@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "BaseInteractable.h"
 #include "GameFramework/Actor.h"
+#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "BaseItemPickUp.generated.h"
 
 UCLASS()
@@ -11,6 +12,10 @@ class PROJECTEAST_API ABaseItemPickUp : public ABaseInteractable
 	GENERATED_BODY()
 
 protected:
+	ABaseItemPickUp();
+
+	UInventoryCore* InventoryCore;
+
 	AActor* CachedInteractor;
 	AActor* CachedLocalInteractor;
 
@@ -26,5 +31,5 @@ protected:
 	void MulticastSetPhysicsSimulation() const;
 	void SetPhysicsSimulationAndCollision() const;
 
-void OnRemoveInteraction();
+	void OnRemoveInteraction() const;
 };

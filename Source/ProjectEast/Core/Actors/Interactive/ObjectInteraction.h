@@ -1,10 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "UObject/Interface.h"
 #include "ObjectInteraction.generated.h"
 
+
+class UInteractableComponent;
 
 UINTERFACE(MinimalAPI)
 class UObjectInteraction : public UInterface

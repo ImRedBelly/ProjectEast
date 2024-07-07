@@ -2,10 +2,12 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UInteractionWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	SetIconInteraction();
 	SetAppropriateFillingBackground();
 
 	ESlateVisibility ImageFillVisibility = ESlateVisibility::Hidden;
@@ -21,6 +23,7 @@ void UInteractionWidget::NativeConstruct()
 
 	ImageFillBorder->SetVisibility(ImageFillVisibility);
 	SetFillDecimalValue(0.05f);
+	
 	PlayAnimation(FillAnimOpacity, 0.0f, 0, EUMGSequencePlayMode::PingPong, 1.0f, false);
 	BindEventDispatchers();
 }
@@ -38,6 +41,7 @@ void UInteractionWidget::SetText(FString Interact) const
 
 void UInteractionWidget::SetInputType(EInteractionInputType InteractionInput)
 {
+	InputType = InteractionInput;
 }
 
 void UInteractionWidget::OnBorderFill(float Value)
@@ -50,6 +54,12 @@ void UInteractionWidget::OnBorderFill(float Value)
 void UInteractionWidget::SetFillDecimalValue(float Value) const
 {
 	ImageFillBorder->GetDynamicMaterial()->SetScalarParameterValue("Decimal", FMath::Clamp(Value, 0.05f, 1.0f));
+}
+
+void UInteractionWidget::SetIconInteraction() const
+{
+	UTexture2D* Texture = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonBottom);
+	ImageInteraction->SetBrushFromTexture(Texture);
 }
 
 void UInteractionWidget::SetAppropriateFillingBackground() const
@@ -72,14 +82,10 @@ void UInteractionWidget::UnbindEventDispatchers()
 	if (IsValid(PlayerController))
 		PlayerController->OnGamepadToggled.RemoveDynamic(this, &UInteractionWidget::OnGamepadToggled);
 }
-//
-// FString UInteractionWidget::GetInteractionText()
-// {
-// 	return NameInteract;
-// }
 
 void UInteractionWidget::OnGamepadToggled()
 {
+	SetIconInteraction();
 	SetAppropriateFillingBackground();
 	SetFillDecimalValue(0.05f);
 }
@@ -89,6 +95,7 @@ bool UInteractionWidget::IsUsingGamepad() const
 	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
 
 	if (IsValid(PlayerController))
-		PlayerController->IsUsingGamepad();
+		return PlayerController->IsUsingGamepad();
+	
 	return false;
 }

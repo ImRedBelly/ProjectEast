@@ -61,6 +61,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* SlidingAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractionAction;
 
 #pragma endregion InputActions
 
@@ -180,12 +183,9 @@ protected:
 
 #pragma region Interactive
 
-public:
-	void RegisterInteractiveActor(AInteractiveActor* InteractiveActor);
-	void UnregisterInteractiveActor(AInteractiveActor* InteractiveActor);
-
 private:
-	TArray<AInteractiveActor*> AvailableInteractiveActors;
+	void OnInteractive();
+
 #pragma endregion Interactive
 
 #pragma region IKSetting

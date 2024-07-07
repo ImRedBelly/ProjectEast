@@ -15,41 +15,49 @@ class PROJECTEAST_API UInteractionWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
-
 	void SetText(FString Interact) const;
 	void SetInputType(EInteractionInputType InteractionInput);
 	void OnBorderFill(float Value);
 	void SetFillDecimalValue(float Value) const;
 
+
 protected:
 	UPROPERTY(meta=(BindWidget))
+	UImage* ImageInteraction;
+	
+	UPROPERTY(meta=(BindWidget))
 	UImage* ImageFillBorder;
+
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* TextBlockInteract;
 
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* FillAnimOpacity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Materials Fill")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Materials Fill")
 	UMaterial* SquareFill;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Materials Fill")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Materials Fill")
 	UMaterial* CircularFill;
+	
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
+private:
 	EInteractionInputType InputType;
 
+	void SetIconInteraction() const;
 	void SetAppropriateFillingBackground() const;
 	void BindEventDispatchers();
 	void UnbindEventDispatchers();
 
-	//FString GetInteractionText();
-
 	UFUNCTION()
 	void OnGamepadToggled();
+
 	bool IsUsingGamepad() const;
-//
-// private:
-// 	FString NameInteract;
+
+	//FString GetInteractionText();
+	//
+	// private:
+	// 	FString NameInteract;
 };
