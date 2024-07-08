@@ -13,8 +13,7 @@ UWallRunComponent::UWallRunComponent()
 void UWallRunComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	checkf(GetOwner() -> IsA<ACharacter>(),
-	       TEXT("ULedgeDetectorComponent::BeginPlay() only a character can use ULedgeDetectorComponent"));
+	checkf(GetOwner() -> IsA<ACharacter>(),TEXT("ULedgeDetectorComponent::BeginPlay() only a character can use ULedgeDetectorComponent"));
 	CachedCharacterOwner = StaticCast<ACharacter*>(GetOwner());
 
 	GatherCharacterInformation();

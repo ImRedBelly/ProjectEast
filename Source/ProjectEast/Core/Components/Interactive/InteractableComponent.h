@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/PlayerInput.h"
-#include "ProjectEast/Core/Actors/Interactive/Interactable.h"
+#include "ProjectEast/Core/Actors/Interfaces/Interactable.h"
 #include "InteractableComponent.generated.h"
 
 class UBoxComponent;

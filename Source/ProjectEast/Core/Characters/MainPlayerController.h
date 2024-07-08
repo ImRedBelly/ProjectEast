@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "ProjectEast/Core/Actors/Interactive/ObjectInteraction.h"
+#include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "ProjectEast/Core/UI/HUD/MainWindow.h"
 #include "MainPlayerController.generated.h"
 

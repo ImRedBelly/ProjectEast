@@ -3,9 +3,9 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "ProjectEast/Core/Actors/Interactive/Interactable.h"
-#include "ProjectEast/Core/Actors/Interactive/ObjectInteraction.h"
-#include "ProjectEast/Core/UI/Widgets/Interactive/InteractionWidget.h"
+#include "ProjectEast/Core/Actors/Interfaces/Interactable.h"
+#include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
+#include "ProjectEast/Core/UI/Misc/Interaction/InteractionWidget.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 

@@ -3,7 +3,6 @@
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "ProjectEast/Core/Actors/Interactive/ObjectInteraction.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 
 class UInteractableComponent;

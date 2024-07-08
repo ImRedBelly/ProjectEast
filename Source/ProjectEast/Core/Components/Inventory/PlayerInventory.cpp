@@ -1,6 +1,6 @@
 ﻿#include "PlayerInventory.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "ProjectEast/Core/Actors/Interactive/ObjectInteraction.h"
+#include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 

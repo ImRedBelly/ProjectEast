@@ -106,45 +106,45 @@ void UInventoryCore::RemoveViewer(APlayerState* PlayerState, UInventoryCore* Inv
 {
 }
 
-void UInventoryCore::ServerMoveItemToSlot(UInventoryCore Inventory, EInventoryPanels InventoryPanels, int32 MoveFrom,
+void UInventoryCore::ServerMoveItemToSlot(UInventoryCore* Inventory, EInventoryPanels InventoryPanels, int32 MoveFrom,
                                           int32 MoveTo)
 {
 }
 
-void UInventoryCore::ServerAddItemToInventory(UInventoryCore Inventory, FItemData ItemData, int32 SlotIndex)
+void UInventoryCore::ServerAddItemToInventory(UInventoryCore* Inventory, FItemData ItemData, int32 SlotIndex)
 {
 }
 
-void UInventoryCore::ServerRemoveItemFromInventory(UInventoryCore Inventory, FItemData ItemData)
+void UInventoryCore::ServerRemoveItemFromInventory(UInventoryCore* Inventory, FItemData ItemData)
 {
 }
 
-void UInventoryCore::ServerTransferItemFromInventory(UInventoryCore Receiver, FItemData ItemData, FItemData InSlotData,
-                                                     EInputMethodType Method, UInventoryCore Sender,
+void UInventoryCore::ServerTransferItemFromInventory(UInventoryCore* Receiver, FItemData ItemData, FItemData InSlotData,
+                                                     EInputMethodType Method, UInventoryCore* Sender,
                                                      AActor* OwningPlayer)
 {
 }
 
 void UInventoryCore::ServerTransferItemFromEquipment(FItemData ItemData, FItemData InSlotData, EInputMethodType Method,
-                                                     UPlayerEquipment Sender)
+                                                     UPlayerEquipment* Sender)
 {
 }
 
-void UInventoryCore::ServerSplitItemsInInventory(UInventoryCore Receiver, UInventoryCore Sender, FItemData ItemData,
+void UInventoryCore::ServerSplitItemsInInventory(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData ItemData,
                                                  FItemData InSlotData, FItemData StackableLeft, EInputMethodType Method,
                                                  EInputMethodType Initiator,
                                                  EInputMethodType Destination, AActor* OwningPlayer)
 {
 }
 
-void UInventoryCore::ServerConfirmationPopupAccepted(UInventoryCore Receiver, UInventoryCore Sender, FItemData ItemData,
+void UInventoryCore::ServerConfirmationPopupAccepted(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData ItemData,
                                                      FItemData InSlotData, EInputMethodType Method,
                                                      EInputMethodType Initiator, EInputMethodType Destination,
                                                      AActor* OwningPlayer)
 {
 }
 
-void UInventoryCore::ServerSortInventory(UInventoryCore Inventory, EInputMethodType Method,
+void UInventoryCore::ServerSortInventory(UInventoryCore* Inventory, EInputMethodType Method,
                                          EInventoryPanels SinglePanel, bool EveryPanel)
 {
 }

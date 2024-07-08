@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ProjectEast/Core/Actors/Interactive/ObjectInteraction.h"
+#include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "InteractionComponent.generated.h"
 
 class UInteractableComponent;

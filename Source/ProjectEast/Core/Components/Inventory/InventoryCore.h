@@ -94,18 +94,18 @@ public:
 	void AddViewer(APlayerState* PlayerState, UInventoryCore* Inventory);
 	void RemoveViewer(APlayerState* PlayerState, UInventoryCore* Inventory);
 
-	void ServerMoveItemToSlot(UInventoryCore Inventory, EInventoryPanels InventoryPanels, int32 MoveFrom, int32 MoveTo);
-	void ServerAddItemToInventory(UInventoryCore Inventory, FItemData ItemData, int32 SlotIndex);
-	void ServerRemoveItemFromInventory(UInventoryCore Inventory, FItemData ItemData);
-	void ServerTransferItemFromInventory(UInventoryCore Receiver, FItemData ItemData, FItemData InSlotData,EInputMethodType Method, UInventoryCore Sender, AActor* OwningPlayer);
-	void ServerTransferItemFromEquipment(FItemData ItemData, FItemData InSlotData, EInputMethodType Method,UPlayerEquipment Sender);
-	void ServerSplitItemsInInventory(UInventoryCore Receiver, UInventoryCore Sender, FItemData ItemData,
+	void ServerMoveItemToSlot(UInventoryCore* Inventory, EInventoryPanels InventoryPanels, int32 MoveFrom, int32 MoveTo);
+	void ServerAddItemToInventory(UInventoryCore* Inventory, FItemData ItemData, int32 SlotIndex);
+	void ServerRemoveItemFromInventory(UInventoryCore* Inventory, FItemData ItemData);
+	void ServerTransferItemFromInventory(UInventoryCore* Receiver, FItemData ItemData, FItemData InSlotData,EInputMethodType Method, UInventoryCore* Sender, AActor* OwningPlayer);
+	void ServerTransferItemFromEquipment(FItemData ItemData, FItemData InSlotData, EInputMethodType Method,UPlayerEquipment* Sender);
+	void ServerSplitItemsInInventory(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData ItemData,
 	                                 FItemData InSlotData, FItemData StackableLeft, EInputMethodType Method,
 	                                 EInputMethodType Initiator, EInputMethodType Destination, AActor* OwningPlayer);
-	void ServerConfirmationPopupAccepted(UInventoryCore Receiver, UInventoryCore Sender, FItemData ItemData,
+	void ServerConfirmationPopupAccepted(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData ItemData,
 	                                     FItemData InSlotData, EInputMethodType Method, EInputMethodType Initiator,
 	                                     EInputMethodType Destination, AActor* OwningPlayer);
-	void ServerSortInventory(UInventoryCore Inventory, EInputMethodType Method, EInventoryPanels SinglePanel,
+	void ServerSortInventory(UInventoryCore* Inventory, EInputMethodType Method, EInventoryPanels SinglePanel,
 	                         bool EveryPanel);
 
 	

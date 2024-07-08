@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "Interactable.h"
 #include "GameFramework/Actor.h"
+#include "ProjectEast/Core/Actors/Interfaces/Interactable.h"
 #include "BaseInteractable.generated.h"
 
 class UBoxComponent;

@@ -1,7 +1,6 @@
 ﻿#include "PlayerMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
-#include "ProjectEast/Core/Characters/PlayerCharacter.h"
 
 float UPlayerMovementComponent::GetMaxSpeed() const
 {
