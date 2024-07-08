@@ -1,4 +1,7 @@
 ﻿#include "InventoryCore.h"
+
+#include "Chaos/ChaosPerfTest.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
@@ -15,10 +18,11 @@ void UInventoryCore::InitializeInventory(APlayerController* PlayerController)
 		BuildInitialInventory();
 	}
 }
+
 //TODO Completed
 void UInventoryCore::CallOnRefreshInventory(EInventoryPanels Panel) const
 {
-	if(OnRefreshInventory.IsBound())
+	if (OnRefreshInventory.IsBound())
 		OnRefreshInventory.Broadcast(Panel);
 }
 
@@ -27,15 +31,15 @@ void UInventoryCore::ClientTransferItemReturnValue(bool Success, FText FailureMe
 }
 
 void UInventoryCore::ClientUpdateItems(UInventoryCore* Inventory, EInventoryPanels InventoryPanel,
-	TArray<FItemData*> Array)
+                                       TArray<FItemData*> Array)
 {
 }
 
-void UInventoryCore::ClientUpdateAddedItem(FItemData ItemData, UInventoryCore Inventory)
+void UInventoryCore::ClientUpdateAddedItem(FItemData* ItemData, UInventoryCore* Inventory)
 {
 }
 
-void UInventoryCore::ClientUpdateRemovedItem(FItemData ItemData, UInventoryCore Inventory)
+void UInventoryCore::ClientUpdateRemovedItem(FItemData* ItemData, UInventoryCore* Inventory)
 {
 }
 
@@ -71,7 +75,7 @@ void UInventoryCore::SortInventory(ESortMethod Method, EInventoryPanels SinglePa
 
 	CallOnRefreshInventory(CurrentPanel);
 
-	if(!UKismetSystemLibrary::IsStandalone(GetWorld()))
+	if (!UKismetSystemLibrary::IsStandalone(GetWorld()))
 	{
 		UpdateViewInventory(CurrentPanel);
 		ClientUpdateItems(this, CurrentPanel, GetInventoryAndSize(CurrentPanel).Get<0>());
@@ -103,7 +107,7 @@ void UInventoryCore::RemoveViewer(APlayerState* PlayerState, UInventoryCore* Inv
 }
 
 void UInventoryCore::ServerMoveItemToSlot(UInventoryCore Inventory, EInventoryPanels InventoryPanels, int32 MoveFrom,
-	int32 MoveTo)
+                                          int32 MoveTo)
 {
 }
 
@@ -116,29 +120,32 @@ void UInventoryCore::ServerRemoveItemFromInventory(UInventoryCore Inventory, FIt
 }
 
 void UInventoryCore::ServerTransferItemFromInventory(UInventoryCore Receiver, FItemData ItemData, FItemData InSlotData,
-                                                     EInputMethodType Method, UInventoryCore Sender, AActor* OwningPlayer)
+                                                     EInputMethodType Method, UInventoryCore Sender,
+                                                     AActor* OwningPlayer)
 {
 }
 
 void UInventoryCore::ServerTransferItemFromEquipment(FItemData ItemData, FItemData InSlotData, EInputMethodType Method,
-	UPlayerEquipment Sender)
+                                                     UPlayerEquipment Sender)
 {
 }
 
 void UInventoryCore::ServerSplitItemsInInventory(UInventoryCore Receiver, UInventoryCore Sender, FItemData ItemData,
-	FItemData InSlotData, FItemData StackableLeft, EInputMethodType Method, EInputMethodType Initiator,
-	EInputMethodType Destination, AActor* OwningPlayer)
+                                                 FItemData InSlotData, FItemData StackableLeft, EInputMethodType Method,
+                                                 EInputMethodType Initiator,
+                                                 EInputMethodType Destination, AActor* OwningPlayer)
 {
 }
 
 void UInventoryCore::ServerConfirmationPopupAccepted(UInventoryCore Receiver, UInventoryCore Sender, FItemData ItemData,
-	FItemData InSlotData, EInputMethodType Method, EInputMethodType Initiator, EInputMethodType Destination,
-	AActor* OwningPlayer)
+                                                     FItemData InSlotData, EInputMethodType Method,
+                                                     EInputMethodType Initiator, EInputMethodType Destination,
+                                                     AActor* OwningPlayer)
 {
 }
 
 void UInventoryCore::ServerSortInventory(UInventoryCore Inventory, EInputMethodType Method,
-	EInventoryPanels SinglePanel, bool EveryPanel)
+                                         EInventoryPanels SinglePanel, bool EveryPanel)
 {
 }
 
@@ -182,7 +189,8 @@ void UInventoryCore::BuildInitialInventory()
 		auto RowName = SingleDTItem[i].TableAndRow.RowName;
 
 		CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
-
+		CurrentItemData->Quantity = FMathf::Clamp(SingleDTItem[i].Quantity, 1, SingleDTItem[i].Quantity);
+		
 		auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemData);
 		if (DataEmptySlot.Get<0>())
 		{
@@ -311,8 +319,95 @@ TTuple<bool, int32> UInventoryCore::GetEmptyInventorySlot(const FItemData* ItemD
 
 void UInventoryCore::AddItemToInventoryArray(FItemData* ItemData, int32 Index)
 {
+	if (InventoryUtility::SwitchHasOwnerAuthority(this))
+	{
+		ModifyItemValue(ItemData);
+
+		auto InventoryPanel = InventoryUtility::GetInventoryPanelFromItem(ItemData);
+		auto InventoryData = GetInventoryAndSize(InventoryPanel);
+
+		CurrentInventoryArray = InventoryData.Get<0>();
+		if (bIsUseInventorySize || Index >= 0)
+		{
+			ItemData->Index = Index;
+			ItemData->bIsEquipped = false;
+			CurrentInventoryArray[Index] = ItemData;
+
+			ApplyChangesToInventoryArray(InventoryPanel, CurrentInventoryArray);
+
+
+			if (UKismetSystemLibrary::IsStandalone(GetWorld()))
+			{
+				SwitchActivePanel(InventoryPanel);
+
+				if (OnRefreshInventory.IsBound())
+					OnRefreshInventory.Broadcast(InventoryPanel);
+				if (OnHighlightInventorySlot.IsBound())
+					OnHighlightInventorySlot.Broadcast(ItemData->Index);
+			}
+			else
+			{
+				UpdateViewItem(ItemData, false);
+			}
+		}
+		else
+		{
+			if (InventoryUtility::IsItemClassValid(ItemData))
+			{
+				auto CurrentIndex = CurrentInventoryArray.Add(ItemData);
+				auto NewItemData = CurrentInventoryArray[CurrentIndex];
+				NewItemData->Index = CurrentIndex;
+				NewItemData->bIsEquipped = false;
+				auto NewInventoryPanel = InventoryUtility::GetInventoryPanelFromItem(NewItemData);
+				ApplyChangesToInventoryArray(NewInventoryPanel, CurrentInventoryArray);
+
+				if (UKismetSystemLibrary::IsStandalone(GetWorld()))
+				{
+					SwitchActivePanel(InventoryPanel);
+
+					if (OnRefreshInventory.IsBound())
+						OnRefreshInventory.Broadcast(InventoryPanel);
+					if (OnHighlightInventorySlot.IsBound())
+						OnHighlightInventorySlot.Broadcast(ItemData->Index);
+				}
+				else
+				{
+					UpdateViewItem(ItemData, false);
+				}
+			}
+		}
+	}
 }
 
 void UInventoryCore::AddWeightToInventory(float Weight)
 {
+}
+
+void UInventoryCore::ModifyItemValue(FItemData* ItemData)
+{
+}
+
+void UInventoryCore::SwitchActivePanel(EInventoryPanels Panel)
+{
+	if (ActivePanel != Panel && PanelsToUse.Contains(Panel))
+	{
+		ActivePanel = Panel;
+		if (OnSwitchedActivePanel.IsBound())
+			OnSwitchedActivePanel.Broadcast(ActivePanel);
+	}
+}
+
+void UInventoryCore::UpdateViewItem(FItemData* ItemData, bool IsRemove)
+{
+	for (auto PlayerState : CurrentViewers)
+	{
+		auto PlayerInventory = InventoryUtility::GetPlayerInventory(PlayerState->GetOwner());
+		if (IsValid(PlayerInventory))
+		{
+			if (IsRemove)
+				ClientUpdateRemovedItem(ItemData, this);
+			else
+				ClientUpdateAddedItem(ItemData, this);
+		}
+	}
 }

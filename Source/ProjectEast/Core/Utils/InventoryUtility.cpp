@@ -1,6 +1,5 @@
 ﻿#include "InventoryUtility.h"
 #include "Engine/DataTable.h"
-#include "ProjectEast/Core/Actors/Inventory/MainItem.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
 #include "ProjectEast/Core/Data/FGamepadButtonData.h"
@@ -324,7 +323,7 @@ FSlateColor InventoryUtility::GetRarityColor(EItemRarity ItemRarity)
 	switch (ItemRarity)
 	{
 	case EItemRarity::None:
-		return FSlateColor(FLinearColor(0.0f, 0.0f, 0.0f));
+		return FSlateColor(FLinearColor(1.0f, 1.0f, 1.0f));
 	case EItemRarity::Common:
 		return FSlateColor(FLinearColor(0.775822f, 0.775822f, 0.775822f));
 	case EItemRarity::Superior:

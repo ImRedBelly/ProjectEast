@@ -201,8 +201,6 @@ void UInteractableComponent::SetupInteractableReferences(UBoxComponent* BoxCompo
 
 void UInteractableComponent::OnClientInteraction(AActor* Interactor)
 {
-	
-	GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "C");
 	if (IInteractable* ObjectInteractable = Cast<IInteractable>(GetOwner()))
 		ObjectInteractable->ClientStartInteraction(Interactor);
 }

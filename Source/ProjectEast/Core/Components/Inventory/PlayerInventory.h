@@ -29,7 +29,7 @@ public:
 	void ServerTakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
 	void ServerTakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer);
 	void InputCloseWidget();
-	void InputInteraction();
+	void InputInteraction() const;
 
 	void OpenLootBarWidget();
 	void CloseLootBarWidget();

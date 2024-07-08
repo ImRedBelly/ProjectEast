@@ -17,11 +17,11 @@ class PROJECTEAST_API ULootBarSlot : public UUserWidget
 
 public:
 	void InitializeSlot(ULootBar* LootBar, FItemData* ItemData);
-	
+
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UButton* BackgroundButton;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	UImage* ImageItem;
 
@@ -39,7 +39,7 @@ protected:
 
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* TextItemQuantity;
-	
+
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* AnimationBorder;
 
@@ -55,19 +55,19 @@ protected:
 	void SetItemRarity() const;
 	void SetItemRarityColor() const;
 	void SetItemQuantity() const;
-	void SetButtonStyle(FItemData* ItemData) const;
+	void SetImageItem() const;
 
 private:
 	ULootBar* CachedLootBar;
 	FItemData* CachedItemData;
 
 	UFUNCTION()
-	void  OnRightClick();
+	void OnRightClick();
 
 	UFUNCTION()
-	void  OnHovered();
+	void OnHovered();
 
-	void  OnMouseMoved();
+	void OnMouseMoved();
 	bool IsUsingGamepad() const;
 
 	void SetActivateState();

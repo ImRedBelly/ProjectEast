@@ -3,34 +3,42 @@
 #include "CoreMinimal.h"
 #include "PlayerEquipment.h"
 #include "Components/ActorComponent.h"
+#include "ProjectEast/Core/Actors/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "InventoryCore.generated.h"
 
-class AMainItem;
-
-USTRUCT()
-struct FItemData
+USTRUCT(BlueprintType)
+struct FItemData : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditDefaultsOnly)
 	FString ID;
-	
+	UPROPERTY(EditDefaultsOnly)
 	EItemSlot ItemSlot;
-	TSubclassOf<AMainItem> Class;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMainItemData> Class;
+	UPROPERTY(EditDefaultsOnly)
 	int32 Quantity;
+	UPROPERTY(EditDefaultsOnly)
 	int32 Durability;
+	UPROPERTY(EditDefaultsOnly)
 	int32 Index;
+	UPROPERTY(EditDefaultsOnly)
 	bool bIsEquipped;
+	UPROPERTY(EditDefaultsOnly)
 	bool bIsAlreadyUsed;
+	UPROPERTY(EditDefaultsOnly)
 	float ValueModifier;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FSingleDTItem
 {
 	GENERATED_BODY()
-
+	UPROPERTY(EditDefaultsOnly)
 	FDataTableRowHandle TableAndRow;
+	UPROPERTY(EditDefaultsOnly)
 	int32 Quantity;
 };
 
@@ -51,6 +59,8 @@ struct FRandomizedLootTable
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRefreshInventory, EInventoryPanels, Panel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHighlightInventorySlot, int32, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedActivePanel, EInventoryPanels, Panel);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -60,6 +70,8 @@ class PROJECTEAST_API UInventoryCore : public UActorComponent
 
 public:
 	FOnRefreshInventory OnRefreshInventory;
+	FOnHighlightInventorySlot OnHighlightInventorySlot;
+	FOnSwitchedActivePanel OnSwitchedActivePanel;
 
 	virtual void InitializeInventory(APlayerController* PlayerController);
 	void CallOnRefreshInventory(EInventoryPanels Panel) const;
@@ -68,8 +80,8 @@ public:
 
 	void ClientTransferItemReturnValue(bool Success, FText FailureMessage);
 	void ClientUpdateItems(UInventoryCore* Inventory, EInventoryPanels InventoryPanel, TArray<FItemData*> Array);
-	void ClientUpdateAddedItem(FItemData ItemData, UInventoryCore Inventory);
-	void ClientUpdateRemovedItem(FItemData ItemData, UInventoryCore Inventory);
+	void ClientUpdateAddedItem(FItemData* ItemData, UInventoryCore* Inventory);
+	void ClientUpdateRemovedItem(FItemData* ItemData, UInventoryCore* Inventory);
 
 
 	void SortInventory(ESortMethod Method, EInventoryPanels SinglePanel, bool EveryPanel);
@@ -102,13 +114,18 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ESortMethod DefaultSortingMethod;
-
-	virtual void BeginPlay() override;
-
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FSingleDTItem> SingleDTItem;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<EInventoryPanels> PanelsToUse;
+	
+	virtual void BeginPlay() override;
 
 	int32 CurrentInventorySize;
 	EInventoryPanels CurrentPanel;
+	EInventoryPanels ActivePanel;
 	TArray<FItemData*> CurrentInventory;
 	TArray<FItemData*> CurrentSortedItems;
 
@@ -117,7 +134,7 @@ protected:
 
 	FItemData* CurrentItemData;
 	TArray<UDataTable> AllItemsFromDT;
-	TArray<FSingleDTItem> SingleDTItem;
+	TArray<APlayerState*> CurrentViewers;
 	TArray<FRandomizedLootTable> RandomizedItemsData;
 
 	TArray<FItemData*> InventoryP1;
@@ -125,10 +142,10 @@ protected:
 	TArray<FItemData*> InventoryP3;
 	TArray<FItemData*> InventoryP4;
 
-	int32 InventorySizeP1;
-	int32 InventorySizeP2;
-	int32 InventorySizeP3;
-	int32 InventorySizeP4;
+	int32 InventorySizeP1 = 30;
+	int32 InventorySizeP2 = 30;
+	int32 InventorySizeP3 = 30;
+	int32 InventorySizeP4 = 30;
 
 	bool bIsUseInventorySize;
 	bool bSortInitialItems;
@@ -145,4 +162,7 @@ protected:
 
 	void AddItemToInventoryArray(FItemData* ItemData, int32 Index);
 	void AddWeightToInventory(float Weight);
+	void ModifyItemValue(FItemData* ItemData);
+	void SwitchActivePanel(EInventoryPanels Panel);
+	void UpdateViewItem(FItemData* ItemData, bool IsRemove);
 };

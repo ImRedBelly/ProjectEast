@@ -37,6 +37,12 @@ void AMainPlayerController::OnInteraction() const
 
 void AMainPlayerController::CloseActiveWidget() const
 {
+	switch (ActiveWidget)
+	{
+	case EWidgetType::None:
+		break;
+	default: ;
+	}
 }
 
 bool AMainPlayerController::IsUsingGamepad()

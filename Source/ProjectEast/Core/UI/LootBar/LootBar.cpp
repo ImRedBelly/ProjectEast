@@ -18,12 +18,11 @@ void ULootBar::ScrollWidget(ULootBarSlot* LootBarSlot) const
 	ScrollBox->ScrollWidgetIntoView(LootBarSlot, true, EDescendantScrollDestination::Center, 0.0f);
 }
 
-
 void ULootBar::NativeConstruct()
 {
 	Super::NativeConstruct();
 	UpdateButtonIcons();
-	
+
 	ButtonTake->OnClicked.AddUniqueDynamic(this, &ULootBar::TakeItem);
 	ButtonTakeAll->OnClicked.AddUniqueDynamic(this, &ULootBar::TakeAllItems);
 	ButtonClose->OnClicked.AddUniqueDynamic(this, &ULootBar::Close);
@@ -32,7 +31,6 @@ void ULootBar::NativeConstruct()
 void ULootBar::BindEventDispatchers()
 {
 	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-
 	if (IsValid(PlayerController))
 		PlayerController->OnGamepadToggled.AddDynamic(this, &ULootBar::UpdateButtonIcons);
 
@@ -47,10 +45,13 @@ void ULootBar::UnbindEventDispatchers()
 
 	if (IsValid(PlayerController))
 		PlayerController->OnGamepadToggled.RemoveDynamic(this, &ULootBar::UpdateButtonIcons);
-
-	PlayerInventory->OnTakeItem.RemoveDynamic(this, &ULootBar::TakeItem);
-	PlayerInventory->OnTakeAllItems.RemoveDynamic(this, &ULootBar::TakeAllItems);
-	OwnerInventory->OnRefreshInventory.RemoveDynamic(this, &ULootBar::RefreshLootBar);
+	if (IsValid(PlayerInventory))
+	{
+		PlayerInventory->OnTakeItem.RemoveDynamic(this, &ULootBar::TakeItem);
+		PlayerInventory->OnTakeAllItems.RemoveDynamic(this, &ULootBar::TakeAllItems);
+	}
+	if (IsValid(OwnerInventory))
+		OwnerInventory->OnRefreshInventory.RemoveDynamic(this, &ULootBar::RefreshLootBar);
 }
 
 void ULootBar::PlayAnimationConstruct()
@@ -61,11 +62,16 @@ void ULootBar::PlayAnimationConstruct()
 void ULootBar::CreateLootBar()
 {
 	VerticalBox->ClearChildren();
-	for (FItemData* ItemData : OwnerInventory->GetInventoryAndSize(EInventoryPanels::P1).Get<0>())
+
+
+	auto DataItems = OwnerInventory->GetInventoryAndSize(EInventoryPanels::P1).Get<0>();
+
+	for (FItemData* ItemData : DataItems)
 	{
 		if (InventoryUtility::IsItemClassValid(ItemData))
 		{
-			ULootBarSlot* NewBarSlot = CreateWidget<ULootBarSlot>(this, DefaultLootBarSlot);
+		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, FString::FromInt(ItemData->Quantity));
+			ULootBarSlot* NewBarSlot = CreateWidget<ULootBarSlot>(GWorld->GetGameInstance(), DefaultLootBarSlot);
 			NewBarSlot->InitializeSlot(this, ItemData);
 			VerticalBox->AddChildToVerticalBox(NewBarSlot);
 		}

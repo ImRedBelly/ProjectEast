@@ -4,7 +4,6 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Kismet/KismetTextLibrary.h"
-#include "ProjectEast/Core/Actors/Inventory/MainItem.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
@@ -12,6 +11,14 @@ void ULootBarSlot::InitializeSlot(ULootBar* LootBar, FItemData* ItemData)
 {
 	CachedLootBar = LootBar;
 	CachedItemData = ItemData;
+
+	SetIsFocusable(true);
+	SetImageItem();
+	SetItemName();
+	SetItemType();
+	SetItemRarity();
+	SetItemRarityColor();
+	SetItemQuantity();
 }
 
 void ULootBarSlot::NativeConstruct()
@@ -20,12 +27,6 @@ void ULootBarSlot::NativeConstruct()
 
 	BackgroundButton->OnClicked.AddUniqueDynamic(this, &ULootBarSlot::OnRightClick);
 	BackgroundButton->OnHovered.AddUniqueDynamic(this, &ULootBarSlot::OnHovered);
-
-	SetItemName();
-	SetItemType();
-	SetItemRarity();
-	SetItemRarityColor();
-	SetItemQuantity();
 }
 
 FReply ULootBarSlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -47,7 +48,7 @@ FReply ULootBarSlot::NativeOnMouseMove(const FGeometry& InGeometry, const FPoint
 		OnMouseMoved();
 
 		//if (IGamePadControls* GamePadControls = Cast<IGamePadControls>(GetOwningPlayer()))
-			//GamePadControls->IsGamepad = false;
+		//GamePadControls->IsGamepad = false;
 
 		return FReply::Handled();
 	}
@@ -70,9 +71,10 @@ void ULootBarSlot::NativeOnFocusLost(const FFocusEvent& InFocusEvent)
 void ULootBarSlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnAddedToFocusPath(InFocusEvent);
+
 	if (IsUsingGamepad() || CachedLootBar->IsKeyboardFocus)
 	{
-		BorderImage->SetColorAndOpacity(FLinearColor());
+		BorderImage->SetColorAndOpacity(FLinearColor(1, 1, 1));
 		CachedLootBar->SetCurrentlyFocusedSlot(this);
 		CachedLootBar->ScrollWidget(this);
 		PlayAnimation(AnimationBorder, 0.0f, 0.0f, EUMGSequencePlayMode::Forward, 1.0f, false);
@@ -108,10 +110,10 @@ void ULootBarSlot::SetItemQuantity() const
 {
 	if (InventoryUtility::IsItemClassValid(CachedItemData))
 	{
-		if (CachedItemData->Class.GetDefaultObject()->bIsStackable && CachedItemData->Class.GetDefaultObject()->Quantity > 1)
+		if (CachedItemData->Class.GetDefaultObject()->bIsStackable && CachedItemData->Quantity > 1)
 		{
-			FText Value = UKismetTextLibrary::Conv_IntToText(CachedItemData->Class.GetDefaultObject()->Quantity,
-			                                                 false, true, 1, 324);
+			FText Value = UKismetTextLibrary::Conv_IntToText(CachedItemData->Quantity,
+			false, true, 1, 324);
 
 			TextItemQuantity->SetText(Value);
 		}
@@ -120,10 +122,10 @@ void ULootBarSlot::SetItemQuantity() const
 	}
 }
 
-void ULootBarSlot::SetButtonStyle(FItemData* ItemData) const
+void ULootBarSlot::SetImageItem() const
 {
-	if (InventoryUtility::IsItemClassValid(ItemData))
-		ImageItem->SetBrushFromTexture(ItemData->Class.GetDefaultObject()->ImageItem);
+	if (InventoryUtility::IsItemClassValid(CachedItemData))
+		ImageItem->SetBrushFromTexture(CachedItemData->Class.GetDefaultObject()->ImageItem);
 }
 
 void ULootBarSlot::OnRightClick()
@@ -139,7 +141,7 @@ void ULootBarSlot::OnMouseMoved()
 
 void ULootBarSlot::OnHovered()
 {
-	if(!IsUsingGamepad() && !CachedLootBar->IsKeyboardFocus)
+	if (!IsUsingGamepad() && !CachedLootBar->IsKeyboardFocus)
 		SetActivateState();
 }
 
@@ -155,7 +157,7 @@ bool ULootBarSlot::IsUsingGamepad() const
 void ULootBarSlot::SetActivateState()
 {
 	SetKeyboardFocus();
-	BorderImage->SetColorAndOpacity(FLinearColor());
+	BorderImage->SetColorAndOpacity(FLinearColor(1, 1, 1));
 	CachedLootBar->SetCurrentlyFocusedSlot(this);
 	PlayAnimation(AnimationBorder, 0.0f, 0.0f, EUMGSequencePlayMode::Forward, 1.0f, false);
 }

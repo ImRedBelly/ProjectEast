@@ -1,5 +1,4 @@
 ﻿#include "PlayerInventory.h"
-
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Actors/Interactive/ObjectInteraction.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
@@ -38,19 +37,15 @@ void UPlayerInventory::InputCloseWidget()
 {
 	if(bIsInteractableActorWidgetOpen)
 	{
-	
-		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "A");
 		CashedPlayerController->EndInteractionWithObject(GetCurrentInteractable());
 	}
 	else
 	{
-	
-		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "B");
 		CashedPlayerController->CloseActiveWidget();
 	}
 }
 
-void UPlayerInventory::InputInteraction()
+void UPlayerInventory::InputInteraction() const
 {
 	if (bIsLootBarOpen)
 	{

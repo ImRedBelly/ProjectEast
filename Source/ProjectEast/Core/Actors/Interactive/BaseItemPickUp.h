@@ -14,6 +14,7 @@ class PROJECTEAST_API ABaseItemPickUp : public ABaseInteractable
 protected:
 	ABaseItemPickUp();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UInventoryCore* InventoryCore;
 
 	AActor* CachedInteractor;

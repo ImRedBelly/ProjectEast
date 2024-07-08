@@ -34,6 +34,7 @@ public:
 	void Close();
 
 protected:
+
 	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonTake;
 
