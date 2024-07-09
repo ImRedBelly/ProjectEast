@@ -13,7 +13,18 @@ UWallRunComponent::UWallRunComponent()
 void UWallRunComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	checkf(GetOwner() -> IsA<ACharacter>(),TEXT("ULedgeDetectorComponent::BeginPlay() only a character can use ULedgeDetectorComponent"));
+
+	CurrentWallRunParameters = WallRunParameters[0];
+	for (auto WallRunParameter : WallRunParameters)
+		if (WallRunParameter.WallRunType == CurrentWallRunType)
+		{
+			CurrentWallRunParameters = WallRunParameter;
+			break;
+		}
+
+
+	checkf(GetOwner() -> IsA<ACharacter>(),
+	       TEXT("ULedgeDetectorComponent::BeginPlay() only a character can use ULedgeDetectorComponent"));
 	CachedCharacterOwner = StaticCast<ACharacter*>(GetOwner());
 
 	GatherCharacterInformation();
@@ -58,12 +69,13 @@ bool UWallRunComponent::StartWallJump()
 		StopWallRun(MOVE_Falling, 0.1f);
 
 		float WallSideValue = WallSide == EDirectionType::Right ? 90 : -90;
-		float RangeValue = UKismetMathLibrary::MapRangeClamped(WallJumpAngle, 90.0f, 0.0f, 0.0f, WallSideValue);
+		float RangeValue = UKismetMathLibrary::MapRangeClamped(CurrentWallRunParameters.WallJumpAngle, 90.0f, 0.0f,
+		                                                       0.0f, WallSideValue);
 
 
 		FVector DirectionLaunchCharacter = FRotator(0.0f, RangeValue, 0.0f).RotateVector(AverageWallNormal);
-		DirectionLaunchCharacter *= WallJumpHorizontalVelocity;
-		DirectionLaunchCharacter.Z = WallJumpVerticalVelocity;
+		DirectionLaunchCharacter *= CurrentWallRunParameters.WallJumpHorizontalVelocity;
+		DirectionLaunchCharacter.Z = CurrentWallRunParameters.WallJumpVerticalVelocity;
 
 		CachedCharacterOwner->LaunchCharacter(DirectionLaunchCharacter, true, true);
 
@@ -118,15 +130,15 @@ bool UWallRunComponent::StartWallRun(EDirectionType Direction)
 			bIsWallRunning = true;
 			WallSide = Direction;
 
-			MovementComponent->MaxFlySpeed = WallRunSpeed;
+			MovementComponent->MaxFlySpeed = CurrentWallRunParameters.WallRunSpeed;
 			MovementComponent->bOrientRotationToMovement = false;
-			MovementComponent->MaxAcceleration = WallRunAcceleration;
-			MovementComponent->BrakingDecelerationFlying = WallRunBrakingDeceleration;
+			MovementComponent->MaxAcceleration = CurrentWallRunParameters.WallRunAcceleration;
+			MovementComponent->BrakingDecelerationFlying = CurrentWallRunParameters.WallRunBrakingDeceleration;
 			MovementComponent->SetMovementMode(MOVE_Flying, 0);
 			CurrentWallRunDuration = 0;
 			PreviousRotation = CachedCharacterOwner->GetActorRotation();
 
-			if (WallRunDurationLimit >= 0)
+			if (CurrentWallRunParameters.WallRunDurationLimit >= 0)
 			{
 				StartDurationCountdown();
 			}
@@ -172,11 +184,12 @@ void UWallRunComponent::WallRunTick(float DeltaSeconds)
 
 		FVector CrossProduct = UKismetMathLibrary::Cross_VectorVector(AverageWallNormal,
 		                                                              FVector(0, 0, WallSide == EDirectionType::Right
-			                                                                      ? -1
-			                                                                      : 1));
+				                                                                      ? -1
+				                                                                      : 1));
 		float RangeValue = UKismetMathLibrary::MapRangeClamped(CurrentWallRunDuration, 0.0f, 2.5f, 1.0f, -2.0f);
 
-		FVector WorldDirection = FVector(CrossProduct.X, CrossProduct.Y, RangeValue * ArcAmount);
+		FVector WorldDirection = FVector(CrossProduct.X, CrossProduct.Y,
+		                                 RangeValue * CurrentWallRunParameters.ArcAmount);
 		CachedCharacterOwner->AddMovementInput(WorldDirection, 10000.0f, false);
 
 
@@ -377,12 +390,12 @@ void UWallRunComponent::DetectWall(EDirectionType DirectionType)
 bool UWallRunComponent::IsWallRunnable(const AActor* WallActor) const
 {
 	if (!IsValid(WallActor))
-		return !RequiresTag;
+		return !CurrentWallRunParameters.RequiresTag;
 
 	if (WallActor->ActorHasTag(TagForPreventingWallRun))
 		return false;
 
-	if (RequiresTag)
+	if (CurrentWallRunParameters.RequiresTag)
 	{
 		if (WallActor->ActorHasTag(TagForAllowingWallRun))
 		{
@@ -404,8 +417,8 @@ FHitResult UWallRunComponent::LineTraceRelativeToCapsuleAndWall(FVector WallNorm
 	FVector ForwardDirection = UKismetMathLibrary::Cross_VectorVector(WallNormal,
 	                                                                  FVector(
 		                                                                  0, 0, DirectionType == EDirectionType::Right
-			                                                                  ? 1
-			                                                                  : -1));
+				                                                                  ? 1
+				                                                                  : -1));
 
 	float StartPositionForwardsOffset = (StartOffset_Backwards * CapsuleRadius);
 	FVector StartPositionSidewaysOffset = (StartOffset_AwayFromWall * CapsuleRadius) * WallNormal;
@@ -449,9 +462,9 @@ bool UWallRunComponent::CheckCornerAngle(FVector FirstWallNormal, FVector Second
 	bool bIsOutsideLeft = WallSide == EDirectionType::Left && Sign < 0.0f;
 
 	if (bIsOutsideRight || bIsOutsideLeft)
-		return CurrentCornerAngle <= OutsideCornerAngleLimit;
+		return CurrentCornerAngle <= CurrentWallRunParameters.OutsideCornerAngleLimit;
 
-	return CurrentCornerAngle <= InsideCornerAngleLimit;
+	return CurrentCornerAngle <= CurrentWallRunParameters.InsideCornerAngleLimit;
 }
 
 void UWallRunComponent::CheckEnoughVerticalSpace(EDirectionType DirectionType)
@@ -653,9 +666,10 @@ void UWallRunComponent::DelayedAirControl()
 void UWallRunComponent::EnableWallJumpAirControl() const
 {
 	UCharacterMovementComponent* MovementComponent = CachedCharacterOwner->GetCharacterMovement();
-	MovementComponent->AirControl = WallJumpAirControl;
+	MovementComponent->AirControl = CurrentWallRunParameters.WallJumpAirControl;
 
-	float RangeValue = UKismetMathLibrary::MapRangeClamped(WallJumpAirControl, 0.0f, 1.0f, 2048.0f, 6000.0f);
+	float RangeValue = UKismetMathLibrary::MapRangeClamped(CurrentWallRunParameters.WallJumpAirControl, 0.0f, 1.0f,
+	                                                       2048.0f, 6000.0f);
 
 	MovementComponent->MaxAcceleration = RangeValue;
 }
@@ -684,7 +698,7 @@ void UWallRunComponent::StartDurationCountdown()
 {
 	GetWorld()->GetTimerManager().ClearTimer(DurationCountdownTimer);
 	GetWorld()->GetTimerManager().SetTimer(DurationCountdownTimer, this, &UWallRunComponent::WallRunTimeout,
-	                                       WallRunDurationLimit, false);
+	                                       CurrentWallRunParameters.WallRunDurationLimit, false);
 }
 
 void UWallRunComponent::StartMonitoringSpeed()
@@ -704,7 +718,7 @@ void UWallRunComponent::MonitorSpeed()
 {
 	FVector Velocity = CachedCharacterOwner->GetVelocity();
 
-	if (FVector(Velocity.X, Velocity.Y, 0).Length() < WallRunSpeed * 0.25f)
+	if (FVector(Velocity.X, Velocity.Y, 0).Length() < CurrentWallRunParameters.WallRunSpeed * 0.25f)
 	{
 		if (bSpeedTooLow)
 		{

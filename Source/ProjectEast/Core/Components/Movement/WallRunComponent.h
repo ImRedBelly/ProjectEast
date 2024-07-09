@@ -11,98 +11,115 @@ enum class EDirectionType : uint8
 	Left UMETA(DisplayName = "Left"),
 };
 
+UENUM(BlueprintType)
+enum class EWallRunType : uint8
+{
+	Default UMETA(DisplayName = "Default"),
+	HighSpeedInfiniteDurationRequiresTagNoArc UMETA(DisplayName = "HighSpeedInfiniteDurationRequiresTagNoArc"),
+	DegreeCornersSharpWallJumpAngle UMETA(DisplayName = "DegreeCornersSharpWallJumpAngle"),
+	HigherArcHigherWallJump UMETA(DisplayName = "HigherArcHigherWallJump"),
+};
+
+USTRUCT(BlueprintType)
+struct FWallRunParameters
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	EWallRunType WallRunType = EWallRunType::Default;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float WallRunSpeed = 800.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float ArcAmount = 0.65f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float WallRunDurationLimit = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float InsideCornerAngleLimit = 45.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float OutsideCornerAngleLimit = 45.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float WallJumpAngle = 45.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float WallJumpHorizontalVelocity = 800.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float WallJumpVerticalVelocity = 500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	float WallJumpAirControl = 0.3f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Core Utilities | Wall Run Movement Settings")
+	float WallRunAcceleration = 50000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Core Utilities | Wall Run Movement Settings")
+	float WallRunBrakingDeceleration = 500.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	bool RequiresTag;
+
+};
+
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTEAST_API UWallRunComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	UWallRunComponent();
-protected:
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float WallRunSpeed = 800.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float ArcAmount = 0.65f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float WallRunDurationLimit = 3.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float InsideCornerAngleLimit = 45.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float OutsideCornerAngleLimit = 45.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float WallJumpAngle = 45.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float WallJumpHorizontalVelocity = 800.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float WallJumpVerticalVelocity = 500.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	float WallJumpAirControl = 0.3f;
-
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	bool RequiresTag;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	FName TagForPreventingWallRun = "NoWallRun";
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
-	FName TagForAllowingWallRun = "WallRun";
-	
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="States")
-	bool bIsWallRunning;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="States")
-	bool bIsWallJumping;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="States")
-	bool bWallRunningAvailable = true;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="States")
-	bool bSpeedTooLow;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Core Utilities | Wall Run Movement Settings")
-	float WallRunAcceleration = 50000.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Core Utilities | Wall Run Movement Settings")
-	float WallRunBrakingDeceleration = 500.0f;
-
-
-	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	UWallRunComponent();
 	bool StartWallJump();
 	void StopWallJump();
 	bool StartWallRun(EDirectionType Direction);
 	void StopWallRun(EMovementMode NewMovementMode, float TemporarilyDisableWallRunSeconds);
 	void DetectWall(EDirectionType DirectionType);
-	
-	
+
 	bool GetIsWallRunning() const { return bIsWallRunning; }
 	bool GetIsWallJumping() const { return bIsWallJumping; }
 	EDirectionType GetDirectionType() const { return WallSide; }
 	float GetCurrentArcAngle() const { return CurrentArcAngle; }
 	float GetCurrentTurnRate() const { return CurrentTurnRate; }
-	float GetWallJumpHorizontalVelocity() const { return WallJumpHorizontalVelocity; }
-	float GetWallJumpVerticalVelocity() const { return WallJumpVerticalVelocity; }
+	float GetWallJumpHorizontalVelocity() const { return CurrentWallRunParameters.WallJumpHorizontalVelocity; }
+	float GetWallJumpVerticalVelocity() const { return CurrentWallRunParameters.WallJumpVerticalVelocity; }
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	EWallRunType CurrentWallRunType = EWallRunType::Default;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	TArray<FWallRunParameters> WallRunParameters;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	FName TagForPreventingWallRun = "NoWallRun";
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wall Run Parameters")
+	FName TagForAllowingWallRun = "WallRun";
+
+
+	FWallRunParameters CurrentWallRunParameters;
+
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	TWeakObjectPtr<ACharacter> CachedCharacterOwner;
 
 	EDirectionType WallSide;
-	
+
 	FVector CurrentWallLocation;
 	FVector PrimaryTraceNormal;
 	FVector SecondaryTraceNormal;
 	FVector AverageWallNormal;
 	FVector PreviousVelocity;
-	
-	
+
+
 	FRotator PreviousRotation;
 
 
@@ -119,7 +136,10 @@ private:
 	float CurrentArcAngle;
 	float CurrentTurnRate;
 	float DistanceAboveWall;
-	
+
+	bool bIsWallRunning;
+	bool bIsWallJumping;
+	bool bSpeedTooLow;
 	bool DefaultOrientRotation = false;
 	bool WallRunningAvailable = true;
 
@@ -165,10 +185,9 @@ private:
 
 	UFUNCTION()
 	void OnActorHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
-
-
+	
 	void EnterGate();
 	void OpenGate();
 	void CloseGate();
-    bool bGateOpen;
+	bool bGateOpen;
 };
