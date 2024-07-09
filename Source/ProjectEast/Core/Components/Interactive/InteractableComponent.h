@@ -126,6 +126,7 @@ public:
 	virtual void ClientEndInteraction(AActor* Interactor) override;
 	virtual void ClientPreInteraction(AActor* Interactor) override;
 	virtual bool CanBeInteractedWith() override;
+	
 
 #pragma region BeforeInteraction
 
@@ -174,6 +175,8 @@ public:
 
 #pragma endregion AfterInteraction
 
+	void ChangeInteractableValue(bool Increment);
+	int GetInteractableValue() const;
 	void ToggleInteractionWidget(bool Condition) const;
 	bool IsTargetInteractableValue();
 	void ToggleCanBeReInitialized(bool Condition);

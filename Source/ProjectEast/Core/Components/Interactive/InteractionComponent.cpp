@@ -171,18 +171,14 @@ bool UInteractionComponent::UseOwnerFPTrace()
 						AssignInteractionToLocal(InteractableComponent);
 						return true;
 					}
-					else
-						return false;
-				}
-				else
 					return false;
+				}
+				return false;
 			}
 		}
-		else
-			return false;
-	}
-	else
 		return false;
+	}
+	return false;
 }
 
 void UInteractionComponent::CheckCurrentInteractableComponent()

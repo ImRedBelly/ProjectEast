@@ -149,7 +149,7 @@ void UInteractableComponent::Interaction(AActor* Interactor)
 
 	if (IInteractable* ObjectInteractable = Cast<IInteractable>(GetOwner()))
 		ObjectInteractable->Interaction(Interactor);
-	
+
 	RemoveInteractionByResponse();
 }
 
@@ -386,6 +386,27 @@ void UInteractableComponent::OnGameLoaded() const
 
 	if (IsValid(CachedInteractionWidget))
 		CachedInteractionWidget->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UInteractableComponent::ChangeInteractableValue(bool Increment)
+{
+	if (Increment)
+	{
+		InteractableValue++;
+		if (InteractableValue > InteractableLimitValue)
+			InteractableValue = 0;
+	}
+	else
+	{
+		InteractableValue--;
+		if (InteractableValue < 0)
+			InteractableValue = InteractableLimitValue;
+	}
+}
+
+int UInteractableComponent::GetInteractableValue() const
+{
+	return InteractableValue;
 }
 
 void UInteractableComponent::ToggleInteractionWidget(bool Condition) const
