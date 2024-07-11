@@ -4,6 +4,7 @@
 #include "InventoryCore.h"
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
+#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "PlayerInventory.generated.h"
 
 
@@ -28,6 +29,7 @@ public:
 
 	void ServerTakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
 	void ServerTakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer);
+	void ServerDropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer);
 	void InputCloseWidget();
 	void InputInteraction() const;
 

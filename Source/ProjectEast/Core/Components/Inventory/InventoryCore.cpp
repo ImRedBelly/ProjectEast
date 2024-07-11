@@ -1,6 +1,4 @@
 ﻿#include "InventoryCore.h"
-
-#include "Chaos/ChaosPerfTest.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
@@ -111,7 +109,7 @@ void UInventoryCore::ServerMoveItemToSlot(UInventoryCore* Inventory, EInventoryP
 {
 }
 
-void UInventoryCore::ServerAddItemToInventory(UInventoryCore* Inventory, FItemData ItemData, int32 SlotIndex)
+void UInventoryCore::ServerAddItemToInventory(UInventoryCore* Inventory, FItemData* ItemData, int32 SlotIndex)
 {
 }
 
@@ -119,13 +117,11 @@ void UInventoryCore::ServerRemoveItemFromInventory(UInventoryCore* Inventory, FI
 {
 }
 
-void UInventoryCore::ServerTransferItemFromInventory(UInventoryCore* Receiver, FItemData ItemData, FItemData InSlotData,
-                                                     EInputMethodType Method, UInventoryCore* Sender,
-                                                     AActor* OwningPlayer)
+void UInventoryCore::ServerTransferItemFromInventory(UInventoryCore* Receiver, FItemData* ItemData, FItemData* InSlotData, EInputMethodType Method, UInventoryCore* Sender, AActor* OwningPlayer)
 {
 }
 
-void UInventoryCore::ServerTransferItemFromEquipment(FItemData ItemData, FItemData InSlotData, EInputMethodType Method,
+void UInventoryCore::ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* InSlotData, EInputMethodType Method,
                                                      UPlayerEquipment* Sender)
 {
 }
@@ -299,6 +295,17 @@ TTuple<TArray<FItemData*>, int32> UInventoryCore::GetInventoryAndSize(EInventory
 	}
 
 	return MakeTuple(InventoryP1, InventorySizeP1);
+}
+
+void UInventoryCore::SwitchedActivePanel(EInventoryPanels Panel)
+{
+}
+
+EItemRemoveType UInventoryCore::GetItemRemoveType(FItemData* ItemData) const
+{
+	if(bIsCheckRemoveType)
+		return ItemData->Class.GetDefaultObject()->RemoveType;
+	return EItemRemoveType::Default;
 }
 
 void UInventoryCore::RandomizeInitialItems()

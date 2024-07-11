@@ -83,4 +83,27 @@ enum class EItemsType : uint8
 	CraftingRecipe UMETA(DisplayName = "CraftingRecipe"),
 };
 
+UENUM(BlueprintType)
+enum class EItemRemoveType : uint8
+{
+	Default UMETA(DisplayName = "Default"),
+	OnConfirmation UMETA(DisplayName = "OnConfirmation"),
+	CannotBeRemoved UMETA(DisplayName = "CannotBeRemoved"),
+};
 
+UENUM(BlueprintType)
+enum class EItemUseType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	TextDocument UMETA(DisplayName = "TextDocument"),
+	Currency UMETA(DisplayName = "Currency"),
+	CraftingRecipe UMETA(DisplayName = "CraftingRecipe"),
+};
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	OneHand UMETA(DisplayName = "OneHand"),
+	TwoHand UMETA(DisplayName = "TwoHand"),
+	OffHand UMETA(DisplayName = "OffHand"),
+};

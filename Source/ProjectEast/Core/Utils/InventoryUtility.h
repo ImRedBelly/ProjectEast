@@ -17,11 +17,15 @@ public:
 	static TTuple<bool, UInventoryCore*> GetInventoryFromInteractable(UInteractableComponent* InteractableComponent);
 	static bool SwitchHasOwnerAuthority(UActorComponent* ActorComponent);
 	static bool IsItemClassValid(const FItemData* ItemData);
+	static bool AreItemsTheSame(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
+	static bool AreItemsStackable(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
+	static bool AreItemSlotsEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
+	static bool CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
+	static bool IsStackableAndHaveStacks(const FItemData* ItemData, int32 Quantity);
 	static EInventoryPanels GetInventoryPanelFromItem(const FItemData* ItemData);
 	static TTuple<bool, int32> FindEmptySlotInArray(const TArray<FItemData*> ItemData);
 	static float CalculateStackedItemWeight(FItemData* ItemData);
-	static void TakeAllItemsFromInventory(AActor* Interactor, UInventoryCore* ActorInventory);
-
+	static void TakeAllItemsFromInventory(AActor* Interactor, UInventoryCore* ActorInventory);;
 
 	static TArray<FItemData*> QuickSortItems(TArray<FItemData*> ItemData);
 	static TArray<FItemData*> SortItemsByType(TArray<FItemData*> ItemData);
@@ -30,6 +34,7 @@ public:
 	static TArray<FItemData*> SortItemsByWeight(TArray<FItemData*> ItemData);
 	static FSlateColor GetRarityColor(EItemRarity ItemRarity);
 	static void PlaySoundOnOpeningWidget();
+	static void PlaySoundOnItemDropped();
 
 	static UDataTable* GamepadIconsTable;
 

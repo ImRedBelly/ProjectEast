@@ -33,6 +33,10 @@ void UPlayerInventory::ServerTakeAllItems(UInventoryCore* Sender, AActor* Owning
 {
 }
 
+void UPlayerInventory::ServerDropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer)
+{
+}
+
 void UPlayerInventory::InputCloseWidget()
 {
 	if(bIsInteractableActorWidgetOpen)

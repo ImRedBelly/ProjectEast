@@ -4,6 +4,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Kismet/KismetTextLibrary.h"
+#include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
@@ -47,8 +48,8 @@ FReply ULootBarSlot::NativeOnMouseMove(const FGeometry& InGeometry, const FPoint
 		CachedLootBar->IsKeyboardFocus = false;
 		OnMouseMoved();
 
-		//if (IGamePadControls* GamePadControls = Cast<IGamePadControls>(GetOwningPlayer()))
-		//GamePadControls->IsGamepad = false;
+		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
+			GamepadControls->IsGamepad = false;
 
 		return FReply::Handled();
 	}

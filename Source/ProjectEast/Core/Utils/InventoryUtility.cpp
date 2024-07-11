@@ -91,6 +91,47 @@ bool InventoryUtility::IsItemClassValid(const FItemData* ItemData)
 	return IsValid(ItemData->Class);
 }
 
+bool InventoryUtility::AreItemsTheSame(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
+{
+	return ItemDataFirst->ID == ItemDataSecond->ID;
+}
+
+bool InventoryUtility::AreItemsStackable(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
+{
+	return ItemDataFirst->Class.GetDefaultObject()->bIsStackable && ItemDataSecond->Class.GetDefaultObject()->bIsStackable;
+}
+
+bool InventoryUtility::AreItemSlotsEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
+{
+	auto ResultFirst =(ItemDataFirst->ItemSlot == EItemSlot::Pocket1)
+		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket2)
+		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket3)
+		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket4);
+		auto ResultSecond =(ItemDataSecond->ItemSlot == EItemSlot::Pocket1)
+		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket2)
+		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket3)
+		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket4);
+	
+	return ItemDataFirst->ItemSlot == ItemDataSecond->ItemSlot || (ResultFirst && ResultSecond);
+}
+
+bool InventoryUtility::CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
+{
+	if (IsItemClassValid(ItemDataSecond))
+		if (ItemDataFirst->Class.GetDefaultObject()->WeaponType == EWeaponType::OneHand &&
+			ItemDataSecond->Class.GetDefaultObject()->WeaponType == EWeaponType::OneHand)
+			return true;
+	
+	return ItemDataFirst->Class.GetDefaultObject()->WeaponType == EWeaponType::OneHand &&
+	(ItemDataSecond->Class.GetDefaultObject()->Type == EItemsType::Weapon ||
+		ItemDataSecond->Class.GetDefaultObject()->Type == EItemsType::Shield);
+}
+
+bool InventoryUtility::IsStackableAndHaveStacks(const FItemData* ItemData, int32 Quantity)
+{
+	return ItemData->Class.GetDefaultObject()->bIsStackable && ItemData->Quantity > Quantity;
+}
+
 EInventoryPanels InventoryUtility::GetInventoryPanelFromItem(const FItemData* ItemData)
 {
 	return ItemData->Class.GetDefaultObject()->InventoryPanel;
@@ -341,5 +382,9 @@ FSlateColor InventoryUtility::GetRarityColor(EItemRarity ItemRarity)
 }
 
 void InventoryUtility::PlaySoundOnOpeningWidget()
+{
+}
+
+void InventoryUtility::PlaySoundOnItemDropped()
 {
 }

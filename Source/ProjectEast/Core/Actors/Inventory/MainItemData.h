@@ -26,10 +26,12 @@ public:
 	EItemRarity Rarity;
 	UPROPERTY(EditDefaultsOnly, Category="Item Details")
 	EInventoryPanels InventoryPanel = EInventoryPanels::P1;
-	// UPROPERTY(EditDefaultsOnly, Category="Item Details")
-	// EWeaponType WeaponType;
+	UPROPERTY(EditDefaultsOnly, Category="Item Details")
+	EWeaponType WeaponType;
 	// UPROPERTY(EditDefaultsOnly, Category="Item Details")
 	// EWeaponSubType WeaponSubType;
+	UPROPERTY(EditDefaultsOnly, Category="Item Details")
+	EItemUseType UseType;
 
 
 	UPROPERTY(EditDefaultsOnly, Category="Item Stats")
@@ -39,4 +41,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Item Stacking")
 	bool bIsStackable;
+	UPROPERTY(EditDefaultsOnly, Category="Item Stacking")
+	EItemRemoveType RemoveType;
 };

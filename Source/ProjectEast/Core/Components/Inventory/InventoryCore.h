@@ -1,11 +1,12 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "PlayerEquipment.h"
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Actors/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "InventoryCore.generated.h"
+
+class UPlayerEquipment;
 
 USTRUCT(BlueprintType)
 struct FItemData : public FTableRowBase
@@ -95,10 +96,10 @@ public:
 	void RemoveViewer(APlayerState* PlayerState, UInventoryCore* Inventory);
 
 	void ServerMoveItemToSlot(UInventoryCore* Inventory, EInventoryPanels InventoryPanels, int32 MoveFrom, int32 MoveTo);
-	void ServerAddItemToInventory(UInventoryCore* Inventory, FItemData ItemData, int32 SlotIndex);
+	void ServerAddItemToInventory(UInventoryCore* Inventory, FItemData* ItemData, int32 SlotIndex);
 	void ServerRemoveItemFromInventory(UInventoryCore* Inventory, FItemData ItemData);
-	void ServerTransferItemFromInventory(UInventoryCore* Receiver, FItemData ItemData, FItemData InSlotData,EInputMethodType Method, UInventoryCore* Sender, AActor* OwningPlayer);
-	void ServerTransferItemFromEquipment(FItemData ItemData, FItemData InSlotData, EInputMethodType Method,UPlayerEquipment* Sender);
+	void ServerTransferItemFromInventory(UInventoryCore* Receiver, FItemData* ItemData, FItemData* InSlotData, EInputMethodType Method, UInventoryCore* Sender, AActor* OwningPlayer);
+	void ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* InSlotData, EInputMethodType Method,UPlayerEquipment* Sender);
 	void ServerSplitItemsInInventory(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData ItemData,
 	                                 FItemData InSlotData, FItemData StackableLeft, EInputMethodType Method,
 	                                 EInputMethodType Initiator, EInputMethodType Destination, AActor* OwningPlayer);
@@ -110,6 +111,9 @@ public:
 
 	
 	TTuple<TArray<FItemData*>, int32>GetInventoryAndSize(EInventoryPanels Panel);
+
+	void SwitchedActivePanel(EInventoryPanels Panel);
+	EItemRemoveType GetItemRemoveType(FItemData* ItemData) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -149,6 +153,7 @@ protected:
 
 	bool bIsUseInventorySize;
 	bool bSortInitialItems;
+	bool bIsCheckRemoveType;
 
 
 	void BuildInitialInventory();

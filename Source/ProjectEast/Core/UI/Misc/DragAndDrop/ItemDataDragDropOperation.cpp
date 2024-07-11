@@ -1,0 +1,31 @@
+#include "Components/Image.h"
+#include "ItemDataDragAndDropPanel.h"
+#include "ItemDataDragDropOperation.h"
+
+void UItemDataDragDropOperation::ClearDraggableIcon() const
+{
+	if (IsValid(ItemDataDragAndDropPanel))
+	{
+		ItemDataDragAndDropPanel->WrongSlotImage->SetVisibility(ESlateVisibility::Hidden);
+		ItemDataDragAndDropPanel->DropSlotImage->SetVisibility(ESlateVisibility::Hidden);
+		ItemDataDragAndDropPanel->SwapSlotImage->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UItemDataDragDropOperation::ShowIconWrongSlot() const
+{
+	ClearDraggableIcon();
+	ItemDataDragAndDropPanel->WrongSlotImage->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UItemDataDragDropOperation::ShowIconDrop() const
+{
+	ClearDraggableIcon();
+	ItemDataDragAndDropPanel->DropSlotImage->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UItemDataDragDropOperation::ShowIconSwap() const
+{
+	ClearDraggableIcon();
+	ItemDataDragAndDropPanel->SwapSlotImage->SetVisibility(ESlateVisibility::Hidden);
+}
