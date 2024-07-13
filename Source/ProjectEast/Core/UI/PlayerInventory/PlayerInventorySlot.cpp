@@ -16,6 +16,37 @@
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 
+void UPlayerInventorySlot::InitializeSlot(FItemData* ItemData, UInventoryCore* ReceiverInventory, UPlayerInventoryWidget* ParentWidget,
+	UPlayerEquipment* PlayerEquipment, UPlayerInventory* PlayerInventory, FVector2D DragImageSize, uint32 IndexSlot)
+{
+	CurrentItemData = ItemData;
+	CachedReceiverInventory = ReceiverInventory;
+	CachedPlayerInventoryWidget = ParentWidget;
+	CachedPlayerEquipment = PlayerEquipment;
+	CachedPlayerInventory = PlayerInventory;
+	ImageSize = DragImageSize;
+	SlotIndex = IndexSlot;
+	
+}
+
+void UPlayerInventorySlot::HighlightSlot()
+{
+	if(!HasUserFocusedDescendants(GetOwningPlayer()) && !IsHovered())
+		PlayAnimation(AnimationHighlight, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f, false);
+}
+
+void UPlayerInventorySlot::OnInitialInput()
+{
+	bIsInitialInputDelay = true;
+	GetWorld()->GetTimerManager().ClearTimer(DelayTimer);
+	GetWorld()->GetTimerManager().SetTimer(DelayTimer, this, &UPlayerInventorySlot::OffInitialInput, 0.5f, false);
+}
+
+void UPlayerInventorySlot::OffInitialInput()
+{
+	bIsInitialInputDelay = false;
+}
+
 void UPlayerInventorySlot::InitializeInventorySlot(UPlayerEquipment* PlayerEquipment, UPlayerInventory* PlayerInventory,
                                                    UInventoryCore* ReceiverInventory)
 {
@@ -88,7 +119,7 @@ void UPlayerInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, con
 			CachedReceiverInventory->SwitchedActivePanel(CurrentItemData->Class.GetDefaultObject()->InventoryPanel);
 
 		UItemDataDragAndDropPanel* DragAndDropPanel = CreateWidget<UItemDataDragAndDropPanel>(this, ItemDataDragAndDropPanel);
-		DragAndDropPanel->InitializeImage(CurrentItemData->Class.GetDefaultObject()->ImageItem);
+		DragAndDropPanel->InitializePanel(CurrentItemData->Class.GetDefaultObject()->ImageItem, ImageSize);
 
 		auto Operation = Cast<UItemDataDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(ItemDataDragDropOperation));
 		Operation->DefaultDragVisual = DragAndDropPanel;

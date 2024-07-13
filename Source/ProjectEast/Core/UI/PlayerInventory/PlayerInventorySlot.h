@@ -17,6 +17,14 @@ class PROJECTEAST_API UPlayerInventorySlot : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	void InitializeSlot(FItemData* ItemData,UInventoryCore* ReceiverInventory, UPlayerInventoryWidget* ParentWidget, UPlayerEquipment* PlayerEquipment,
+	                    UPlayerInventory* PlayerInventory, FVector2D DragImageSize, uint32 IndexSlot);
+	
+	void HighlightSlot();
+	void OnInitialInput();
+	void OffInitialInput();
+	
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonItem;
@@ -123,4 +131,7 @@ private:
 	float VerticalAlignment;
 
 	bool bIsInitialInputDelay;
+	FTimerHandle DelayTimer;
+	
+	FVector2D ImageSize;
 };

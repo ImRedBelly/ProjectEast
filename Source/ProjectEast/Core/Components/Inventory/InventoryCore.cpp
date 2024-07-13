@@ -24,6 +24,11 @@ void UInventoryCore::CallOnRefreshInventory(EInventoryPanels Panel) const
 		OnRefreshInventory.Broadcast(Panel);
 }
 
+EInventoryPanels UInventoryCore::GetActivePanel() const
+{
+	return ActivePanel;
+}
+
 void UInventoryCore::ClientTransferItemReturnValue(bool Success, FText FailureMessage)
 {
 }
@@ -140,7 +145,7 @@ void UInventoryCore::ServerConfirmationPopupAccepted(UInventoryCore* Receiver, U
 {
 }
 
-void UInventoryCore::ServerSortInventory(UInventoryCore* Inventory, EInputMethodType Method,
+void UInventoryCore::ServerSortInventory(UInventoryCore* Inventory, ESortMethod Method,
                                          EInventoryPanels SinglePanel, bool EveryPanel)
 {
 }

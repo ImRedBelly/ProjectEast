@@ -16,6 +16,7 @@ class PROJECTEAST_API IGamepadControls
 	GENERATED_BODY()
 
 public:
+	EWidgetType GetCurrentlyFocusedWidget();
 	void SetCurrentlyFocusedWidget(EWidgetType WidgetType);
 	bool IsGamepad;
 };

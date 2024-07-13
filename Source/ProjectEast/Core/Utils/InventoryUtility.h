@@ -35,6 +35,7 @@ public:
 	static FSlateColor GetRarityColor(EItemRarity ItemRarity);
 	static void PlaySoundOnOpeningWidget();
 	static void PlaySoundOnItemDropped();
+	static void PlaySoundOnTabSwitched();
 
 	static UDataTable* GamepadIconsTable;
 

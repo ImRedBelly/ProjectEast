@@ -46,7 +46,10 @@ public:
 	virtual void EndInteractionWithObject(UInteractableComponent* InteractableComponent) override;
 	virtual void RemoveInteractionFromObject(UInteractableComponent* InteractableComponent) override;
 
+	UPlayerInventory* GetPlayerInventory() const;
+	UPlayerEquipment* GetPlayerEquipment() const;
 	UMainWindow* GetMainWindow() const;
+
 	FOnGamepadToggled OnGamepadToggled;
 
 protected:
@@ -58,6 +61,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPlayerInventory* PlayerInventory;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPlayerEquipment* PlayerEquipment;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UDataTable* GamepadIcons;

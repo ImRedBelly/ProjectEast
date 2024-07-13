@@ -1,9 +1,10 @@
 #include "Components/Image.h"
 #include "ItemDataDragAndDropPanel.h"
 
-void UItemDataDragAndDropPanel::InitializeImage(UTexture2D* Texture)
+void UItemDataDragAndDropPanel::InitializePanel(UTexture2D* Texture, FVector2D Size)
 {
 	ImageTexture = Texture;
+	ImageSize = Size;
 }
 
 void UItemDataDragAndDropPanel::NativeConstruct()

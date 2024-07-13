@@ -1,15 +1,17 @@
 ﻿#include "MainPlayerController.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
-#include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
+#include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
-#include "ProjectEast/Core/Utils/InventoryUtility.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
+#include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 
 AMainPlayerController::AMainPlayerController()
 {
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	PlayerInventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
+	PlayerEquipment = CreateDefaultSubobject<UPlayerEquipment>(TEXT("PlayerEquipment"));
 }
 
 void AMainPlayerController::BeginPlay()
@@ -119,6 +121,16 @@ void AMainPlayerController::RemoveInteractionFromObject(UInteractableComponent* 
 {
 	if (IsValid(InteractableComponent) && InteractableComponent->GetOwner()->GetIsReplicated())
 		InteractableComponent->OnRemoveInteraction();
+}
+
+UPlayerInventory* AMainPlayerController::GetPlayerInventory() const
+{
+	return PlayerInventory;
+}
+
+UPlayerEquipment* AMainPlayerController::GetPlayerEquipment() const
+{
+	return PlayerEquipment;
 }
 
 UMainWindow* AMainPlayerController::GetMainWindow() const

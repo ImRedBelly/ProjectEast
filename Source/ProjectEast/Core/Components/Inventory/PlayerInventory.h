@@ -35,12 +35,17 @@ public:
 
 	void OpenLootBarWidget();
 	void CloseLootBarWidget();
+
+	bool IsRefreshOmClosingWidget() const {return bIsRefreshOmClosingWidget;}
 	
 	FOnTakeItem OnTakeItem;
 	FOnTakeAllItems OnTakeAllItems;
 	FOnItemLooted OnItemLooted;
 	FOnItemUsed OnItemUsed;
-
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsRefreshOmClosingWidget;
+	
 private:
 	AMainPlayerController* CashedPlayerController;
 	

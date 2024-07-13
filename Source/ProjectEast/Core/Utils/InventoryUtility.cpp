@@ -388,3 +388,7 @@ void InventoryUtility::PlaySoundOnOpeningWidget()
 void InventoryUtility::PlaySoundOnItemDropped()
 {
 }
+
+void InventoryUtility::PlaySoundOnTabSwitched()
+{
+}

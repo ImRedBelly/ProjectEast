@@ -11,7 +11,7 @@ class PROJECTEAST_API UItemDataDragAndDropPanel : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void InitializeImage(UTexture2D* Texture2D);
+	void InitializePanel(UTexture2D* Texture, FVector2D Size);
 
 	UPROPERTY(meta=(BindWidget))
 	UImage* ImageDraggable;
@@ -24,13 +24,10 @@ public:
 
 	UPROPERTY(meta=(BindWidget))
 	UImage* SwapSlotImage;
-
-
-	UPROPERTY(EditAnywhere)
-	FVector2D ImageSize;
-
+	
 	virtual void NativeConstruct() override;
 
 private:
 	UTexture2D* ImageTexture;
+	FVector2D ImageSize;
 };

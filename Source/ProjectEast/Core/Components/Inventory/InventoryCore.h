@@ -60,7 +60,7 @@ struct FRandomizedLootTable
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRefreshInventory, EInventoryPanels, Panel);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHighlightInventorySlot, int32, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHighlightInventorySlot, uint32, Index);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedActivePanel, EInventoryPanels, Panel);
 
 
@@ -75,10 +75,11 @@ public:
 	FOnSwitchedActivePanel OnSwitchedActivePanel;
 
 	virtual void InitializeInventory(APlayerController* PlayerController);
+
 	void CallOnRefreshInventory(EInventoryPanels Panel) const;
 
+	EInventoryPanels GetActivePanel() const;
 	//Client
-
 	void ClientTransferItemReturnValue(bool Success, FText FailureMessage);
 	void ClientUpdateItems(UInventoryCore* Inventory, EInventoryPanels InventoryPanel, TArray<FItemData*> Array);
 	void ClientUpdateAddedItem(FItemData* ItemData, UInventoryCore* Inventory);
@@ -106,7 +107,7 @@ public:
 	void ServerConfirmationPopupAccepted(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData ItemData,
 	                                     FItemData InSlotData, EInputMethodType Method, EInputMethodType Initiator,
 	                                     EInputMethodType Destination, AActor* OwningPlayer);
-	void ServerSortInventory(UInventoryCore* Inventory, EInputMethodType Method, EInventoryPanels SinglePanel,
+	void ServerSortInventory(UInventoryCore* Inventory, ESortMethod Method, EInventoryPanels SinglePanel,
 	                         bool EveryPanel);
 
 	
