@@ -26,7 +26,7 @@ void UPlayerInventorySlot::InitializeSlot(FItemData* ItemData, UInventoryCore* R
 	CachedPlayerInventory = PlayerInventory;
 	ImageSize = DragImageSize;
 	SlotIndex = IndexSlot;
-	
+	OverwriteSlot(ItemData);
 }
 
 void UPlayerInventorySlot::HighlightSlot()
@@ -599,7 +599,11 @@ void UPlayerInventorySlot::SetItemQuantity() const
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
 		if (CurrentItemData->Class.GetDefaultObject()->bIsStackable && CurrentItemData->Quantity > 1)
+		{
+		
+			GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, FString::FromInt(CurrentItemData->Quantity));	
 			TextQuantity->SetText(UKismetTextLibrary::Conv_IntToText(CurrentItemData->Quantity));
+		}
 		else
 			TextQuantity->SetText(FText());
 	}

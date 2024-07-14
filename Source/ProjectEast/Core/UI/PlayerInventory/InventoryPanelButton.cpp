@@ -23,7 +23,7 @@ void UInventoryPanelButton::ButtonOnClicked()
 
 void UInventoryPanelButton::RefreshPanelButton(EInventoryPanels ActivePanel) const
 {
-	BorderBackground->SetBrushColor(FLinearColor());
+	BorderBackground->SetBrushColor(FLinearColor(1,1,1,0));
 	ButtonPanel->SetStyle(ButtonStyleOff);
 	if (Panel == ActivePanel)
 	{

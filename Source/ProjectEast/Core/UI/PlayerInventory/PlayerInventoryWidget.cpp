@@ -185,17 +185,22 @@ void UPlayerInventoryWidget::HighlightSlot(uint32 SlotIndex)
 		CurrentSlot->HighlightSlot();
 }
 
-void UPlayerInventoryWidget::BuildInventorySlots(TArray<FItemData*> ItemData, uint32 Size, UUniformGridPanel* GridPanel)
+void UPlayerInventoryWidget::BuildInventorySlots(TArray<FItemData*> ItemData, int32 Size, UUniformGridPanel* GridPanel)
 {
 	uint32 CurrentRow = 0;
 	uint32 CurrentColumn = 0;
 	GridPanel->ClearChildren();
 	
-	for (int i = 0; i < ItemData.Num(); ++i)
+	for (int i = 0; i < Size; ++i)
 	{
-		auto Data = ItemData[i];
+		FItemData* CurrentItemData;
+		if(ItemData.IsValidIndex(i))
+			CurrentItemData = ItemData[i];
+		else
+			CurrentItemData = new FItemData();
+		
 		UPlayerInventorySlot* InventorySLot = CreateWidget<UPlayerInventorySlot>(this, DefaultPlayerInventorySlot);
-		InventorySLot->InitializeSlot(Data, CachedReceiverInventory, this, CachedPlayerEquipment, CachedPlayerInventory, DraggedImageSize, i);
+		InventorySLot->InitializeSlot(CurrentItemData, CachedReceiverInventory, this, CachedPlayerEquipment, CachedPlayerInventory, DraggedImageSize, i);
 
 		UUniformGridSlot* CurrentSlot = GridPanel->AddChildToUniformGrid(InventorySLot, CurrentRow, CurrentColumn);
 		CurrentSlot->SetHorizontalAlignment(HAlign_Fill);

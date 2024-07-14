@@ -108,7 +108,7 @@ protected:
 	void CreateInventoryP3();
 	void CreateInventoryP4();
 	void SetFocusToSlot(uint32 SlotIndex) const;
-	void BuildInventorySlots(TArray<FItemData*> ItemData, uint32 Size, UUniformGridPanel* GridPanel);
+	void BuildInventorySlots(TArray<FItemData*> ItemData, int32 Size, UUniformGridPanel* GridPanel);
 	EInventoryPanels GetActivePanel() const;
 	UUniformGridPanel* GetUniformGridFromPanel(EInventoryPanels Panel) const;
 	void SwitchToNextInventoryPanel(bool ToTheRight);
