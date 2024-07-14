@@ -133,6 +133,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		//Interaction
 		
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &APlayerCharacter::OnInteractive);
+		EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Started, this, &APlayerCharacter::OnOpenInventory);
 		//
 	}
 }
@@ -370,6 +371,12 @@ void APlayerCharacter::OnInteractive()
 {
 	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
 		PlayerController->OnInteraction();
+}
+
+void APlayerCharacter::OnOpenInventory()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->OpenNewWidget(EWidgetType::Inventory);
 }
 
 void APlayerCharacter::UpdateIKSettings(float DeltaSeconds)

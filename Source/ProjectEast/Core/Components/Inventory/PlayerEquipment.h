@@ -15,6 +15,8 @@ class PROJECTEAST_API UPlayerEquipment : public UActorComponent
 	
 public:
 	void ServerTransferItemFromInventory(FItemData* ItemData, FItemData* InSlotData, UPlayerInventory* PlayerInventory, EInputMethodType RightClick);
+	void RemoveItemFromEquipmentArray(FItemData* ItemData);
+	void DetachItemFromEquipment(FItemData* ItemData);
 	bool CanItemBeEquipped(FItemData* ItemData);
 
 	bool bIsEnableOffHand;

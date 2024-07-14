@@ -20,11 +20,11 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMainItemData> Class;
 	UPROPERTY(EditDefaultsOnly)
-	int32 Quantity;
+	uint32 Quantity;
 	UPROPERTY(EditDefaultsOnly)
-	int32 Durability;
+	uint32 Durability;
 	UPROPERTY(EditDefaultsOnly)
-	int32 Index;
+	uint32 Index;
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsEquipped;
 	UPROPERTY(EditDefaultsOnly)
@@ -50,18 +50,30 @@ struct FRandomizedLootTable
 
 	UPROPERTY(EditAnywhere)
 	UDataTable* DataTable;
-	
+
 	UPROPERTY(EditAnywhere)
 	int32 MinLootItems;
-	
+
 	UPROPERTY(EditAnywhere)
 	int32 MaxLootItems;
 };
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRefreshInventory, EInventoryPanels, Panel);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemovedFromInventoryArray, FItemData&, ItemData);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddedToInventoryArray, FItemData&, ItemData);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHighlightInventorySlot, uint32, Index);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedActivePanel, EInventoryPanels, Panel);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedOwnerGold);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedCurrentWeight);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedMaxWeight);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -71,62 +83,92 @@ class PROJECTEAST_API UInventoryCore : public UActorComponent
 
 public:
 	FOnRefreshInventory OnRefreshInventory;
+	FOnRemovedFromInventoryArray OnRemovedFromInventoryArray;
+	FOnAddedToInventoryArray OnAddedToInventoryArray;
 	FOnHighlightInventorySlot OnHighlightInventorySlot;
 	FOnSwitchedActivePanel OnSwitchedActivePanel;
+	FOnChangedOwnerGold OnChangedOwnerGold;
+	FOnChangedCurrentWeight OnChangedCurrentWeight;
+	FOnChangedMaxWeight OnChangedMaxWeight;
 
 	virtual void InitializeInventory(APlayerController* PlayerController);
+	virtual void BeginPlay() override;
 
-	void CallOnRefreshInventory(EInventoryPanels Panel) const;
-
-	EInventoryPanels GetActivePanel() const;
-	//Client
-	void ClientTransferItemReturnValue(bool Success, FText FailureMessage);
-	void ClientUpdateItems(UInventoryCore* Inventory, EInventoryPanels InventoryPanel, TArray<FItemData*> Array);
-	void ClientUpdateAddedItem(FItemData* ItemData, UInventoryCore* Inventory);
-	void ClientUpdateRemovedItem(FItemData* ItemData, UInventoryCore* Inventory);
-
-
-	void SortInventory(ESortMethod Method, EInventoryPanels SinglePanel, bool EveryPanel);
-	void UpdateViewInventory(EInventoryPanels InventoryPanel);
-
-	//Server
-	void ServerUpdateItems(AActor* Actor);
-	void MulticastSetCurrentWeight(float CurrentWeight);
-	void MulticastSetOwnerGold(float OwnerGold);
 	void AddViewer(APlayerState* PlayerState, UInventoryCore* Inventory);
 	void RemoveViewer(APlayerState* PlayerState, UInventoryCore* Inventory);
 
-	void ServerMoveItemToSlot(UInventoryCore* Inventory, EInventoryPanels InventoryPanels, int32 MoveFrom, int32 MoveTo);
-	void ServerAddItemToInventory(UInventoryCore* Inventory, FItemData* ItemData, int32 SlotIndex);
-	void ServerRemoveItemFromInventory(UInventoryCore* Inventory, FItemData ItemData);
-	void ServerTransferItemFromInventory(UInventoryCore* Receiver, FItemData* ItemData, FItemData* InSlotData, EInputMethodType Method, UInventoryCore* Sender, AActor* OwningPlayer);
-	void ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* InSlotData, EInputMethodType Method,UPlayerEquipment* Sender);
-	void ServerSplitItemsInInventory(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData ItemData,
-	                                 FItemData InSlotData, FItemData StackableLeft, EInputMethodType Method,
-	                                 EInputMethodType Initiator, EInputMethodType Destination, AActor* OwningPlayer);
-	void ServerConfirmationPopupAccepted(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData ItemData,
-	                                     FItemData InSlotData, EInputMethodType Method, EInputMethodType Initiator,
-	                                     EInputMethodType Destination, AActor* OwningPlayer);
-	void ServerSortInventory(UInventoryCore* Inventory, ESortMethod Method, EInventoryPanels SinglePanel,
-	                         bool EveryPanel);
 
-	
-	TTuple<TArray<FItemData*>, int32>GetInventoryAndSize(EInventoryPanels Panel);
+	void MulticastSetCurrentWeight(float CurrentWeight);
+	void MulticastSetOwnerGold(float Gold);
 
+
+	//Client
+	void ClientUpdateItems(UInventoryCore* Inventory, EInventoryPanels InventoryPanel, TArray<FItemData*> Array) const;
+	virtual void ClientTransferItemReturnValue(bool Success, FText FailureMessage);
+	void ClientUpdateAddedItem(FItemData* ItemData, UInventoryCore* Inventory);
+	void ClientUpdateRemovedItem(FItemData* ItemData, UInventoryCore* Inventory);
+
+	void SortInventory(ESortMethod Method, EInventoryPanels SinglePanel, bool EveryPanel);
+
+	//Server
+	static void ServerRemoveItemFromInventory(UInventoryCore* Inventory, FItemData* ItemData);
+	static void ServerAddItemToInventory(UInventoryCore* Inventory, FItemData* ItemData, int32 SlotIndex);
+	void ServerUpdateItems(AActor* Actor);
+	void ServerTransferItemFromInventory(UInventoryCore* Receiver, FItemData* ItemData, FItemData* InSlotData,
+	                                     EInputMethodType Method, UInventoryCore* Sender, AActor* OwningPlayer);
+	static void ServerMoveItemToSlot(UInventoryCore* Inventory, EInventoryPanels Panel, int32 MoveFrom, int32 MoveTo);
+	static void ServerSplitItemsInInventory(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData* ItemData,
+	                                        FItemData* InSlotData, FItemData* StackableLeft, EInputMethodType Method,
+	                                        EInputMethodType Initiator, EInputMethodType Destination,
+	                                        AActor* OwningPlayer);
+	static void ServerSortInventory(UInventoryCore* Inventory, ESortMethod Method, EInventoryPanels SinglePanel,
+	                                bool EveryPanel);
+	void ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* InSlotData, EInputMethodType Method,
+	                                     UPlayerEquipment* Sender);
+	static void ServerConfirmationPopupAccepted(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData* ItemData,
+	                                            FItemData* InSlotData, EInputMethodType Method,
+	                                            EInputMethodType Initiator,
+	                                            EInputMethodType Destination, AActor* OwningPlayer);
+	//Network Replication
+	void UpdateViewersInventory(EInventoryPanels Panel);
+	void UpdateAddedItemInInventory(FItemData* ItemData, UInventoryCore* Inventory);
+	void UpdateViewersItem(FItemData* ItemData, bool Remove);
+	void UpdateRemovedItemInInventory(FItemData* ItemData, UInventoryCore* Inventory);
+
+	void CallOnRefreshInventory(EInventoryPanels Panel) const;
+	void CallOnAddedToInventorySlot(FItemData& ItemData) const;
+	void CallOnRemovedFromInventoryArray(FItemData& ItemData) const;
+	void CallOnHighlightSlot(uint32 Index) const;
+	EInventoryPanels GetActivePanel() const;
+	TTuple<TArray<FItemData*>, int32> GetInventoryAndSize(EInventoryPanels Panel);
 	void SwitchedActivePanel(EInventoryPanels Panel);
 	EItemRemoveType GetItemRemoveType(FItemData* ItemData) const;
+
+	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ESortMethod DefaultSortingMethod;
-	
+
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FSingleDTItem> SingleDTItem;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<EInventoryPanels> PanelsToUse;
-	
-	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsUseInventoryWeight;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float ValueModifier = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float MaxInventoryWeight = 1.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsCheckOwnerGold;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FString MessageNotEnoughGold = "Not enough gold.";
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FString MessageInventoryFull = "Inventory is full.";
 
 	int32 CurrentInventorySize;
 	EInventoryPanels CurrentPanel;
@@ -157,18 +199,62 @@ protected:
 	bool bIsCheckRemoveType;
 
 
-	void BuildInitialInventory();
 	void BuildInventory(EInventoryPanels Panel);
+	void BuildInitialInventory();
+	void RemoveItemFromInventoryArray(FItemData* ItemData);
+	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 Index);
+	void AddToStackInInventory(FItemData* ItemData, int32 Index);
 	void ApplyChangesToInventoryArray(EInventoryPanels Panel, TArray<FItemData*> Inventory);
-
-
+	virtual TTuple<bool, FText> TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
+	                                                      EInputMethodType InputMethod,
+	                                                      UInventoryCore* Sender, AActor* OwningPlayer);
+	TTuple<bool, FText> TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,
+	                                              EInputMethodType InputMethod,
+	                                              UPlayerEquipment* Sender);
+	virtual void SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem);
+	bool HasEnoughGold(FItemData* ItemData) const;
+	void RemoveGoldFromOwner(float Gold);
+	void AddGoldToOwner(float Gold);
+	void AddWeightToInventory(float Weight);
+	void RemoveWeightFromInventory(float Weight);
+	bool IsInventoryOverweight() const;
+	TTuple<bool, int> GetEmptyInventorySlot(FItemData* ItemData);
+	FItemData* GetItemBySlot(EInventoryPanels Panel, uint32 SlitIndex);
+	TTuple<FItemData*, bool> GetItemByID(FString ID, EInventoryPanels InSpecifiedPanel);
+	TArray<FItemData*> GetCombinedInventories() const;
+	TTuple<FItemData*, bool> GetItemByData(FItemData* ItemData);
+	TArray<FItemData*> GetItemsOfSpecifiedType(EItemsType ItemsType) const;
+	uint32 GetAmountOfEmptySlots(EInventoryPanels Panels);
+	void SwitchActivePanel(EInventoryPanels Panel);
+	void RemoveItemQuantity(FItemData* ItemData, uint32 Quantity);
+	void ModifyItemValue(FItemData* ItemData) const;
 	void RandomizeInitialItems();
-
+	FItemData* RandomizeItemParameters(FItemData* ItemData);
+	virtual void SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
+	                                   FItemData* StackableLeft,
+	                                   EInputMethodType Method, EInputMethodType Initiator,
+	                                   EInputMethodType Destination, AActor* OwningPlayer);
+	virtual void ConfirmationPopupAccepted(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
+	                                       EInputMethodType Method,
+	                                       EInputMethodType Initiator, EInputMethodType Destination,
+	                                       AActor* OwningPlayer);
 	TTuple<bool, int32> GetEmptyInventorySlot(const FItemData* ItemData);
 
-	void AddItemToInventoryArray(FItemData* ItemData, int32 Index);
-	void AddWeightToInventory(float Weight);
-	void ModifyItemValue(FItemData* ItemData);
-	void SwitchActivePanel(EInventoryPanels Panel);
+	void ChangeInventorySize(EInventoryPanels Panels, uint32 Size);
+	void OnRep_OwnerGold();
+	void OnRep_InventorySizeP1();
+	void OnRep_InventorySizeP2();
+	void OnRep_InventorySizeP3();
+	void OnRep_InventorySizeP4();
+	void OnRep_CurrentInventoryWeight();
+	void OnRep_MaxInventoryWeight();
+
+
 	void UpdateViewItem(FItemData* ItemData, bool IsRemove);
+
+private:
+	float OwnerGold;
+	float CurrentInventoryWeight;
+
+	void LocalSwapItemsInInventory(FItemData* LocalFirstItem, FItemData* LocalSecondItem);
 };

@@ -49,7 +49,7 @@ FReply ULootBarSlot::NativeOnMouseMove(const FGeometry& InGeometry, const FPoint
 		OnMouseMoved();
 
 		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-			GamepadControls->IsGamepad = false;
+			GamepadControls->SetGamepadControls(false);
 
 		return FReply::Handled();
 	}

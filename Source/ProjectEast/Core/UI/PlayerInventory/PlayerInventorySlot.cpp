@@ -58,6 +58,7 @@ void UPlayerInventorySlot::InitializeInventorySlot(UPlayerEquipment* PlayerEquip
 void UPlayerInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
+	CurrentItemData = new FItemData();
 	SetButtonStyle(CurrentItemData);
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
 }

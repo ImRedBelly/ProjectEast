@@ -21,11 +21,17 @@ public:
 	static bool AreItemsStackable(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool AreItemSlotsEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
-	static bool IsStackableAndHaveStacks(const FItemData* ItemData, int32 Quantity);
+	static bool IsStackableAndHaveStacks(const FItemData* ItemData, uint32 Quantity);
+	static TTuple<bool, uint32> HasPartialStack(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);
 	static EInventoryPanels GetInventoryPanelFromItem(const FItemData* ItemData);
 	static TTuple<bool, int32> FindEmptySlotInArray(const TArray<FItemData*> ItemData);
+	static TTuple<bool, FItemData*> FindItemByID(const TArray<FItemData*> ItemData, FString ID);
+	static TTuple<bool, uint32> FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);
 	static float CalculateStackedItemWeight(FItemData* ItemData);
+	static float CalculateStackedItemValue(FItemData* ItemData);
 	static void TakeAllItemsFromInventory(AActor* Interactor, UInventoryCore* ActorInventory);;
+	static TArray<FItemData*> GetAllItemsOfType(TArray<FItemData*> ItemData, EItemsType ItemsType);
+	static uint32 FindAmountOfEmptySlots(TArray<FItemData*> ItemData);
 
 	static TArray<FItemData*> QuickSortItems(TArray<FItemData*> ItemData);
 	static TArray<FItemData*> SortItemsByType(TArray<FItemData*> ItemData);

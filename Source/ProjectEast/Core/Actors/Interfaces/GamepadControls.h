@@ -1,9 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "UObject/Interface.h"
 #include "GamepadControls.generated.h"
+
+class AMainPlayerController;
 
 UINTERFACE(MinimalAPI)
 class UGamepadControls : public UInterface
@@ -16,7 +18,10 @@ class PROJECTEAST_API IGamepadControls
 	GENERATED_BODY()
 
 public:
-	EWidgetType GetCurrentlyFocusedWidget();
-	void SetCurrentlyFocusedWidget(EWidgetType WidgetType);
-	bool IsGamepad;
+	virtual bool IsUsingGamepad();
+	virtual void SetGamepadControls(bool IsGamepad);
+	virtual AMainPlayerController* GetMainPlayerController();
+
+	virtual EWidgetType GetCurrentlyFocusedWidget();
+	virtual void SetCurrentlyFocusedWidget(EWidgetType WidgetType);
 };

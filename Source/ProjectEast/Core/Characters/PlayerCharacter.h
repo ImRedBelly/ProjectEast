@@ -64,6 +64,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractionAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* OpenInventoryAction;
 
 #pragma endregion InputActions
 
@@ -185,6 +188,7 @@ protected:
 
 private:
 	void OnInteractive();
+	void OnOpenInventory();
 
 #pragma endregion Interactive
 

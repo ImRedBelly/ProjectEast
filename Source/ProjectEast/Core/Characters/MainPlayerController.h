@@ -1,33 +1,21 @@
 ﻿#pragma once
+
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "ProjectEast/Core/UI/HUD/MainWindow.h"
+#include "ProjectEast/Core/Actors/Interfaces/IWidgetManager.h"
+#include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
+#include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "MainPlayerController.generated.h"
 
 class UPlayerInventory;
 class UInputMappingContext;
 class UInteractionComponent;
 
-
-UENUM(BlueprintType)
-enum class EWidgetType : uint8
-{
-	None UMETA(DisplayName = "None"),
-	Inventory UMETA(DisplayName = "Inventory"),
-	Equipment UMETA(DisplayName = "Equipment"),
-	Crafting UMETA(DisplayName = "Crafting"),
-	Vendor UMETA(DisplayName = "Vendor"),
-	Storage UMETA(DisplayName = "Storage"),
-	LoadGame UMETA(DisplayName = "LoadGame"),
-	Abilities UMETA(DisplayName = "Abilities"),
-};
-
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGamepadToggled);
 
 UCLASS()
-class PROJECTEAST_API AMainPlayerController : public APlayerController, public IObjectInteraction
+class PROJECTEAST_API AMainPlayerController : public APlayerController, public IObjectInteraction, public IWidgetManager, public IGamepadControls
 {
 	GENERATED_BODY()
 
@@ -37,10 +25,12 @@ public:
 	virtual void BeginPlay() override;
 	void InitializeInteraction(UInteractableComponent* InteractableComponent);
 	void OnInteraction() const;
-	void CloseActiveWidget() const;
-	bool IsUsingGamepad();
+	virtual void CloseActiveWidget() override;
 
-
+	virtual bool IsUsingGamepad() override;
+	virtual void OpenNewWidget(EWidgetType WidgetType) override;
+	virtual void SwitchWidgetTo(EWidgetType WidgetType) override;
+	
 	virtual void InitializeInteractionWithObject(UInteractableComponent* InteractableComponent) override;
 	virtual void StartInteractionWithObject(UInteractableComponent* InteractableComponent) override;
 	virtual void EndInteractionWithObject(UInteractableComponent* InteractableComponent) override;
@@ -72,6 +62,7 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 
+	void InputActionInventory();
 	void InitializeComponents();
 	bool IsAnyMainWidgetOpen() const;
 	void ClientInitializeInteractionWithObject(UInteractableComponent* InteractableComponent);

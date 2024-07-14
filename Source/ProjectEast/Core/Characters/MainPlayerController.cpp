@@ -37,7 +37,7 @@ void AMainPlayerController::OnInteraction() const
 		PlayerInventory->InputInteraction();
 }
 
-void AMainPlayerController::CloseActiveWidget() const
+void AMainPlayerController::CloseActiveWidget()
 {
 	switch (ActiveWidget)
 	{
@@ -52,6 +52,24 @@ bool AMainPlayerController::IsUsingGamepad()
 	return false;
 }
 
+void AMainPlayerController::OpenNewWidget(EWidgetType WidgetType)
+{
+	switch (WidgetType)
+	{
+	case EWidgetType::Inventory:
+		PlayerInventory->OpenInventoryWidget();
+	default: ;
+	}
+}
+
+void AMainPlayerController::SwitchWidgetTo(EWidgetType WidgetType)
+{
+	if(WidgetType != ActiveWidget)
+	{
+		CloseActiveWidget();
+		OpenNewWidget(WidgetType);
+	}
+}
 
 void AMainPlayerController::OnPossess(APawn* InPawn)
 {
@@ -64,6 +82,11 @@ void AMainPlayerController::OnUnPossess()
 {
 	Super::OnUnPossess();
 	InteractionComponent->Deactivate();
+}
+
+void AMainPlayerController::InputActionInventory()
+{
+	PlayerInventory->InputInventory();
 }
 
 void AMainPlayerController::InitializeComponents()

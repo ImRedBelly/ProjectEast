@@ -5,6 +5,8 @@
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
+#include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
+#include "ProjectEast/Core/UI/PlayerInventory/PlayerInventoryWidget.h"
 #include "PlayerInventory.generated.h"
 
 
@@ -12,46 +14,97 @@ class IInteractable;
 class AMainPlayerController;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeItem);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeAllItems);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemLooted);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemUsed);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class PROJECTEAST_API UPlayerInventory : public UInventoryCore 
+class PROJECTEAST_API UPlayerInventory : public UInventoryCore
 {
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay() override;
 	virtual void InitializeInventory(APlayerController* PlayerController) override;
+	virtual void BeginPlay() override;
+	virtual void ClientTransferItemReturnValue(bool Success, FText FailureMessage) override;
 	void ClientInitializeInventory(APlayerController* PlayerController);
-
-	void ServerTakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
-	void ServerTakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer);
-	void ServerDropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer);
-	void InputCloseWidget();
 	void InputInteraction() const;
-
+	void ServerTakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer);
 	void OpenLootBarWidget();
 	void CloseLootBarWidget();
+	void InputCloseWidget();
+	void InputInventory();
 
-	bool IsRefreshOmClosingWidget() const {return bIsRefreshOmClosingWidget;}
+	void OpenInventoryWidget();
+	void CloseInventoryWidget();
+
+	void ServerTakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
+	void ServerDropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer);
 	
+	bool IsRefreshOmClosingWidget() const { return bIsRefreshOmClosingWidget; }
+
 	FOnTakeItem OnTakeItem;
 	FOnTakeAllItems OnTakeAllItems;
 	FOnItemLooted OnItemLooted;
 	FOnItemUsed OnItemUsed;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsRefreshOmClosingWidget;
-	
-private:
-	AMainPlayerController* CashedPlayerController;
-	
-	bool bIsLootBarOpen;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsInteractableActorWidgetOpen;
 
-	UInteractableComponent* GetCurrentInteractable() const;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UInventoryWindow> DefaultInventoryWindow;
 
+
+	
+private:
+	void InputCloseWidget() const;
+	void InputTakeAll() const;
+
+
+	void ServerSpawnLootBag(FItemData* ItemData, AActor* OwningPlayer);
+	void ServerSpawnInteractable(FItemData* ItemData, AActor* OwningPlayer);
+	void ServerChangeDroppedIndex(uint32 DroppedIndex);
+	void ServerModifyItemDurability(FItemData* ItemData, uint32 Amount, AActor* OwningPlayer);
+
+	void ClientItemLooted(FItemData* ItemData);
+	void ClientTakeItemReturnValue(bool Success, FText FailureMessage, bool RemoveInteraction);
+
+	void OpenVendorWidget();
+	void CloseVendorWidget();
+	void OpenStorageWidget();
+	void CloseStorageWidget();
+
+	void TakeItem();
+	void TakeAllItems();
+	void DropItemOnTheGround();
+	void SpawnLootBagNearThePlayer();
+	void SpawnItemMeshNearThePlayer();
+	void IsCollidingWithLootBag();
+
+	virtual TTuple<bool, FText> TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
+	EInputMethodType InputMethod, UInventoryCore* Inventory, AActor* OwningPlayer) override;
+	virtual void SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
+	FItemData* StackableLeft, EInputMethodType Method, EInputMethodType Initiator,
+	EInputMethodType Destination, AActor* OwningPlayer) override;
+	virtual void ConfirmationPopupAccepted(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
+										   EInputMethodType Method,
+										   EInputMethodType Initiator, EInputMethodType Destination,
+										   AActor* OwningPlayer) override;
+	bool AttemptUsingTransferredItem(FItemData* ItemData, UInventoryCore* Sender);
+	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 Index) override;
+	virtual void SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem) override;
+	
+	AMainPlayerController* CashedPlayerController;
+	UInventoryWindow* CashedInventoryWindow;
+
+	bool bIsLootBarOpen;
+
+	UInteractableComponent* GetCurrentInteractable() const;
 };

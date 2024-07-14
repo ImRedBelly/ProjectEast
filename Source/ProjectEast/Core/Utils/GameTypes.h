@@ -107,3 +107,18 @@ enum class EWeaponType : uint8
 	TwoHand UMETA(DisplayName = "TwoHand"),
 	OffHand UMETA(DisplayName = "OffHand"),
 };
+
+
+
+UENUM(BlueprintType)
+enum class EWidgetType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Inventory UMETA(DisplayName = "Inventory"),
+	Equipment UMETA(DisplayName = "Equipment"),
+	Crafting UMETA(DisplayName = "Crafting"),
+	Vendor UMETA(DisplayName = "Vendor"),
+	Storage UMETA(DisplayName = "Storage"),
+	LoadGame UMETA(DisplayName = "LoadGame"),
+	Abilities UMETA(DisplayName = "Abilities"),
+};

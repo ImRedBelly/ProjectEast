@@ -98,20 +98,21 @@ bool InventoryUtility::AreItemsTheSame(const FItemData* ItemDataFirst, const FIt
 
 bool InventoryUtility::AreItemsStackable(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
 {
-	return ItemDataFirst->Class.GetDefaultObject()->bIsStackable && ItemDataSecond->Class.GetDefaultObject()->bIsStackable;
+	return ItemDataFirst->Class.GetDefaultObject()->bIsStackable && ItemDataSecond->Class.GetDefaultObject()->
+		bIsStackable;
 }
 
 bool InventoryUtility::AreItemSlotsEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
 {
-	auto ResultFirst =(ItemDataFirst->ItemSlot == EItemSlot::Pocket1)
+	auto ResultFirst = (ItemDataFirst->ItemSlot == EItemSlot::Pocket1)
 		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket2)
 		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket3)
 		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket4);
-		auto ResultSecond =(ItemDataSecond->ItemSlot == EItemSlot::Pocket1)
+	auto ResultSecond = (ItemDataSecond->ItemSlot == EItemSlot::Pocket1)
 		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket2)
 		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket3)
 		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket4);
-	
+
 	return ItemDataFirst->ItemSlot == ItemDataSecond->ItemSlot || (ResultFirst && ResultSecond);
 }
 
@@ -121,15 +122,29 @@ bool InventoryUtility::CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const
 		if (ItemDataFirst->Class.GetDefaultObject()->WeaponType == EWeaponType::OneHand &&
 			ItemDataSecond->Class.GetDefaultObject()->WeaponType == EWeaponType::OneHand)
 			return true;
-	
+
 	return ItemDataFirst->Class.GetDefaultObject()->WeaponType == EWeaponType::OneHand &&
 	(ItemDataSecond->Class.GetDefaultObject()->Type == EItemsType::Weapon ||
 		ItemDataSecond->Class.GetDefaultObject()->Type == EItemsType::Shield);
 }
 
-bool InventoryUtility::IsStackableAndHaveStacks(const FItemData* ItemData, int32 Quantity)
+bool InventoryUtility::IsStackableAndHaveStacks(const FItemData* ItemData, uint32 Quantity)
 {
 	return ItemData->Class.GetDefaultObject()->bIsStackable && ItemData->Quantity > Quantity;
+}
+
+TTuple<bool, uint32> InventoryUtility::HasPartialStack(const TArray<FItemData*> ItemDataArray, FItemData* ItemData)
+{
+	for (int i = 0; i < ItemDataArray.Num(); ++i)
+	{
+		if (IsItemClassValid(ItemDataArray[i]))
+		{
+			if (ItemDataArray[i]->ID == ItemData->ID && ItemDataArray[i]->Class.GetDefaultObject()->bIsStackable &&
+				ItemData->Class.GetDefaultObject()->bIsStackable)
+				return MakeTuple(true, i);
+		}
+	}
+	return MakeTuple(false, 0);
 }
 
 EInventoryPanels InventoryUtility::GetInventoryPanelFromItem(const FItemData* ItemData)
@@ -156,9 +171,34 @@ TTuple<bool, int32> InventoryUtility::FindEmptySlotInArray(const TArray<FItemDat
 	return MakeTuple(IsFindEmptyElement, IndexEmptyElement);
 }
 
+TTuple<bool, FItemData*> InventoryUtility::FindItemByID(const TArray<FItemData*> ItemData, FString ID)
+{
+	for (int i = 0; i < ItemData.Num(); ++i)
+	{
+		if (ItemData[i]->ID == ID)
+			return MakeTuple(true, ItemData[i]);
+	}
+	return MakeTuple(true, ItemData[0]);
+}
+
+TTuple<bool, uint32> InventoryUtility::FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData)
+{
+	for (int i = 0; i < ItemDataArray.Num(); ++i)
+		if (AreItemsTheSame(ItemDataArray[i], ItemData))
+			return MakeTuple(true, i);
+
+	return MakeTuple(false, 0);
+}
+
 float InventoryUtility::CalculateStackedItemWeight(FItemData* ItemData)
 {
 	return ItemData->Class.GetDefaultObject()->Weight * FMathf::Clamp(ItemData->Quantity, 1, ItemData->Quantity);
+}
+
+float InventoryUtility::CalculateStackedItemValue(FItemData* ItemData)
+{
+	auto Quantity = FMathf::Clamp(ItemData->Quantity, 0, ItemData->Quantity);
+	return Quantity * (ItemData->Class.GetDefaultObject()->Value * ItemData->ValueModifier);
 }
 
 void InventoryUtility::TakeAllItemsFromInventory(AActor* Interactor, UInventoryCore* ActorInventory)
@@ -169,6 +209,28 @@ void InventoryUtility::TakeAllItemsFromInventory(AActor* Interactor, UInventoryC
 		if (IsValid(PlayerInventory))
 			PlayerInventory->ServerTakeAllItems(ActorInventory, Interactor);
 	}
+}
+
+TArray<FItemData*> InventoryUtility::GetAllItemsOfType(TArray<FItemData*> ItemData, EItemsType ItemsType)
+{
+	TArray<FItemData*> ItemsDataByType;
+	for (int i = 0; i < ItemData.Num(); ++i)
+		if (IsItemClassValid(ItemData[i]))
+			if (ItemData[i]->Class.GetDefaultObject()->Type == ItemsType)
+				ItemsDataByType.Add(ItemData[i]);
+
+	return ItemsDataByType;
+}
+
+uint32 InventoryUtility::FindAmountOfEmptySlots(TArray<FItemData*> ItemData)
+{
+	uint32 Amount = 0;
+	for (int i = 0; i < ItemData.Num(); ++i)
+	{
+		if (!IsItemClassValid(ItemData[i]))
+			Amount++;
+	}
+	return Amount;
 }
 
 TArray<FItemData*> InventoryUtility::QuickSortItems(TArray<FItemData*> ItemData)

@@ -5,6 +5,14 @@ void UPlayerEquipment::ServerTransferItemFromInventory(FItemData* ItemData, FIte
 {
 }
 
+void UPlayerEquipment::RemoveItemFromEquipmentArray(FItemData* ItemData)
+{
+}
+
+void UPlayerEquipment::DetachItemFromEquipment(FItemData* ItemData)
+{
+}
+
 bool UPlayerEquipment::CanItemBeEquipped(FItemData* ItemData)
 {
 	return true;
