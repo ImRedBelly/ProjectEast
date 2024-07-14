@@ -175,13 +175,7 @@ protected:
 	int32 CurrentInventorySize;
 	EInventoryPanels CurrentPanel;
 	EInventoryPanels ActivePanel;
-	TArray<FItemData*> CurrentInventory;
-	TArray<FItemData*> CurrentSortedItems;
-
-	TArray<FItemData*> CurrentInventoryArray;
-	TArray<FItemData*> CurrentEmptyInventoryArray;
-
-	FItemData* CurrentItemData;
+	
 	TArray<UDataTable> AllItemsFromDT;
 	TArray<APlayerState*> CurrentViewers;
 	TArray<FRandomizedLootTable> RandomizedItemsData;

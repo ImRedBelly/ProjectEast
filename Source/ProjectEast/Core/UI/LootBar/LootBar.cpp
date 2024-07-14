@@ -70,7 +70,6 @@ void ULootBar::CreateLootBar()
 	{
 		if (InventoryUtility::IsItemClassValid(ItemData))
 		{
-		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, FString::FromInt(ItemData->Quantity));
 			ULootBarSlot* NewBarSlot = CreateWidget<ULootBarSlot>(GWorld->GetGameInstance(), DefaultLootBarSlot);
 			NewBarSlot->InitializeSlot(this, ItemData);
 			VerticalBox->AddChildToVerticalBox(NewBarSlot);

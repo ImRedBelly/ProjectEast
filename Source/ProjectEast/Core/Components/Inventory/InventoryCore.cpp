@@ -1,12 +1,9 @@
 ﻿#include "InventoryCore.h"
-
 #include "PlayerEquipment.h"
 #include "GameFramework/PlayerState.h"
-#include "Kismet/KismetArrayLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
-//TODO Completed
 void UInventoryCore::InitializeInventory(APlayerController* PlayerController)
 {
 	//TODO Check use APlayerController
@@ -20,7 +17,6 @@ void UInventoryCore::InitializeInventory(APlayerController* PlayerController)
 	}
 }
 
-//TODO Completed
 void UInventoryCore::CallOnRefreshInventory(EInventoryPanels Panel) const
 {
 	if (OnRefreshInventory.IsBound())
@@ -87,7 +83,8 @@ void UInventoryCore::SortInventory(ESortMethod Method, EInventoryPanels SinglePa
 			CurrentPanel = PanelsToUse[i];
 	}
 
-	CurrentInventory = GetInventoryAndSize(CurrentPanel).Get<0>();
+	TArray<FItemData*> CurrentSortedItems;
+	TArray<FItemData*> CurrentInventory = GetInventoryAndSize(CurrentPanel).Get<0>();
 	switch (Method)
 	{
 	case ESortMethod::Quicksort:
@@ -298,6 +295,8 @@ void UInventoryCore::BuildInitialInventory()
 {
 	RandomizeInitialItems();
 
+	FItemData* CurrentItemData;
+
 	for (int i = 0; i < AllItemsFromDT.Num(); ++i)
 	{
 		auto& DataTableItem = AllItemsFromDT[i];
@@ -306,9 +305,8 @@ void UInventoryCore::BuildInitialInventory()
 			TArray<FName> Names = DataTableItem.GetRowNames();
 			for (int a = 0; a < Names.Num(); ++a)
 			{
-				FItemData* ItemData = DataTableItem.FindRow<FItemData>(Names[a], TEXT(""));
-				CurrentItemData = ItemData;
-
+				CurrentItemData = DataTableItem.FindRow<FItemData>(Names[a], TEXT(""));
+		
 				auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemData);
 				if (DataEmptySlot.Get<0>())
 				{
@@ -325,13 +323,26 @@ void UInventoryCore::BuildInitialInventory()
 		auto RowName = SingleDTItem[i].TableAndRow.RowName;
 
 		CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
-		CurrentItemData->Quantity = FMathf::Clamp(SingleDTItem[i].Quantity, 1, SingleDTItem[i].Quantity);
+		
+		FItemData* CurrentItemDataBase = new FItemData();
+		CurrentItemDataBase->ID = CurrentItemData->ID;
+		CurrentItemDataBase->ItemSlot = CurrentItemData->ItemSlot;
+		CurrentItemDataBase->Class = CurrentItemData->Class;
+		CurrentItemDataBase->Quantity = CurrentItemData->Quantity;
+		CurrentItemDataBase->Durability = CurrentItemData->Durability;
+		CurrentItemDataBase->Index = CurrentItemData->Index;
+		CurrentItemDataBase->bIsEquipped = CurrentItemData->bIsEquipped;
+		CurrentItemDataBase->bIsAlreadyUsed = CurrentItemData->bIsAlreadyUsed;
+		CurrentItemDataBase->ValueModifier = CurrentItemData->ValueModifier;
+		
+		
+		CurrentItemDataBase->Quantity = FMathf::Clamp(SingleDTItem[i].Quantity, 1, SingleDTItem[i].Quantity);
 
-		auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemData);
+		auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
 		if (DataEmptySlot.Get<0>())
 		{
-			AddItemToInventoryArray(CurrentItemData, DataEmptySlot.Get<1>());
-			AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(CurrentItemData));
+			AddItemToInventoryArray(CurrentItemDataBase, DataEmptySlot.Get<1>());
+			AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(CurrentItemDataBase));
 		}
 	}
 
@@ -383,7 +394,7 @@ void UInventoryCore::BuildInventory(EInventoryPanels Panel)
 {
 	auto Data = GetInventoryAndSize(Panel);
 
-	CurrentInventoryArray = Data.Get<0>();
+	TArray<FItemData*> CurrentInventoryArray = Data.Get<0>();
 	CurrentInventorySize = Data.Get<1>();
 
 	if (bIsUseInventorySize)
@@ -400,8 +411,11 @@ void UInventoryCore::BuildInventory(EInventoryPanels Panel)
 	}
 	else
 	{
+		TArray<FItemData*> CurrentEmptyInventoryArray;
+		
 		for (int i = 0; i < CurrentInventoryArray.Num(); ++i)
 		{
+			
 			auto& ItemData = CurrentInventoryArray[i];
 			if (InventoryUtility::IsItemClassValid(ItemData))
 			{
@@ -706,7 +720,7 @@ void UInventoryCore::AddItemToInventoryArray(FItemData* ItemData, int32 Index)
 		auto InventoryPanel = InventoryUtility::GetInventoryPanelFromItem(ItemData);
 		auto InventoryData = GetInventoryAndSize(InventoryPanel);
 
-		CurrentInventoryArray = InventoryData.Get<0>();
+		TArray<FItemData*> CurrentInventoryArray = InventoryData.Get<0>();
 		if (bIsUseInventorySize || Index >= 0)
 		{
 			ItemData->Index = Index;
