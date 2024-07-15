@@ -412,14 +412,11 @@ void UPlayerInventorySlot::OnHovered()
 		 	CachedToolTip->RemoveFromParent();
 
 		SetKeyboardFocus();
-		
-		 CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
-		 CachedToolTip->InitializeToolTip(CurrentItemData);
-		 CachedToolTip->AddToViewport();
+		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
+		CachedToolTip->InitializeToolTip(CurrentItemData);
+	
 		ButtonItem->SetToolTip(CachedToolTip);
-
 		BorderObject->SetBrushColor(BorderHovered);
-		
 	}
 }
 
@@ -499,7 +496,6 @@ void UPlayerInventorySlot::RefreshTooltipGamepad()
 	{
 		if (IsValid(CachedToolTip))
 			CachedToolTip->RemoveFromParent();
-		
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->AddToViewport();
 		SetToolTipPositionAndAlignment();

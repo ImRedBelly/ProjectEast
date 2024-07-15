@@ -11,17 +11,21 @@ class PROJECTEAST_API ADoor : public ABaseInteractable
 	GENERATED_BODY()
 
 protected:
-ADoor();
+	ADoor();
 	
-	UPROPERTY(EditAnywhere)
-	float RotationAngle = 90.0f;
-	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void Interaction(AActor* Interactor) override;
 	virtual void GameLoad() override;
-
-	void OnUnlock();
-
-private:
 	
-	bool bIsDoorOpen = false;
+	UPROPERTY(ReplicatedUsing=OnRep_DoorToggle)
+	bool bDoorOpen = false;
+	
+	UFUNCTION()
+	void OnRep_DoorToggle();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnAnimateOpenDoor(bool bIsOpen);
+
+	UFUNCTION(BlueprintCallable)
+	void OnDoorRotation(FRotator DoorRotation);
 };

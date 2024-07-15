@@ -1,12 +1,20 @@
 ﻿#include "Door.h"
+#include "Net/UnrealNetwork.h"
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 
 ADoor::ADoor()
 {
+	bReplicates = true;
 	InteractionWidget->SetupAttachment(StaticMeshComponent);
 	InteractableArea->SetupAttachment(StaticMeshComponent);
+}
+
+void ADoor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ADoor, bDoorOpen);
 }
 
 void ADoor::Interaction(AActor* Interactor)
@@ -14,24 +22,26 @@ void ADoor::Interaction(AActor* Interactor)
 	if (IsValid(Interactor))
 		SetOwner(Interactor);
 
-	OnUnlock();
+	if (HasAuthority())
+	{
+		bDoorOpen = !bDoorOpen;
+		InteractableComponent->ChangeInteractableValue(true);
+		InteractableComponent->RemoveInteraction();
+
+		OnRep_DoorToggle();
+	}
 }
 
 void ADoor::GameLoad()
 {
-	FRotator CurrentRotation = InteractableComponent->GetInteractableValue() == 0
-		                           ? FRotator(0, 0, 0)
-		                           : FRotator(0, 0, 90);
-	StaticMeshComponent->SetRelativeRotation(CurrentRotation);
 }
 
-void ADoor::OnUnlock()
+void ADoor::OnDoorRotation(FRotator DoorRotation)
 {
-	InteractableComponent->ChangeInteractableValue(true);
+	StaticMeshComponent->SetRelativeRotation(DoorRotation);
+}
 
-	FRotator CurrentRotation = StaticMeshComponent->GetRelativeRotation();
-	CurrentRotation.Yaw = bIsDoorOpen ? 0.0f : RotationAngle;
-	StaticMeshComponent->SetRelativeRotation(CurrentRotation);
-
-	bIsDoorOpen = !bIsDoorOpen;
+void ADoor::OnRep_DoorToggle()
+{
+	OnAnimateOpenDoor(bDoorOpen);
 }
