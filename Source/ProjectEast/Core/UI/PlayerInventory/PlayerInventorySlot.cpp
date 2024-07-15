@@ -8,6 +8,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Actors/Interfaces/IWidgetManager.h"
@@ -58,9 +59,9 @@ void UPlayerInventorySlot::InitializeInventorySlot(UPlayerEquipment* PlayerEquip
 void UPlayerInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-	CurrentItemData = new FItemData();
-	SetButtonStyle(CurrentItemData);
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	ButtonItem->OnHovered.AddDynamic(this, &UPlayerInventorySlot::OnHovered);
+	ButtonItem->OnUnhovered.AddDynamic(this, &UPlayerInventorySlot::OnUnhovered);
 }
 
 void UPlayerInventorySlot::NativeDestruct()
@@ -68,6 +69,9 @@ void UPlayerInventorySlot::NativeDestruct()
 	Super::NativeDestruct();
 	if (IsValid(CachedToolTip))
 		CachedToolTip->RemoveFromParent();
+
+	ButtonItem->OnHovered.RemoveDynamic(this, &UPlayerInventorySlot::OnHovered);
+	ButtonItem->OnUnhovered.RemoveDynamic(this, &UPlayerInventorySlot::OnUnhovered);
 }
 
 void UPlayerInventorySlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -85,6 +89,7 @@ void UPlayerInventorySlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEv
 	{
 		StopAnimation(AnimationHighlight);
 		BorderObject->SetBrushColor(BorderHovered);
+		
 		CachedPlayerInventoryWidget->AssignCurrentlyFocusedSlot(this);
 		CachedPlayerInventoryWidget->ScrollToSlot(this);
 
@@ -403,16 +408,18 @@ void UPlayerInventorySlot::OnHovered()
 	if (!IsAnyPopUpActive() && !IsUsingGamepad())
 	{
 		StopAnimation(AnimationHighlight);
-		if (IsValid(CachedToolTip))
-			CachedToolTip->RemoveFromParent();
+		 if (IsValid(CachedToolTip))
+		 	CachedToolTip->RemoveFromParent();
 
 		SetKeyboardFocus();
-		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
-		CachedToolTip->InitializeToolTip(CurrentItemData);
-		CachedToolTip->AddToViewport();
+		
+		 CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
+		 CachedToolTip->InitializeToolTip(CurrentItemData);
+		 CachedToolTip->AddToViewport();
+		ButtonItem->SetToolTip(CachedToolTip);
 
-		SetToolTip(ButtonItem);
 		BorderObject->SetBrushColor(BorderHovered);
+		
 	}
 }
 
@@ -421,19 +428,19 @@ void UPlayerInventorySlot::OnUnhovered()
 	if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
 		GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::None);
 
-	SetToolTip(ButtonItem);
+	ButtonItem->SetToolTip(this);
 	BorderObject->SetBrushColor(BorderUnHovered);
 	HideItemComparison();
-	if (IsValid(CachedToolTip))
-		CachedToolTip->RemoveFromParent();
+	 if (IsValid(CachedToolTip))
+	 	CachedToolTip->RemoveFromParent();
 }
 
 void UPlayerInventorySlot::ShowItemComparison() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 		if (CurrentItemData->Class.GetDefaultObject()->Rarity != EItemRarity::Consumable)
-			if (IsValid(CachedToolTip))
-				CachedToolTip->ShowComparisonToolTip();
+			 if (IsValid(CachedToolTip))
+			 	CachedToolTip->ShowComparisonToolTip();
 }
 
 void UPlayerInventorySlot::HideItemComparison() const
@@ -454,8 +461,8 @@ void UPlayerInventorySlot::SetToolTipPositionAndAlignment()
 	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(),FVector2D(0, GetCachedGeometry().GetLocalSize().Y),
 	HorizontalSecondPixelPosition, HorizontalSecondViewportPosition);
 
-	float HorizontalMaxValue = UWidgetLayoutLibrary::GetViewportSize(GetWorld()).X -
-		(CachedToolTip->GetDesiredSize().X * UWidgetLayoutLibrary::GetViewportScale(GetWorld()));
+	 float HorizontalMaxValue = UWidgetLayoutLibrary::GetViewportSize(GetWorld()).X -
+	 	(CachedToolTip->GetDesiredSize().X * UWidgetLayoutLibrary::GetViewportScale(GetWorld()));
 
 	bool HorizontalValue = UKismetMathLibrary::InRange_FloatFloat(HorizontalSecondPixelPosition.X, 0.0f, HorizontalMaxValue, true, true);
 
@@ -481,9 +488,9 @@ void UPlayerInventorySlot::SetToolTipPositionAndAlignment()
 	VerticalPosition = VerticalValue ? VerticalSecondViewportPosition.Y : VerticalFirstViewportPosition.Y;
 	VerticalAlignment = VerticalValue ? 0.0f : 1.0f;
 
-	CachedToolTip->SetPositionInViewport(FVector2D(HorizontalPosition, VerticalPosition), false);
-	CachedToolTip->SetAlignmentInViewport(FVector2D(HorizontalAlignment, VerticalAlignment));
-	CachedToolTip->SetDesiredSizeInViewport(CachedToolTip->GetDesiredSize());
+	 CachedToolTip->SetPositionInViewport(FVector2D(HorizontalPosition, VerticalPosition), false);
+	 CachedToolTip->SetAlignmentInViewport(FVector2D(HorizontalAlignment, VerticalAlignment));
+	 CachedToolTip->SetDesiredSizeInViewport(CachedToolTip->GetDesiredSize());
 }
 
 void UPlayerInventorySlot::RefreshTooltipGamepad()
@@ -492,7 +499,7 @@ void UPlayerInventorySlot::RefreshTooltipGamepad()
 	{
 		if (IsValid(CachedToolTip))
 			CachedToolTip->RemoveFromParent();
-
+		
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->AddToViewport();
 		SetToolTipPositionAndAlignment();
@@ -509,7 +516,7 @@ void UPlayerInventorySlot::RefreshToolTip()
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
 				CachedToolTip->RemoveFromParent();
-
+			
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData);
 			CachedToolTip->AddToViewport();
@@ -524,7 +531,7 @@ void UPlayerInventorySlot::RefreshToolTip()
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
 				CachedToolTip->RemoveFromParent();
-
+			
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData);
 			CachedToolTip->AddToViewport();
@@ -599,11 +606,7 @@ void UPlayerInventorySlot::SetItemQuantity() const
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
 		if (CurrentItemData->Class.GetDefaultObject()->bIsStackable && CurrentItemData->Quantity > 1)
-		{
-		
-			GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, FString::FromInt(CurrentItemData->Quantity));	
 			TextQuantity->SetText(UKismetTextLibrary::Conv_IntToText(CurrentItemData->Quantity));
-		}
 		else
 			TextQuantity->SetText(FText());
 	}
@@ -629,10 +632,9 @@ void UPlayerInventorySlot::SetButtonStyle(FItemData* ItemData) const
 		{
 			if (ItemData->bIsAlreadyUsed)
 				ImageItem->SetBrushTintColor(FSlateColor(FLinearColor(0.223958f, 0.220658f, 0.210761f)));
-			else
-				ImageItem->SetBrushFromTexture(Texture);
 
-			ImageItem->SetVisibility(ESlateVisibility::HitTestInvisible);
+			ImageItem->SetBrushFromTexture(Texture);
+			ImageItem->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		}
 	}
 	else
@@ -683,14 +685,14 @@ bool UPlayerInventorySlot::IsUsingGamepad() const
 {
 	if (IsValid(CachedPlayerController))
 		return CachedPlayerController->IsUsingGamepad();
+	
 	return false;
 }
 
 bool UPlayerInventorySlot::IsAnyPopUpActive() const
 {
 	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
-		return WidgetManager->GetCurrentPopupType() != EWidgetType::Vendor;
-	
+		return WidgetManager->GetActivePopup() != EWidgetType::None;
 	return false;
 }
 

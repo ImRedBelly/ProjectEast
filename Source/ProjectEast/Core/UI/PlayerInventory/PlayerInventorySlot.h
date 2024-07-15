@@ -86,8 +86,6 @@ protected:
 	
 	void OnClickedButtonItem();
 	void OnDropKeyPressed() const;
-	void OnHovered();
-	void OnUnhovered();
 	void ShowItemComparison() const;
 	void HideItemComparison() const;
 
@@ -104,13 +102,19 @@ protected:
 	EWidgetType GetActiveWidgetType() const;
 	bool AttemptSplitting(UItemDataDragDropOperation* Operation) const;
 	bool IsUsingGamepad() const;
-	bool IsAnyPopUpActive() const;
 
 	void OpenInventoryWindow() const;
 	void OpenVendorStorageWindow() const;
 	void TryToUseAnItem() const;
 
 private:
+	UFUNCTION()
+	void OnHovered();
+	UFUNCTION()
+	void OnUnhovered();
+	
+	bool IsAnyPopUpActive() const;
+	
 	UPlayerEquipment* CachedPlayerEquipment;
 	UPlayerInventory* CachedPlayerInventory;
 	UInventoryCore* CachedReceiverInventory;
