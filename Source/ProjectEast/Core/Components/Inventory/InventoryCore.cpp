@@ -156,8 +156,8 @@ void UInventoryCore::ServerMoveItemToSlot(UInventoryCore* Inventory, EInventoryP
 {
 	if (IsValid(Inventory))
 	{
-		auto FromItem = Inventory->GetItemBySlot(Panel, MoveFrom);
-		auto ToItem = Inventory->GetItemBySlot(Panel, MoveTo);
+		FItemData* FromItem = Inventory->GetItemBySlot(Panel, MoveFrom);
+		FItemData* ToItem = Inventory->GetItemBySlot(Panel, MoveTo);
 		Inventory->SwapItemsInInventory(FromItem, ToItem);
 	}
 }
@@ -323,19 +323,9 @@ void UInventoryCore::BuildInitialInventory()
 		auto RowName = SingleDTItem[i].TableAndRow.RowName;
 
 		CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
+
 		
-		FItemData* CurrentItemDataBase = new FItemData();
-		CurrentItemDataBase->ID = CurrentItemData->ID;
-		CurrentItemDataBase->ItemSlot = CurrentItemData->ItemSlot;
-		CurrentItemDataBase->Class = CurrentItemData->Class;
-		CurrentItemDataBase->Quantity = CurrentItemData->Quantity;
-		CurrentItemDataBase->Durability = CurrentItemData->Durability;
-		CurrentItemDataBase->Index = CurrentItemData->Index;
-		CurrentItemDataBase->bIsEquipped = CurrentItemData->bIsEquipped;
-		CurrentItemDataBase->bIsAlreadyUsed = CurrentItemData->bIsAlreadyUsed;
-		CurrentItemDataBase->ValueModifier = CurrentItemData->ValueModifier;
-		
-		
+		FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);// new FItemData();
 		CurrentItemDataBase->Quantity = FMathf::Clamp(SingleDTItem[i].Quantity, 1, SingleDTItem[i].Quantity);
 
 		auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
@@ -394,32 +384,35 @@ void UInventoryCore::BuildInventory(EInventoryPanels Panel)
 {
 	auto Data = GetInventoryAndSize(Panel);
 
-	TArray<FItemData*> CurrentInventoryArray = Data.Get<0>();
-	CurrentInventorySize = Data.Get<1>();
+	TArray<FItemData*> LocalInventory = Data.Get<0>();
+	int32 LocalSize = Data.Get<1>();
+	
 
 	if (bIsUseInventorySize)
 	{
-		CurrentInventoryArray.SetNum(CurrentInventorySize);
+		for (int i = 0; i < LocalSize; ++i)
+			if(!LocalInventory.IsValidIndex(i))
+				LocalInventory.Add(new FItemData());
 
-		for (int i = 0; i < CurrentInventoryArray.Num(); ++i)
+		for (int i = 0; i < LocalInventory.Num(); ++i)
 		{
-			auto& ItemData = CurrentInventoryArray[i];
+			FItemData* ItemData = LocalInventory[i];
 			ItemData->Index = i;
 			ItemData->bIsEquipped = false;
+			LocalInventory[i] = ItemData;
 		}
-		ApplyChangesToInventoryArray(Panel, CurrentInventoryArray);
+		
+		ApplyChangesToInventoryArray(Panel, LocalInventory);
 	}
 	else
 	{
 		TArray<FItemData*> CurrentEmptyInventoryArray;
 		
-		for (int i = 0; i < CurrentInventoryArray.Num(); ++i)
+		for (int i = 0; i < LocalInventory.Num(); ++i)
 		{
-			
-			auto& ItemData = CurrentInventoryArray[i];
-			if (InventoryUtility::IsItemClassValid(ItemData))
+			if (InventoryUtility::IsItemClassValid(LocalInventory[i]))
 			{
-				auto IndexNewElement = CurrentEmptyInventoryArray.Add(ItemData);
+				auto IndexNewElement = CurrentEmptyInventoryArray.Add(LocalInventory[i]);
 
 				auto& NewItemData = CurrentEmptyInventoryArray[IndexNewElement];
 				NewItemData->Index = IndexNewElement;
@@ -553,21 +546,18 @@ void UInventoryCore::SwapItemsInInventory(FItemData* FirstItem, FItemData* Secon
 {
 	if (InventoryUtility::SwitchHasOwnerAuthority(this) && InventoryUtility::IsItemClassValid(FirstItem))
 	{
-		FItemData* LocalFirstItem = FirstItem;
-		FItemData* LocalSecondItem = SecondItem;
-
 		if (InventoryUtility::IsItemClassValid(SecondItem))
 		{
-			if (InventoryUtility::AreItemsTheSame(LocalFirstItem, LocalSecondItem))
+			if (InventoryUtility::AreItemsTheSame(FirstItem, SecondItem))
 			{
-				RemoveItemFromInventoryArray(LocalFirstItem);
-				AddToStackInInventory(LocalFirstItem, LocalSecondItem->Index);
+				RemoveItemFromInventoryArray(FirstItem);
+				AddToStackInInventory(FirstItem, SecondItem->Index);
 			}
 			else
-				LocalSwapItemsInInventory(LocalFirstItem, LocalSecondItem);
+				LocalSwapItemsInInventory(FirstItem, SecondItem);
 		}
 		else
-			LocalSwapItemsInInventory(LocalFirstItem, LocalSecondItem);
+			LocalSwapItemsInInventory(FirstItem, SecondItem);
 	}
 }
 
@@ -602,21 +592,18 @@ TTuple<TArray<FItemData*>, int32> UInventoryCore::GetInventoryAndSize(EInventory
 {
 	if (PanelsToUse.Contains(Panel))
 	{
-		if (PanelsToUse.Contains(Panel))
+		switch (Panel)
 		{
-			switch (Panel)
-			{
-			case EInventoryPanels::P1:
-				return MakeTuple(InventoryP1, InventorySizeP1);
-			case EInventoryPanels::P2:
-				return MakeTuple(InventoryP2, InventorySizeP2);
-			case EInventoryPanels::P3:
-				return MakeTuple(InventoryP3, InventorySizeP3);
-			case EInventoryPanels::P4:
-				return MakeTuple(InventoryP4, InventorySizeP4);
-			default:
-				return MakeTuple(InventoryP1, InventorySizeP1);
-			}
+		case EInventoryPanels::P1:
+			return MakeTuple(InventoryP1, InventorySizeP1);
+		case EInventoryPanels::P2:
+			return MakeTuple(InventoryP2, InventorySizeP2);
+		case EInventoryPanels::P3:
+			return MakeTuple(InventoryP3, InventorySizeP3);
+		case EInventoryPanels::P4:
+			return MakeTuple(InventoryP4, InventorySizeP4);
+		default:
+			return MakeTuple(InventoryP1, InventorySizeP1);
 		}
 	}
 
@@ -931,30 +918,24 @@ void UInventoryCore::UpdateViewItem(FItemData* ItemData, bool IsRemove)
 
 void UInventoryCore::LocalSwapItemsInInventory(FItemData* LocalFirstItem, FItemData* LocalSecondItem)
 {
-	//TODO CHECK THIS PLACE DOUBLE CALL ApplyChangesToInventoryArray
-
-	TArray<FItemData*> LocalInventoryData = GetInventoryAndSize(
-		InventoryUtility::GetInventoryPanelFromItem(LocalFirstItem)).Get<0>();
-
-	FItemData* NewFirstItemData = new FItemData();
+	EInventoryPanels InventoryPanel = InventoryUtility::GetInventoryPanelFromItem(LocalFirstItem);
+	TArray<FItemData*> LocalInventoryData = GetInventoryAndSize(InventoryPanel).Get<0>();
+	
+	FItemData* NewFirstItemData = InventoryUtility::CopyItemData(LocalFirstItem);
 	NewFirstItemData->Index = LocalSecondItem->Index;
 	NewFirstItemData->bIsEquipped = false;
-
 	if (LocalInventoryData.IsValidIndex(LocalSecondItem->Index))
 		LocalInventoryData[LocalSecondItem->Index] = NewFirstItemData;
-
-	ApplyChangesToInventoryArray(InventoryUtility::GetInventoryPanelFromItem(LocalFirstItem), LocalInventoryData);
-
-	FItemData* NewSecondItemData = new FItemData();
+	
+	FItemData* NewSecondItemData = InventoryUtility::CopyItemData(LocalSecondItem);
 	NewSecondItemData->Index = LocalFirstItem->Index;
 	NewSecondItemData->bIsEquipped = false;
-
 	if (LocalInventoryData.IsValidIndex(LocalFirstItem->Index))
 		LocalInventoryData[LocalFirstItem->Index] = NewSecondItemData;
-
-
-	ApplyChangesToInventoryArray(InventoryUtility::GetInventoryPanelFromItem(LocalFirstItem), LocalInventoryData);
-	CallOnRefreshInventory(InventoryUtility::GetInventoryPanelFromItem(LocalFirstItem));
+	
+	ApplyChangesToInventoryArray(InventoryPanel, LocalInventoryData);
+	CallOnRefreshInventory(InventoryPanel);
+	
 	if (!UKismetSystemLibrary::IsStandalone(this))
-		UpdateViewersInventory(InventoryUtility::GetInventoryPanelFromItem(LocalFirstItem));
+		UpdateViewersInventory(InventoryPanel);
 }

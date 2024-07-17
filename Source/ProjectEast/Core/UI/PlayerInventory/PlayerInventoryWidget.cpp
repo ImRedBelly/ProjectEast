@@ -14,8 +14,7 @@ void UPlayerInventoryWidget::AssignCurrentlyFocusedSlot(UPlayerInventorySlot* Pl
 
 void UPlayerInventoryWidget::ScrollToSlot(UPlayerInventorySlot* PlayerInventorySlot) const
 {
-	ScrollBox->ScrollWidgetIntoView(PlayerInventorySlot, true,
-		EDescendantScrollDestination::Center, 0.0f);
+	ScrollBox->ScrollWidgetIntoView(PlayerInventorySlot, true,EDescendantScrollDestination::Center, 0.0f);
 }
 
 void UPlayerInventoryWidget::NativeConstruct()
@@ -41,10 +40,9 @@ void UPlayerInventoryWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 	UnbindEventDispatchers();
-	if(CachedPlayerInventory->IsRefreshOmClosingWidget())
+	if (CachedPlayerInventory->IsRefreshOmClosingWidget())
 		CachedPlayerInventory->ServerSortInventory(CachedPlayerInventory,
-			ESortMethod::Quicksort, EInventoryPanels::P1, true);
-	
+		                                           ESortMethod::Quicksort, EInventoryPanels::P1, true);
 }
 
 void UPlayerInventoryWidget::NativePreConstruct()
@@ -95,6 +93,7 @@ void UPlayerInventoryWidget::RefreshInventory(EInventoryPanels Panel)
 		break;
 	default: ;
 	}
+
 	ResetSlotFocus();
 }
 
@@ -130,7 +129,7 @@ void UPlayerInventoryWidget::SetReceiverInventory()
 
 void UPlayerInventoryWidget::SetInitialInputDelayForSlot() const
 {
-	if(IsUsingGamepad())
+	if (IsUsingGamepad())
 	{
 		UPlayerInventorySlot* FirstSlot = Cast<UPlayerInventorySlot>(
 			GetUniformGridFromPanel(GetActivePanel())->GetChildAt(0));
@@ -148,25 +147,25 @@ void UPlayerInventoryWidget::ResetSlotFocus()
 void UPlayerInventoryWidget::CreateInventoryP1()
 {
 	auto DataInventory = CachedPlayerInventory->GetInventoryAndSize(EInventoryPanels::P1);
-	BuildInventorySlots(DataInventory.Get<0>(),DataInventory.Get<1>(),InventoryUG1);
+	BuildInventorySlots(DataInventory.Get<0>(), DataInventory.Get<1>(), InventoryUG1);
 }
 
 void UPlayerInventoryWidget::CreateInventoryP2()
 {
 	auto DataInventory = CachedPlayerInventory->GetInventoryAndSize(EInventoryPanels::P2);
-	BuildInventorySlots(DataInventory.Get<0>(),DataInventory.Get<1>(),InventoryUG2);
+	BuildInventorySlots(DataInventory.Get<0>(), DataInventory.Get<1>(), InventoryUG2);
 }
 
 void UPlayerInventoryWidget::CreateInventoryP3()
 {
 	auto DataInventory = CachedPlayerInventory->GetInventoryAndSize(EInventoryPanels::P3);
-	BuildInventorySlots(DataInventory.Get<0>(),DataInventory.Get<1>(),InventoryUG3);
+	BuildInventorySlots(DataInventory.Get<0>(), DataInventory.Get<1>(), InventoryUG3);
 }
 
 void UPlayerInventoryWidget::CreateInventoryP4()
 {
 	auto DataInventory = CachedPlayerInventory->GetInventoryAndSize(EInventoryPanels::P4);
-	BuildInventorySlots(DataInventory.Get<0>(),DataInventory.Get<1>(),InventoryUG4);
+	BuildInventorySlots(DataInventory.Get<0>(), DataInventory.Get<1>(), InventoryUG4);
 }
 
 void UPlayerInventoryWidget::SetFocusToSlot(uint32 SlotIndex) const
@@ -189,24 +188,27 @@ void UPlayerInventoryWidget::BuildInventorySlots(TArray<FItemData*> ItemData, in
 {
 	uint32 CurrentRow = 0;
 	uint32 CurrentColumn = 0;
+
 	GridPanel->ClearChildren();
 	
 	for (int i = 0; i < Size; ++i)
 	{
-		FItemData* CurrentItemData;
-		if(ItemData.IsValidIndex(i))
+		FItemData* CurrentItemData = new FItemData();
+		if (ItemData.IsValidIndex(i))
 			CurrentItemData = ItemData[i];
 		else
-			CurrentItemData = new FItemData();
-		
-		UPlayerInventorySlot* InventorySLot = CreateWidget<UPlayerInventorySlot>(this, DefaultPlayerInventorySlot);
-		InventorySLot->InitializeSlot(CurrentItemData, CachedReceiverInventory, this, CachedPlayerEquipment, CachedPlayerInventory, DraggedImageSize, i);
+			CurrentItemData->Index = i;
+
+
+		UPlayerInventorySlot* InventorySLot = CreateWidget<UPlayerInventorySlot>(GetOwningPlayer(), DefaultPlayerInventorySlot);
+		InventorySLot->InitializeSlot(CurrentItemData, CachedReceiverInventory, this, CachedPlayerEquipment,
+		                              CachedPlayerInventory, DraggedImageSize, i);
 
 		UUniformGridSlot* CurrentSlot = GridPanel->AddChildToUniformGrid(InventorySLot, CurrentRow, CurrentColumn);
 		CurrentSlot->SetHorizontalAlignment(HAlign_Fill);
 		CurrentSlot->SetVerticalAlignment(VAlign_Fill);
 		CurrentColumn++;
-		if(CurrentColumn >= RowLength)
+		if (CurrentColumn >= RowLength)
 		{
 			CurrentColumn = 0;
 			CurrentRow++;
@@ -216,13 +218,13 @@ void UPlayerInventoryWidget::BuildInventorySlots(TArray<FItemData*> ItemData, in
 
 EInventoryPanels UPlayerInventoryWidget::GetActivePanel() const
 {
-	if(PanelSwitcher->GetActiveWidget() == InventoryUG1)
+	if (PanelSwitcher->GetActiveWidget() == InventoryUG1)
 		return EInventoryPanels::P1;
-	if(PanelSwitcher->GetActiveWidget() == InventoryUG2)
+	if (PanelSwitcher->GetActiveWidget() == InventoryUG2)
 		return EInventoryPanels::P2;
-	if(PanelSwitcher->GetActiveWidget() == InventoryUG3)
+	if (PanelSwitcher->GetActiveWidget() == InventoryUG3)
 		return EInventoryPanels::P3;
-	if(PanelSwitcher->GetActiveWidget() == InventoryUG4)
+	if (PanelSwitcher->GetActiveWidget() == InventoryUG4)
 		return EInventoryPanels::P4;
 	return EInventoryPanels::P1;
 }
@@ -333,9 +335,9 @@ void UPlayerInventoryWidget::SetPanelTitle(EInventoryPanels Panel)
 
 void UPlayerInventoryWidget::DisplaySampleSlots(int32 IndexSlot)
 {
-	if(!IsValid(DefaultPlayerInventorySlot))
+	if (!IsValid(DefaultPlayerInventorySlot))
 		return;
-	
+
 	uint32 CurrentRow = 0;
 	uint32 CurrentColumn = 0;
 	auto CurrentPanel = GetUniformGridFromPanel(EInventoryPanels::P1);
@@ -347,7 +349,7 @@ void UPlayerInventoryWidget::DisplaySampleSlots(int32 IndexSlot)
 		CurrentSlot->SetHorizontalAlignment(HAlign_Fill);
 		CurrentSlot->SetVerticalAlignment(VAlign_Fill);
 		CurrentColumn++;
-		if(CurrentColumn >= RowLength)
+		if (CurrentColumn >= RowLength)
 		{
 			CurrentColumn = 0;
 			CurrentRow++;

@@ -34,6 +34,8 @@ public:
 	static TArray<FItemData*> GetAllItemsOfType(TArray<FItemData*> ItemData, EItemsType ItemsType);
 	static uint32 FindAmountOfEmptySlots(TArray<FItemData*> ItemData);
 
+	static FItemData* CopyItemData(FItemData* ItemData);
+	
 	static TArray<FItemData*> QuickSortItems(TArray<FItemData*> ItemData);
 	static TArray<FItemData*> SortItemsByType(TArray<FItemData*> ItemData);
 	static TArray<FItemData*> SortItemsByRarity(TArray<FItemData*> ItemData);

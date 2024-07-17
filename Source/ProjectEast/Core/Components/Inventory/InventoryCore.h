@@ -172,7 +172,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString MessageInventoryFull = "Inventory is full.";
 
-	int32 CurrentInventorySize;
 	EInventoryPanels CurrentPanel;
 	EInventoryPanels ActivePanel;
 	
@@ -190,7 +189,7 @@ protected:
 	int32 InventorySizeP3 = 30;
 	int32 InventorySizeP4 = 30;
 
-	bool bIsUseInventorySize;
+	bool bIsUseInventorySize = true;
 	bool bSortInitialItems;
 	bool bIsCheckRemoveType;
 

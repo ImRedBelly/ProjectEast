@@ -29,7 +29,7 @@ public:
 	void ShowIconWrongSlot() const;
 	void ShowIconDrop() const;
 	void ShowIconSwap() const;
-	
+
 	UInventoryCore* Inventory;
 	UItemDataDragAndDropPanel* ItemDataDragAndDropPanel;
 

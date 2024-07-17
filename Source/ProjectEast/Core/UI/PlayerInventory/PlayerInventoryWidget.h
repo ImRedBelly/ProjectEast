@@ -128,6 +128,7 @@ private:
 	uint32 RowPosition;
 	uint32 RowLength = 5;
 	uint32 FocusedSlot;
+	uint32 AAA;
 	uint32 SampleSlotsToDisplay = 30;
 	
 	EInventoryPanels DefaultPanel = EInventoryPanels::P1;

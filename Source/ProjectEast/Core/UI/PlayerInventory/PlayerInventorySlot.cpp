@@ -8,7 +8,6 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Actors/Interfaces/IWidgetManager.h"
@@ -20,13 +19,13 @@
 void UPlayerInventorySlot::InitializeSlot(FItemData* ItemData, UInventoryCore* ReceiverInventory, UPlayerInventoryWidget* ParentWidget,
 	UPlayerEquipment* PlayerEquipment, UPlayerInventory* PlayerInventory, FVector2D DragImageSize, uint32 IndexSlot)
 {
-	CurrentItemData = ItemData;
 	CachedReceiverInventory = ReceiverInventory;
 	CachedPlayerInventoryWidget = ParentWidget;
 	CachedPlayerEquipment = PlayerEquipment;
 	CachedPlayerInventory = PlayerInventory;
 	ImageSize = DragImageSize;
 	SlotIndex = IndexSlot;
+	
 	OverwriteSlot(ItemData);
 }
 
@@ -131,6 +130,8 @@ void UPlayerInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, con
 		Operation->DefaultDragVisual = DragAndDropPanel;
 		Operation->ItemData = CurrentItemData;
 		Operation->Inventory = CachedPlayerInventory;
+		Operation->ItemDataDragAndDropPanel = DragAndDropPanel;
+		Operation->DraggerFrom = EItemDestination::InventorySlot;
 
 		OutOperation = Operation;
 	}
@@ -171,7 +172,7 @@ bool UPlayerInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 		DraggedFromEquipment(DragOperation, ItemData);
 		break;
 	case EItemDestination::VendorSlot:
-	case EItemDestination::StorageSlot:
+	case EItemDestination::StorageSlot:	
 		DraggedFromOtherInventory(DragOperation);
 		break;
 	default: ;
@@ -185,9 +186,10 @@ bool UPlayerInventorySlot::NativeOnDragOver(const FGeometry& InGeometry, const F
 {
 	if (auto Operation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
-		FItemData* DraggedData = Operation->ItemData;
-		if (InventoryUtility::IsItemClassValid(CurrentItemData))
-		{
+		 FItemData* DraggedData = Operation->ItemData;
+		
+		 if (InventoryUtility::IsItemClassValid(CurrentItemData))
+		 {
 			switch (Operation->DraggerFrom)
 			{
 			case EItemDestination::InventorySlot:
@@ -209,7 +211,7 @@ bool UPlayerInventorySlot::NativeOnDragOver(const FGeometry& InGeometry, const F
 								if (CachedPlayerEquipment->CanItemBeEquipped(CurrentItemData))
 									return ShowSwapSlotAndGreenBorderColor(Operation);
 							}
-
+		
 							return ShowWrongSlotAndRedBorderColor(Operation);
 						}
 						return ShowWrongSlotAndRedBorderColor(Operation);
@@ -225,11 +227,11 @@ bool UPlayerInventorySlot::NativeOnDragOver(const FGeometry& InGeometry, const F
 				}
 			default: ;
 			}
-		}
-		else
-		{
-			return ShowDropSlotAndGreenBorderColor(Operation);
-		}
+		 }
+		 else
+		 {
+		 	return ShowDropSlotAndGreenBorderColor(Operation);
+		 }
 	}
 
 	return true;
@@ -408,13 +410,13 @@ void UPlayerInventorySlot::OnHovered()
 	if (!IsAnyPopUpActive() && !IsUsingGamepad())
 	{
 		StopAnimation(AnimationHighlight);
-		 if (IsValid(CachedToolTip))
-		 	CachedToolTip->RemoveFromParent();
+		if (IsValid(CachedToolTip))
+			CachedToolTip->RemoveFromParent();
 
 		SetKeyboardFocus();
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
-	
+
 		ButtonItem->SetToolTip(CachedToolTip);
 		BorderObject->SetBrushColor(BorderHovered);
 	}
@@ -425,11 +427,11 @@ void UPlayerInventorySlot::OnUnhovered()
 	if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
 		GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::None);
 
-	ButtonItem->SetToolTip(this);
+	ButtonItem->SetToolTip(nullptr);
 	BorderObject->SetBrushColor(BorderUnHovered);
 	HideItemComparison();
-	 if (IsValid(CachedToolTip))
-	 	CachedToolTip->RemoveFromParent();
+	if (IsValid(CachedToolTip))
+		CachedToolTip->RemoveFromParent();
 }
 
 void UPlayerInventorySlot::ShowItemComparison() const
@@ -587,7 +589,7 @@ void UPlayerInventorySlot::OnRightClick()
 
 void UPlayerInventorySlot::EmptySlot()
 {
-	CurrentItemData = EmptySlotData;
+	CurrentItemData = new FItemData();
 	CurrentItemData->Index = SlotIndex;
 
 	SetButtonStyle(CurrentItemData);
@@ -613,6 +615,8 @@ void UPlayerInventorySlot::SetItemQuantity() const
 
 void UPlayerInventorySlot::OverwriteSlot(FItemData* ItemData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("CurrentItemData: %s"), *FString::FromInt(ItemData->Index));
+	
 	CurrentItemData = ItemData;
 	SetButtonStyle(CurrentItemData);
 	SetItemQuantity();

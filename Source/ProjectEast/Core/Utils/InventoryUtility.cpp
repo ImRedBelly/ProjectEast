@@ -246,6 +246,21 @@ uint32 InventoryUtility::FindAmountOfEmptySlots(TArray<FItemData*> ItemData)
 	return Amount;
 }
 
+FItemData* InventoryUtility::CopyItemData(FItemData* ItemData)
+{
+	FItemData* NewItemData = new FItemData();
+	NewItemData->ID = ItemData->ID;
+	NewItemData->ItemSlot = ItemData->ItemSlot;
+	NewItemData->Class = ItemData->Class;
+	NewItemData->Quantity = ItemData->Quantity;
+	NewItemData->Durability = ItemData->Durability;
+	NewItemData->Index = ItemData->Index;
+	NewItemData->bIsEquipped = ItemData->bIsEquipped;
+	NewItemData->bIsAlreadyUsed = ItemData->bIsAlreadyUsed;
+	NewItemData->ValueModifier = ItemData->ValueModifier;
+	return  NewItemData;
+}
+
 TArray<FItemData*> InventoryUtility::QuickSortItems(TArray<FItemData*> ItemData)
 {
 	TArray<FItemData*> SortedItems;
