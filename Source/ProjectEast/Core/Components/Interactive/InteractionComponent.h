@@ -13,7 +13,9 @@ class PROJECTEAST_API UInteractionComponent : public UActorComponent, public IOb
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(Unreliable,Client)
 	void InitializeInteraction(APlayerController* PlayerController);
+	
 	UInteractableComponent* GetInteractableComponent() const;
 
 protected:

@@ -18,6 +18,10 @@ public:
 	void RemoveItemFromEquipmentArray(FItemData* ItemData);
 	void DetachItemFromEquipment(FItemData* ItemData);
 	bool CanItemBeEquipped(FItemData* ItemData);
+	TTuple<bool, FItemData*> GetItemByEquipmentSlot(EItemSlot Slot) const;
 
 	bool bIsEnableOffHand;
+	
+private:
+	TMap<EItemSlot, FItemData*> EquipmentData;
 };

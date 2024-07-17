@@ -5,6 +5,19 @@
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "MainItemData.generated.h"
 
+USTRUCT()
+struct FItemsStatRow
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	EStateCategoryType Type;
+
+	UPROPERTY(EditAnywhere)
+	float Value;
+};
+
+
 UCLASS()
 class PROJECTEAST_API UMainItemData : public UPrimaryDataAsset
 {
@@ -28,16 +41,29 @@ public:
 	EInventoryPanels InventoryPanel = EInventoryPanels::P1;
 	UPROPERTY(EditDefaultsOnly, Category="Item Details")
 	EWeaponType WeaponType;
-	// UPROPERTY(EditDefaultsOnly, Category="Item Details")
-	// EWeaponSubType WeaponSubType;
+	UPROPERTY(EditDefaultsOnly, Category="Item Details")
+	EItemSlot EquipmentSlot;
 	UPROPERTY(EditDefaultsOnly, Category="Item Details")
 	EItemUseType UseType;
 
+	UPROPERTY(EditDefaultsOnly, Category="Item Details")
+	uint32 RequiredLevel;
 
+	UPROPERTY(EditDefaultsOnly, Category="Item Details")
+	TArray<FItemsStatRow> Stats;
+	
 	UPROPERTY(EditDefaultsOnly, Category="Item Stats")
 	float Weight;
 	UPROPERTY(EditDefaultsOnly, Category="Item Stats")
 	float Value;
+
+	UPROPERTY(EditDefaultsOnly, Category="Item Stacking")
+	bool bUseDurability;
+	UPROPERTY(EditDefaultsOnly, Category="Item Stacking")
+	bool bAlredyUsed;
+
+	UPROPERTY(EditDefaultsOnly, Category="Item Details")
+	uint32 Durability;
 
 	UPROPERTY(EditDefaultsOnly, Category="Item Stacking")
 	bool bIsStackable;

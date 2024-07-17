@@ -14,6 +14,7 @@ public:
 	static UInteractableComponent* GetCurrentInteractableObject(AActor* OwningPlayer);
 	static UTexture2D* GetGamepadIcon(EGamepadButtonType GamepadInputs);
 	static UPlayerInventory* GetPlayerInventory(AActor* OwningPlayer);
+	static UPlayerEquipment* GetPlayerEquipment(AActor* OwningPlayer);
 	static TTuple<bool, UInventoryCore*> GetInventoryFromInteractable(UInteractableComponent* InteractableComponent);
 	static bool SwitchHasOwnerAuthority(UActorComponent* ActorComponent);
 	static bool IsItemClassValid(const FItemData* ItemData);

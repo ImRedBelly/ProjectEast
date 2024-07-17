@@ -122,3 +122,16 @@ enum class EWidgetType : uint8
 	LoadGame UMETA(DisplayName = "LoadGame"),
 	Abilities UMETA(DisplayName = "Abilities"),
 };
+
+UENUM(BlueprintType)
+enum class EStateCategoryType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Health UMETA(DisplayName = "Health"),
+	MaxHealth UMETA(DisplayName = "MaxHealth"),
+	Stamina UMETA(DisplayName = "Stamina"),
+	MaxStamina UMETA(DisplayName = "MaxStamina"),
+	Armor UMETA(DisplayName = "Armor"),
+	Damage UMETA(DisplayName = "Damage"),
+	AttackSpeed UMETA(DisplayName = "AttackSpeed"),
+};

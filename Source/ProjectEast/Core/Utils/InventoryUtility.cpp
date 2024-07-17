@@ -2,6 +2,7 @@
 #include "Engine/DataTable.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/Data/FGamepadButtonData.h"
 
 
@@ -62,6 +63,18 @@ UPlayerInventory* InventoryUtility::GetPlayerInventory(AActor* OwningPlayer)
 			OwningPlayer->GetComponentByClass(UPlayerInventory::StaticClass()));
 		if (IsValid(Inventory))
 			return Inventory;
+	}
+	return nullptr;
+}
+
+UPlayerEquipment* InventoryUtility::GetPlayerEquipment(AActor* OwningPlayer)
+{
+	if (IsValid(OwningPlayer))
+	{
+		UPlayerEquipment* Equipment = Cast<UPlayerEquipment>(
+			OwningPlayer->GetComponentByClass(UPlayerEquipment::StaticClass()));
+		if (IsValid(Equipment))
+			return Equipment;
 	}
 	return nullptr;
 }

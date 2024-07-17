@@ -1,27 +1,29 @@
 ﻿#pragma once
-
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "ItemStatsSlot.generated.h"
 
 
+class UWidgetSwitcher;
 class UTextBlock;
 
 UCLASS()
 class PROJECTEAST_API UItemStatsSlot : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+	void InitializeSlot(FString NameState, float ValueStat, float ValueComparison, bool ComparisonShow);
 
+	void ShowComparisonValue(float Value);
+	void HideComparisonValue();
+
+	float GetStatValue() {return StatValue;}
+	
 protected:
-	UPROPERTY(EditAnywhere)
-	FText StatName;
-	UPROPERTY(EditAnywhere)
-	float StatValue;
-	UPROPERTY(EditAnywhere)
-	float ComparisonValue;
-	UPROPERTY(EditAnywhere)
-	bool ShowComparison;
-
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TextStatName;
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TextStatValue;
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* TextComparisonValue1;
 	UPROPERTY(meta=(BindWidget))
@@ -29,14 +31,22 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* TextComparisonValue3;
 
-
+	UPROPERTY(meta=(BindWidget))
+	UWidgetSwitcher* WidgetSwitcher;
+	
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
+	
+	FText GetStatValue() const;
+	FText GetComparisonValue() const;
+	FLinearColor GetComparisonColor() const;
+	void SetAppropriateComparisonBox() const;
 
-	void ShowComparisonValue(float Value);
-	void HideComparisonValue();
-	FText GetStatValue();
-	FText GetComparisonValue();
-	FLinearColor GetComparisonColor();
-	void SetAppropriateComparisonBox();
+	void UpdateViewSwitcher() const;
+
+private:
+	FString StatName;
+	float StatValue;
+	float ComparisonValue;
+	bool ShowComparison;
 };

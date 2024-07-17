@@ -8,14 +8,14 @@
 class UInteractableComponent;
 class UInteractable;
 
-void UInteractionComponent::InitializeInteraction(APlayerController* PlayerController)
+void UInteractionComponent::InitializeInteraction_Implementation(APlayerController* PlayerController)
 {
 	if (IsValid(PlayerController))
 		CachedPlayerController = PlayerController;
 
 	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
 	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::UpdateInteraction,
-	                                       InteractionTimerRate, true, 1.0f);
+										   InteractionTimerRate, true, 1.0f);
 }
 
 UInteractableComponent* UInteractionComponent::GetInteractableComponent() const

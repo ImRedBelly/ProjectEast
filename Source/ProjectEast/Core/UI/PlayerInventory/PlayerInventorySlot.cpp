@@ -413,7 +413,7 @@ void UPlayerInventorySlot::OnHovered()
 
 		SetKeyboardFocus();
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
-		CachedToolTip->InitializeToolTip(CurrentItemData);
+		CachedToolTip->InitializeToolTip(CurrentItemData, false);
 	
 		ButtonItem->SetToolTip(CachedToolTip);
 		BorderObject->SetBrushColor(BorderHovered);
@@ -514,7 +514,7 @@ void UPlayerInventorySlot::RefreshToolTip()
 				CachedToolTip->RemoveFromParent();
 			
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
-			CachedToolTip->InitializeToolTip(CurrentItemData);
+			CachedToolTip->InitializeToolTip(CurrentItemData, false);
 			CachedToolTip->AddToViewport();
 			SetToolTipPositionAndAlignment();
 		}
@@ -529,7 +529,7 @@ void UPlayerInventorySlot::RefreshToolTip()
 				CachedToolTip->RemoveFromParent();
 			
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
-			CachedToolTip->InitializeToolTip(CurrentItemData);
+			CachedToolTip->InitializeToolTip(CurrentItemData, false);
 			CachedToolTip->AddToViewport();
 			SetToolTip(ButtonItem);
 		}
