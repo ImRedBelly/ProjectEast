@@ -412,8 +412,7 @@ void UPlayerInventorySlot::OnHovered()
 		StopAnimation(AnimationHighlight);
 		if (IsValid(CachedToolTip))
 			CachedToolTip->RemoveFromParent();
-
-		SetKeyboardFocus();
+		
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
 

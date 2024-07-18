@@ -279,10 +279,10 @@ TArray<FItemData*> InventoryUtility::SortItemsByType(TArray<FItemData*> ItemData
 	TArray<FItemData*> SortedItems;
 	for (int i = 0; i < ItemData.Num(); ++i)
 	{
-		EItemsType Type = ItemData[i]->Class.GetDefaultObject()->Type;
-
 		if (!IsItemClassValid(ItemData[i]))
-			continue;
+		continue;
+		
+		EItemsType Type = ItemData[i]->Class.GetDefaultObject()->Type;
 
 		switch (Type)
 		{
@@ -330,7 +330,7 @@ TArray<FItemData*> InventoryUtility::SortItemsByType(TArray<FItemData*> ItemData
 	SortedItems.Append(OtherSortingItems);
 	SortedItems.Append(CurrencySortingItems);
 	SortedItems.Append(CraftingRecipeSortingItems);
-
+	
 	return SortedItems;
 }
 
@@ -339,11 +339,11 @@ TArray<FItemData*> InventoryUtility::SortItemsByRarity(TArray<FItemData*> ItemDa
 	TArray<FItemData*> SortedItems;
 	for (int i = 0; i < ItemData.Num(); ++i)
 	{
-		EItemRarity Rarity = ItemData[i]->Class.GetDefaultObject()->Rarity;
-
 		if (!IsItemClassValid(ItemData[i]))
 			continue;
-
+		
+		EItemRarity Rarity = ItemData[i]->Class.GetDefaultObject()->Rarity;
+		
 		switch (Rarity)
 		{
 		case EItemRarity::Common:

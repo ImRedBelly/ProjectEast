@@ -172,7 +172,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString MessageInventoryFull = "Inventory is full.";
 
-	EInventoryPanels CurrentPanel;
 	EInventoryPanels ActivePanel;
 	
 	TArray<UDataTable> AllItemsFromDT;
@@ -196,6 +195,7 @@ protected:
 
 	void BuildInventory(EInventoryPanels Panel);
 	void BuildInitialInventory();
+	void SortInventoryByPanel(EInventoryPanels Panel);
 	void RemoveItemFromInventoryArray(FItemData* ItemData);
 	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 Index);
 	void AddToStackInInventory(FItemData* ItemData, int32 Index);

@@ -71,45 +71,18 @@ void UInventoryCore::ClientUpdateRemovedItem(FItemData* ItemData, UInventoryCore
 	UpdateRemovedItemInInventory(ItemData, Inventory);
 }
 
-//TODO Completed
 void UInventoryCore::SortInventory(ESortMethod Method, EInventoryPanels SinglePanel, bool EveryPanel)
 {
-	CurrentPanel = SinglePanel;
 	if (EveryPanel)
 	{
-		//TODO Надо переписать, тут все неправильно
-		//TODO Check for remove
 		for (int i = 0; i < PanelsToUse.Num(); ++i)
-			CurrentPanel = PanelsToUse[i];
+		{
+			SinglePanel = PanelsToUse[i];
+			SortInventoryByPanel(SinglePanel);
+		}
 	}
-
-	TArray<FItemData*> CurrentSortedItems;
-	TArray<FItemData*> CurrentInventory = GetInventoryAndSize(CurrentPanel).Get<0>();
-	switch (Method)
-	{
-	case ESortMethod::Quicksort:
-		CurrentInventory = InventoryUtility::QuickSortItems(CurrentInventory);
-	case ESortMethod::ByType:
-		CurrentInventory = InventoryUtility::SortItemsByType(CurrentInventory);
-	case ESortMethod::ByRarity:
-		CurrentInventory = InventoryUtility::SortItemsByRarity(CurrentInventory);
-	case ESortMethod::ByValue:
-		CurrentInventory = InventoryUtility::SortItemsByValue(CurrentInventory);
-	case ESortMethod::ByWeight:
-		CurrentInventory = InventoryUtility::SortItemsByWeight(CurrentInventory);
-		break;
-	}
-
-	ApplyChangesToInventoryArray(CurrentPanel, CurrentSortedItems);
-	BuildInventory(CurrentPanel);
-
-	CallOnRefreshInventory(CurrentPanel);
-
-	if (!UKismetSystemLibrary::IsStandalone(GetWorld()))
-	{
-		UpdateViewersInventory(CurrentPanel);
-		ClientUpdateItems(this, CurrentPanel, GetInventoryAndSize(CurrentPanel).Get<0>());
-	}
+	else
+		SortInventoryByPanel(SinglePanel);
 }
 
 void UInventoryCore::ServerUpdateItems(AActor* Actor)
@@ -306,7 +279,7 @@ void UInventoryCore::BuildInitialInventory()
 			for (int a = 0; a < Names.Num(); ++a)
 			{
 				CurrentItemData = DataTableItem.FindRow<FItemData>(Names[a], TEXT(""));
-		
+
 				auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemData);
 				if (DataEmptySlot.Get<0>())
 				{
@@ -324,8 +297,8 @@ void UInventoryCore::BuildInitialInventory()
 
 		CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
 
-		
-		FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);// new FItemData();
+
+		FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData); // new FItemData();
 		CurrentItemDataBase->Quantity = FMathf::Clamp(SingleDTItem[i].Quantity, 1, SingleDTItem[i].Quantity);
 
 		auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
@@ -343,6 +316,37 @@ void UInventoryCore::BuildInitialInventory()
 	if (bSortInitialItems)
 	{
 		SortInventory(DefaultSortingMethod, EInventoryPanels::P1, true);
+	}
+}
+
+void UInventoryCore::SortInventoryByPanel(EInventoryPanels Panel)
+{
+	TArray<FItemData*> LocaleSortedItems;
+	TArray<FItemData*> CurrentInventory = GetInventoryAndSize(Panel).Get<0>();
+	switch (Panel)
+	{
+	case ESortMethod::Quicksort:
+		LocaleSortedItems = InventoryUtility::QuickSortItems(CurrentInventory);
+	case ESortMethod::ByType:
+		LocaleSortedItems = InventoryUtility::SortItemsByType(CurrentInventory);
+	case ESortMethod::ByRarity:
+		LocaleSortedItems = InventoryUtility::SortItemsByRarity(CurrentInventory);
+	case ESortMethod::ByValue:
+		LocaleSortedItems = InventoryUtility::SortItemsByValue(CurrentInventory);
+	case ESortMethod::ByWeight:
+		LocaleSortedItems = InventoryUtility::SortItemsByWeight(CurrentInventory);
+		break;
+	}
+
+	ApplyChangesToInventoryArray(Panel, LocaleSortedItems);
+	BuildInventory(Panel);
+
+	CallOnRefreshInventory(Panel);
+
+	if (!UKismetSystemLibrary::IsStandalone(GetWorld()))
+	{
+		UpdateViewersInventory(Panel);
+		ClientUpdateItems(this, Panel, GetInventoryAndSize(Panel).Get<0>());
 	}
 }
 
@@ -386,12 +390,12 @@ void UInventoryCore::BuildInventory(EInventoryPanels Panel)
 
 	TArray<FItemData*> LocalInventory = Data.Get<0>();
 	int32 LocalSize = Data.Get<1>();
-	
+
 
 	if (bIsUseInventorySize)
 	{
 		for (int i = 0; i < LocalSize; ++i)
-			if(!LocalInventory.IsValidIndex(i))
+			if (!LocalInventory.IsValidIndex(i))
 				LocalInventory.Add(new FItemData());
 
 		for (int i = 0; i < LocalInventory.Num(); ++i)
@@ -401,13 +405,13 @@ void UInventoryCore::BuildInventory(EInventoryPanels Panel)
 			ItemData->bIsEquipped = false;
 			LocalInventory[i] = ItemData;
 		}
-		
+
 		ApplyChangesToInventoryArray(Panel, LocalInventory);
 	}
 	else
 	{
 		TArray<FItemData*> CurrentEmptyInventoryArray;
-		
+
 		for (int i = 0; i < LocalInventory.Num(); ++i)
 		{
 			if (InventoryUtility::IsItemClassValid(LocalInventory[i]))
@@ -920,22 +924,22 @@ void UInventoryCore::LocalSwapItemsInInventory(FItemData* LocalFirstItem, FItemD
 {
 	EInventoryPanels InventoryPanel = InventoryUtility::GetInventoryPanelFromItem(LocalFirstItem);
 	TArray<FItemData*> LocalInventoryData = GetInventoryAndSize(InventoryPanel).Get<0>();
-	
+
 	FItemData* NewFirstItemData = InventoryUtility::CopyItemData(LocalFirstItem);
 	NewFirstItemData->Index = LocalSecondItem->Index;
 	NewFirstItemData->bIsEquipped = false;
 	if (LocalInventoryData.IsValidIndex(LocalSecondItem->Index))
 		LocalInventoryData[LocalSecondItem->Index] = NewFirstItemData;
-	
+
 	FItemData* NewSecondItemData = InventoryUtility::CopyItemData(LocalSecondItem);
 	NewSecondItemData->Index = LocalFirstItem->Index;
 	NewSecondItemData->bIsEquipped = false;
 	if (LocalInventoryData.IsValidIndex(LocalFirstItem->Index))
 		LocalInventoryData[LocalFirstItem->Index] = NewSecondItemData;
-	
+
 	ApplyChangesToInventoryArray(InventoryPanel, LocalInventoryData);
 	CallOnRefreshInventory(InventoryPanel);
-	
+
 	if (!UKismetSystemLibrary::IsStandalone(this))
 		UpdateViewersInventory(InventoryPanel);
 }
