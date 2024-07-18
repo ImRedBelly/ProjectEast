@@ -92,6 +92,21 @@ void UPlayerInventory::OpenInventoryWidget()
 
 void UPlayerInventory::CloseInventoryWidget()
 {
+	CashedPlayerController->SetActiveWidget(EWidgetType::None);
+	CashedPlayerController->SetActiveTab(EWidgetType::None);
+	CashedPlayerController->StopPlayerCapture();
+
+	if(IsValid(CashedInventoryWindow))
+		CashedInventoryWindow->RemoveFromParent();
+
+	
+	FInputModeGameOnly InputMode;
+	CashedPlayerController->SetInputMode(InputMode);
+	
+	CashedPlayerController->SetShowMouseCursor(false);
+	CashedPlayerController->SetIgnoreMoveInput(false);
+	CashedPlayerController->SetIgnoreLookInput(false);
+	ServerChangeDroppedIndex(0);
 }
 
 void UPlayerInventory::InputCloseWidget()

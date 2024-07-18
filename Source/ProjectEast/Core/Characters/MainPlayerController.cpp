@@ -42,6 +42,8 @@ void AMainPlayerController::CloseActiveWidget()
 	switch (ActiveWidget)
 	{
 	case EWidgetType::None:
+	case EWidgetType::Inventory:
+		PlayerInventory->CloseInventoryWidget();
 		break;
 	default: ;
 	}
@@ -68,6 +70,7 @@ void AMainPlayerController::SwitchWidgetTo(EWidgetType WidgetType)
 	{
 		CloseActiveWidget();
 		OpenNewWidget(WidgetType);
+		ActiveWidget = WidgetType;
 	}
 }
 

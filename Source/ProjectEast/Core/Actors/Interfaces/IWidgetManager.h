@@ -42,4 +42,5 @@ public:
 	virtual void DisplayMessageNotify(const FString Str);
 	virtual EWidgetType GetCurrentPopupType();
 	virtual void StartPlayerCapture();
+	virtual void StopPlayerCapture();
 };
