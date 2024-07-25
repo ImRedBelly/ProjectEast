@@ -108,7 +108,15 @@ enum class EWeaponType : uint8
 	OffHand UMETA(DisplayName = "OffHand"),
 };
 
-
+UENUM(BlueprintType)
+enum class EWeaponSubtype : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Sword UMETA(DisplayName = "Sword"),
+	Warhammer UMETA(DisplayName = "Warhammer"),
+	Axe UMETA(DisplayName = "Axe"),
+	Mace UMETA(DisplayName = "Mace"),
+};
 
 UENUM(BlueprintType)
 enum class EWidgetType : uint8

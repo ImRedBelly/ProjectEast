@@ -2,8 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ProjectEast/Core/Actors/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "InventoryCore.generated.h"
 
 class UPlayerEquipment;
@@ -16,7 +16,7 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly)
 	FString ID;
 	UPROPERTY(EditDefaultsOnly)
-	EItemSlot ItemSlot;
+	EItemSlot EquipmentSlot;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMainItemData> Class;
 	UPROPERTY(EditDefaultsOnly)

@@ -38,7 +38,7 @@ void UToolTip::ShowComparisonToolTip()
 {
 	if (IsValid(ComparisonToolTip))
 	{
-		auto Data = PlayerEquipment->GetItemByEquipmentSlot(CurrentItemData->Class.GetDefaultObject()->EquipmentSlot);
+		auto Data = PlayerEquipment->GetItemByEquipmentSlot(CurrentItemData->EquipmentSlot);
 		if (Data.Get<0>())
 		{
 			auto NewToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
@@ -213,7 +213,7 @@ void UToolTip::SetItemDurability() const
 	{
 		if (CurrentItemData->Class.GetDefaultObject()->bUseDurability)
 		{
-			uint32 Durability = CurrentItemData->Class.GetDefaultObject()->Durability;
+			uint32 Durability = CurrentItemData->Durability;
 			FString DurabilityString = FString::Printf(TEXT("%d%%"), Durability);
 			TextRequiredLevel->SetText(FText::FromString(DurabilityString));
 			HorizontalBoxDurability->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -227,9 +227,8 @@ void UToolTip::SetItemDurabilityColor() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		FLinearColor ColorText = CurrentItemData->Class.GetDefaultObject()->Durability > 10
-			                         ? FLinearColor::Green
-			                         : FLinearColor::Red;
+		FLinearColor ColorText = CurrentItemData->Durability > 10
+			                         ? FLinearColor::Green : FLinearColor::Red;
 		TextDurability->SetColorAndOpacity(ColorText);
 		TextDurabilityValue->SetColorAndOpacity(ColorText);
 	}
@@ -263,7 +262,7 @@ void UToolTip::SetAlreadyReadVisibility() const
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
 		auto bIsVisibleText = CurrentItemData->Class.GetDefaultObject()->UseType == EItemUseType::TextDocument &&
-			CurrentItemData->Class.GetDefaultObject()->bAlredyUsed;
+			CurrentItemData->bIsAlreadyUsed;
 
 		TextAlreadyRead->SetVisibility(bIsVisibleText
 			                               ? ESlateVisibility::SelfHitTestInvisible

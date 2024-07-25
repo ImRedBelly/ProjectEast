@@ -117,16 +117,16 @@ bool InventoryUtility::AreItemsStackable(const FItemData* ItemDataFirst, const F
 
 bool InventoryUtility::AreItemSlotsEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
 {
-	auto ResultFirst = (ItemDataFirst->ItemSlot == EItemSlot::Pocket1)
-		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket2)
-		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket3)
-		|| (ItemDataFirst->ItemSlot == EItemSlot::Pocket4);
-	auto ResultSecond = (ItemDataSecond->ItemSlot == EItemSlot::Pocket1)
-		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket2)
-		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket3)
-		|| (ItemDataSecond->ItemSlot == EItemSlot::Pocket4);
+	auto ResultFirst = (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket1)
+		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket2)
+		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket3)
+		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket4);
+	auto ResultSecond = (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket1)
+		|| (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket2)
+		|| (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket3)
+		|| (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket4);
 
-	return ItemDataFirst->ItemSlot == ItemDataSecond->ItemSlot || (ResultFirst && ResultSecond);
+	return ItemDataFirst->EquipmentSlot == ItemDataSecond->EquipmentSlot || (ResultFirst && ResultSecond);
 }
 
 bool InventoryUtility::CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
@@ -250,7 +250,7 @@ FItemData* InventoryUtility::CopyItemData(FItemData* ItemData)
 {
 	FItemData* NewItemData = new FItemData();
 	NewItemData->ID = ItemData->ID;
-	NewItemData->ItemSlot = ItemData->ItemSlot;
+	NewItemData->EquipmentSlot = ItemData->EquipmentSlot;
 	NewItemData->Class = ItemData->Class;
 	NewItemData->Quantity = ItemData->Quantity;
 	NewItemData->Durability = ItemData->Durability;

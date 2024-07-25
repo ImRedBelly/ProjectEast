@@ -65,12 +65,12 @@ void UPlayerInventorySlot::NativeConstruct()
 
 void UPlayerInventorySlot::NativeDestruct()
 {
-	Super::NativeDestruct();
 	if (IsValid(CachedToolTip))
 		CachedToolTip->RemoveFromParent();
 
 	ButtonItem->OnHovered.RemoveDynamic(this, &UPlayerInventorySlot::OnHovered);
 	ButtonItem->OnUnhovered.RemoveDynamic(this, &UPlayerInventorySlot::OnUnhovered);
+	Super::NativeDestruct();
 }
 
 void UPlayerInventorySlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -697,7 +697,7 @@ bool UPlayerInventorySlot::IsAnyPopUpActive() const
 
 void UPlayerInventorySlot::OpenInventoryWindow() const
 {
-	if(CurrentItemData->ItemSlot != EItemSlot::None)
+	if(CurrentItemData->EquipmentSlot != EItemSlot::None)
 	{
 		CachedPlayerEquipment->ServerTransferItemFromInventory(CurrentItemData, new FItemData(),
 			CachedPlayerInventory, EInputMethodType::RightClick);
