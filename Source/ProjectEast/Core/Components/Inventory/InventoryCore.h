@@ -98,6 +98,8 @@ public:
 
 	void AddViewer(APlayerState* PlayerState, UInventoryCore* Inventory);
 	void RemoveViewer(APlayerState* PlayerState, UInventoryCore* Inventory);
+	void RemoveItemFromInventoryArray(FItemData* ItemData);
+	void RemoveWeightFromInventory(float Weight);
 
 
 	void MulticastSetCurrentWeight(float CurrentWeight);
@@ -145,6 +147,7 @@ public:
 	TTuple<TArray<FItemData*>, int32> GetInventoryAndSize(EInventoryPanels Panel);
 	void SwitchedActivePanel(EInventoryPanels Panel);
 	EItemRemoveType GetItemRemoveType(FItemData* ItemData) const;
+	void AddGoldToOwner(float Gold);
 
 	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
 
@@ -168,6 +171,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsCheckOwnerGold;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsUseInventorySize = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString MessageNotEnoughGold = "Not enough gold.";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString MessageInventoryFull = "Inventory is full.";
@@ -188,7 +193,6 @@ protected:
 	int32 InventorySizeP3 = 30;
 	int32 InventorySizeP4 = 30;
 
-	bool bIsUseInventorySize = true;
 	bool bSortInitialItems;
 	bool bIsCheckRemoveType;
 
@@ -196,7 +200,6 @@ protected:
 	void BuildInventory(EInventoryPanels Panel);
 	void BuildInitialInventory();
 	void SortInventoryByPanel(ESortMethod Method, EInventoryPanels Panel);
-	void RemoveItemFromInventoryArray(FItemData* ItemData);
 	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 Index);
 	void AddToStackInInventory(FItemData* ItemData, int32 Index);
 	void ApplyChangesToInventoryArray(EInventoryPanels Panel, TArray<FItemData*> Inventory);
@@ -209,9 +212,7 @@ protected:
 	virtual void SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem);
 	bool HasEnoughGold(FItemData* ItemData) const;
 	void RemoveGoldFromOwner(float Gold);
-	void AddGoldToOwner(float Gold);
 	void AddWeightToInventory(float Weight);
-	void RemoveWeightFromInventory(float Weight);
 	bool IsInventoryOverweight() const;
 	TTuple<bool, int> GetEmptyInventorySlot(FItemData* ItemData);
 	FItemData* GetItemBySlot(EInventoryPanels Panel, uint32 SlitIndex);

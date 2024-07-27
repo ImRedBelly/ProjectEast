@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeAllItems);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemLooted);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemUsed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemUsed, FItemData, ItemData);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -74,14 +74,14 @@ private:
 	void ServerModifyItemDurability(FItemData* ItemData, uint32 Amount, AActor* OwningPlayer);
 
 	void ClientItemLooted(FItemData* ItemData);
-	void ClientTakeItemReturnValue(bool Success, FText FailureMessage, bool RemoveInteraction);
+	void ClientTakeItemReturnValue(bool Success, FText FailureMessage, bool RemoveInteraction) const;
 
 	void OpenVendorWidget();
 	void CloseVendorWidget();
 	void OpenStorageWidget();
 	void CloseStorageWidget();
 
-	void TakeItem();
+	void TakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
 	void TakeAllItems();
 	void DropItemOnTheGround();
 	void SpawnLootBagNearThePlayer();
@@ -89,7 +89,7 @@ private:
 	void IsCollidingWithLootBag();
 
 	virtual TTuple<bool, FText> TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
-	EInputMethodType InputMethod, UInventoryCore* Inventory, AActor* OwningPlayer) override;
+	EInputMethodType InputMethod, UInventoryCore* Sender, AActor* OwningPlayer) override;
 	virtual void SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
 	FItemData* StackableLeft, EInputMethodType Method, EInputMethodType Initiator,
 	EInputMethodType Destination, AActor* OwningPlayer) override;

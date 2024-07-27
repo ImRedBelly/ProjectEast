@@ -45,6 +45,7 @@ public:
 	static void PlaySoundOnOpeningWidget();
 	static void PlaySoundOnItemDropped();
 	static void PlaySoundOnTabSwitched();
+	static void PlaySoundOnItemPickedUp();
 
 	static UDataTable* GamepadIconsTable;
 

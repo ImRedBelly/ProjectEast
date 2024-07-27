@@ -482,3 +482,7 @@ void InventoryUtility::PlaySoundOnItemDropped()
 void InventoryUtility::PlaySoundOnTabSwitched()
 {
 }
+
+void InventoryUtility::PlaySoundOnItemPickedUp()
+{
+}

@@ -12,6 +12,25 @@ void UPlayerEquipment::RemoveItemFromEquipmentArray(FItemData* ItemData)
 {
 }
 
+void UPlayerEquipment::AddToStackInEquipment(FItemData* ItemData, FItemData* Element)
+{
+}
+
+bool UPlayerEquipment::TryToAddToPartialStack(FItemData* ItemData)
+{
+	TArray<FItemData*> ItemsData;
+	EquipmentData.GenerateValueArray(ItemsData);
+	auto PartialStackData = InventoryUtility::HasPartialStack(ItemsData, ItemData);
+
+	if(PartialStackData.Get<0>())
+	{
+		AddToStackInEquipment(ItemData, ItemsData[PartialStackData.Get<1>()]);
+		return true;
+	}
+	
+	return false;
+}
+
 void UPlayerEquipment::DetachItemFromEquipment(FItemData* ItemData)
 {
 }

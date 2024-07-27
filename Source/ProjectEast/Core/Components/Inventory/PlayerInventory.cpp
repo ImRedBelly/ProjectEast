@@ -1,8 +1,9 @@
 ﻿#include "PlayerInventory.h"
+#include "PlayerEquipment.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
-#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 
 
 void UPlayerInventory::BeginPlay()
@@ -32,6 +33,7 @@ void UPlayerInventory::ClientInitializeInventory(APlayerController* PlayerContro
 
 void UPlayerInventory::ServerTakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer)
 {
+	TakeItem(ItemData, Sender, OwningPlayer);
 }
 
 void UPlayerInventory::ServerTakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer)
@@ -62,8 +64,16 @@ void UPlayerInventory::ClientItemLooted(FItemData* ItemData)
 {
 }
 
-void UPlayerInventory::ClientTakeItemReturnValue(bool Success, FText FailureMessage, bool RemoveInteraction)
+void UPlayerInventory::ClientTakeItemReturnValue(bool Success, FText FailureMessage, bool RemoveInteraction) const
 {
+	if (Success)
+	{
+		InventoryUtility::PlaySoundOnItemPickedUp();
+		if (RemoveInteraction)
+			CashedPlayerController->RemoveInteractionFromObject(GetCurrentInteractable());
+	}
+	else
+		CashedPlayerController->DisplayMessageNotify(FailureMessage.ToString());
 }
 
 void UPlayerInventory::OpenInventoryWidget()
@@ -76,7 +86,7 @@ void UPlayerInventory::OpenInventoryWidget()
 	}
 
 	CashedInventoryWindow = CreateWidget<UInventoryWindow>(CashedPlayerController, DefaultInventoryWindow);
-	if(!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
+	if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 		CashedInventoryWindow->AddToViewport(1);
 	else
 		CashedInventoryWindow->AddToPlayerScreen(1);
@@ -96,13 +106,13 @@ void UPlayerInventory::CloseInventoryWidget()
 	CashedPlayerController->SetActiveTab(EWidgetType::None);
 	CashedPlayerController->StopPlayerCapture();
 
-	if(IsValid(CashedInventoryWindow))
+	if (IsValid(CashedInventoryWindow))
 		CashedInventoryWindow->RemoveFromParent();
 
-	
+
 	FInputModeGameOnly InputMode;
 	CashedPlayerController->SetInputMode(InputMode);
-	
+
 	CashedPlayerController->SetShowMouseCursor(false);
 	CashedPlayerController->SetIgnoreMoveInput(false);
 	CashedPlayerController->SetIgnoreLookInput(false);
@@ -145,17 +155,17 @@ void UPlayerInventory::InputCloseWidget() const
 
 void UPlayerInventory::InputInventory()
 {
-	if(bIsLootBarOpen)
+	if (bIsLootBarOpen)
 		CashedPlayerController->EndInteractionWithObject(GetCurrentInteractable());
 
-	if(CashedPlayerController->GetActiveWidget() == EWidgetType::Inventory)
+	if (CashedPlayerController->GetActiveWidget() == EWidgetType::Inventory)
 		CloseInventoryWidget();
-	
+
 	else
 	{
-		if(bIsInteractableActorWidgetOpen)
+		if (bIsInteractableActorWidgetOpen)
 			CashedPlayerController->EndInteractionWithObject(GetCurrentInteractable());
-		
+
 		CashedPlayerController->SwitchWidgetTo(EWidgetType::Inventory);
 	}
 }
@@ -224,8 +234,22 @@ void UPlayerInventory::CloseStorageWidget()
 {
 }
 
-void UPlayerInventory::TakeItem()
+void UPlayerInventory::TakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer)
 {
+	if (InventoryUtility::IsItemClassValid(ItemData) && IsValid(Sender))
+	{
+		FItemData* LocalItemData = ItemData;
+		auto TransferData = TransferItemFromInventory(LocalItemData, nullptr, EInputMethodType::RightClick, Sender,
+		                                              OwningPlayer);
+
+		auto InventoryData = Sender->GetInventoryAndSize(EInventoryPanels::P1);
+		
+		ClientTakeItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>(),
+		                          !InventoryData.Get<0>().IsValidIndex(0));
+
+		if (TransferData.Get<0>())
+			ClientItemLooted(LocalItemData);
+	}
 }
 
 void UPlayerInventory::TakeAllItems()
@@ -249,10 +273,66 @@ void UPlayerInventory::IsCollidingWithLootBag()
 }
 
 TTuple<bool, FText> UPlayerInventory::TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
-                                                                EInputMethodType InputMethod, UInventoryCore* Inventory,
+                                                                EInputMethodType InputMethod, UInventoryCore* Sender,
                                                                 AActor* OwningPlayer)
 {
-	return Super::TransferItemFromInventory(ItemData, IsSlotData, InputMethod, Inventory, OwningPlayer);
+	//TODO проверь этот метод потом, ты его писал очень уставший может что сделал не так, не ленись!
+	FItemData* LocalItemData = ItemData;
+	if (InventoryUtility::IsItemClassValid(ItemData) && IsValid(Sender))
+	{
+		if (!AttemptUsingTransferredItem(LocalItemData, Sender))
+		{
+			if (Sender->CheckOwnerGold())
+				if (!HasEnoughGold(ItemData))
+					return MakeTuple(false, FText::FromString(MessageNotEnoughGold));
+
+
+			auto PlayerEquipment = InventoryUtility::GetPlayerEquipment(OwningPlayer);
+			if (!IsValid(PlayerEquipment) || (IsValid(PlayerEquipment) && !PlayerEquipment->
+				TryToAddToPartialStack(ItemData)))
+			{
+				auto InventoryData = GetInventoryAndSize(InventoryUtility::GetInventoryPanelFromItem(ItemData));
+				auto PartialStackData = InventoryUtility::HasPartialStack(InventoryData.Get<0>(), ItemData);
+				if (PartialStackData.Get<0>())
+					AddToStackInInventory(ItemData, PartialStackData.Get<1>());
+				else
+				{
+					switch (InputMethod)
+					{
+					case EInputMethodType::RightClick:
+						{
+							auto EmptySlot = GetEmptyInventorySlot(ItemData);
+							if (EmptySlot.Get<0>())
+								AddItemToInventoryArray(ItemData, EmptySlot.Get<1>());
+							else
+								return MakeTuple(false, FText::FromString(MessageInventoryFull));
+						}
+						break;
+					case EInputMethodType::DragAndDrop:
+						AddItemToInventoryArray(ItemData, IsSlotData->Index);
+						break;
+					}
+				}
+			}
+
+			AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
+
+			if (Sender->CheckOwnerGold() && CheckOwnerGold())
+			{
+				auto LocalValue = InventoryUtility::CalculateStackedItemValue(LocalItemData);
+				RemoveGoldFromOwner(LocalValue);
+				Sender->AddGoldToOwner(LocalValue);
+			}
+
+			Sender->RemoveItemFromInventoryArray(LocalItemData);
+			if (IsValid(Sender))
+				Sender->RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(LocalItemData));
+
+			return MakeTuple(true, FText::FromString(""));
+		}
+		return MakeTuple(true, FText::FromString(""));
+	}
+	return MakeTuple(false, FText::FromString(""));
 }
 
 void UPlayerInventory::SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
@@ -273,7 +353,30 @@ void UPlayerInventory::ConfirmationPopupAccepted(UInventoryCore* Sender, FItemDa
 
 bool UPlayerInventory::AttemptUsingTransferredItem(FItemData* ItemData, UInventoryCore* Sender)
 {
-	return true;
+	if (InventoryUtility::IsItemClassValid(ItemData))
+	{
+		switch (ItemData->Class.GetDefaultObject()->UseType)
+		{
+		case EItemUseType::Currency:
+			{
+				AddGoldToOwner(InventoryUtility::CalculateStackedItemValue(ItemData));
+				Sender->RemoveItemFromInventoryArray(ItemData);
+				if(OnItemUsed.IsBound())
+					OnItemUsed.Broadcast(*ItemData);
+			}
+			return true;
+		case EItemUseType::CraftingRecipe:
+			{
+				Sender->RemoveItemFromInventoryArray(ItemData);
+				if(OnItemUsed.IsBound())
+					OnItemUsed.Broadcast(*ItemData);
+			}
+			return true;
+		default:
+			return false;
+		}
+	}
+	return false;
 }
 
 void UPlayerInventory::AddItemToInventoryArray(FItemData* ItemData, int32 Index)

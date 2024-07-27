@@ -279,12 +279,13 @@ void UInventoryCore::BuildInitialInventory()
 			for (int a = 0; a < Names.Num(); ++a)
 			{
 				CurrentItemData = DataTableItem.FindRow<FItemData>(Names[a], TEXT(""));
+				FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);
 		
-				auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemData);
+				auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
 				if (DataEmptySlot.Get<0>())
 				{
-					AddItemToInventoryArray(CurrentItemData, DataEmptySlot.Get<1>());
-					AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(CurrentItemData));
+					AddItemToInventoryArray(CurrentItemDataBase, DataEmptySlot.Get<1>());
+					AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(CurrentItemDataBase));
 				}
 			}
 		}
@@ -296,9 +297,8 @@ void UInventoryCore::BuildInitialInventory()
 		auto RowName = SingleDTItem[i].TableAndRow.RowName;
 
 		CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
-
 		
-		FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);// new FItemData();
+		FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);
 		CurrentItemDataBase->Quantity = FMathf::Clamp(SingleDTItem[i].Quantity, 1, SingleDTItem[i].Quantity);
 
 		auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
@@ -390,22 +390,17 @@ void UInventoryCore::BuildInventory(EInventoryPanels Panel)
 
 	TArray<FItemData*> LocalInventory = Data.Get<0>();
 	int32 LocalSize = Data.Get<1>();
-	
 
 	if (bIsUseInventorySize)
 	{
 		for (int i = 0; i < LocalSize; ++i)
+		{
 			if(!LocalInventory.IsValidIndex(i))
 				LocalInventory.Add(new FItemData());
-
-		for (int i = 0; i < LocalInventory.Num(); ++i)
-		{
-			FItemData* ItemData = LocalInventory[i];
-			ItemData->Index = i;
-			ItemData->bIsEquipped = false;
-			LocalInventory[i] = ItemData;
+			LocalInventory[i]->Index = i;
+			LocalInventory[i]->bIsEquipped = false;
 		}
-		
+				
 		ApplyChangesToInventoryArray(Panel, LocalInventory);
 	}
 	else

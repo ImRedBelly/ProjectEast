@@ -247,7 +247,7 @@ void UInteractableComponent::OnCheckForInteractionWithAssociate(AActor* Interact
 					UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
 						Key->GetComponentByClass(StaticClass()));
 					if (IsValid(InteractableComponent))
-						InteractableComponent->RemoveInteraction();
+						InteractableComponent->OnRemoveInteraction();
 				}
 
 				InteractableResponse = EInteractionResponse::OnlyOnce;
@@ -261,7 +261,7 @@ void UInteractableComponent::OnCheckForInteractionWithAssociate(AActor* Interact
 						UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
 							Key->GetComponentByClass(StaticClass()));
 						if (IsValid(InteractableComponent))
-							InteractableComponent->RemoveInteraction();
+							InteractableComponent->OnRemoveInteraction();
 					}
 				}
 
@@ -341,6 +341,7 @@ void UInteractableComponent::OnClientRemoveInteraction()
 
 	bIsInteractable = false;
 	InteractableArea = nullptr;
+	
 	if (bDestroyAfterPickup)
 		GetOwner()->Destroy();
 }
