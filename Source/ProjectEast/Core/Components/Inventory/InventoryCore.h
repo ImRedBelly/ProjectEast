@@ -150,6 +150,7 @@ public:
 	void AddGoldToOwner(float Gold);
 
 	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
+	bool IsRefreshOnClosingWidget() const { return bIsRefreshOnClosingWidget; }
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -170,6 +171,8 @@ protected:
 	float MaxInventoryWeight = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsCheckOwnerGold;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsRefreshOnClosingWidget;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsUseInventorySize = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

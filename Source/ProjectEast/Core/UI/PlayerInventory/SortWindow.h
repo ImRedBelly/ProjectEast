@@ -16,6 +16,7 @@ class PROJECTEAST_API USortWindow : public UUserWidget
 
 public:
 	FOnEndSorting OnEndSorting;
+	void ToggleSortingWindow() const;
 
 protected:
 	UPROPERTY(meta=(BindWidget))
@@ -39,7 +40,6 @@ private:
 	UFUNCTION()
 	void OnSort(ESortMethod SortMethod);
 
-	void ToggleSortingWindow() const;
 	bool IsUsingGamepad() const;
 
 	AMainPlayerController* CachedPlayerController;

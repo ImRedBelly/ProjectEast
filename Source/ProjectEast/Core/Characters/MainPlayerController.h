@@ -13,6 +13,7 @@ class UInputMappingContext;
 class UInteractionComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGamepadToggled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedTab, EWidgetType, WidgetType);
 
 UCLASS()
 class PROJECTEAST_API AMainPlayerController : public APlayerController, public IObjectInteraction, public IWidgetManager, public IGamepadControls
@@ -41,6 +42,7 @@ public:
 	UMainWindow* GetMainWindow() const;
 
 	FOnGamepadToggled OnGamepadToggled;
+	FOnSwitchedTab OnSwitchedTab;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

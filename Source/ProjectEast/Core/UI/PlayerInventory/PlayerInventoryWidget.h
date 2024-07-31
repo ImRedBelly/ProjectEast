@@ -17,11 +17,14 @@ class PROJECTEAST_API UPlayerInventoryWidget : public UUserWidget
 public:
 	void AssignCurrentlyFocusedSlot(UPlayerInventorySlot* PlayerInventorySlot);
 	void ScrollToSlot(UPlayerInventorySlot* PlayerInventorySlot) const;
+	void SwitchToNextInventoryPanel(bool ToTheRight);
+	void SetFocusToSlot(uint32 SlotIndex) const;
+	USortWindow* GetSortWindow() const { return SortWindow; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UPlayerInventorySlot> DefaultPlayerInventorySlot;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	UBorder* BackgroundBorder;
 
@@ -63,10 +66,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FVector2D DraggedImageSize;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* PanelName;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString P1Title = "ARMOR & WEAPONS";
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -86,19 +89,19 @@ protected:
 
 	void BindEventDispatchers();
 	void UnbindEventDispatchers();
-	
+
 	UFUNCTION()
 	void RefreshInventory(EInventoryPanels Panel);
-	
+
 	UFUNCTION()
 	void HighlightSlot(uint32 SlotIndex);
-	
+
 	UFUNCTION()
 	void SwitchInventoryPanel(EInventoryPanels NewPanel);
-	
+
 	UFUNCTION()
 	void OnSortingFinished();
-	
+
 	void SetActivePanel();
 	void SetReceiverInventory();
 	void SetInitialInputDelayForSlot() const;
@@ -107,11 +110,9 @@ protected:
 	void CreateInventoryP2();
 	void CreateInventoryP3();
 	void CreateInventoryP4();
-	void SetFocusToSlot(uint32 SlotIndex) const;
 	void BuildInventorySlots(TArray<FItemData*> ItemData, int32 Size, UUniformGridPanel* GridPanel);
 	EInventoryPanels GetActivePanel() const;
 	UUniformGridPanel* GetUniformGridFromPanel(EInventoryPanels Panel) const;
-	void SwitchToNextInventoryPanel(bool ToTheRight);
 	void SetPanelTitle(EInventoryPanels Panel);
 	void DisplaySampleSlots(int32 IndexSlot);
 	bool IsUsingGamepad() const;
@@ -121,7 +122,7 @@ private:
 	UInventoryCore* CachedReceiverInventory;
 	UPlayerInventory* CachedPlayerInventory;
 	UPlayerEquipment* CachedPlayerEquipment;
-	
+
 	AMainPlayerController* CachedPlayerController;
 
 	uint32 ColumnPosition;
@@ -130,6 +131,6 @@ private:
 	uint32 FocusedSlot;
 	uint32 AAA;
 	uint32 SampleSlotsToDisplay = 30;
-	
+
 	EInventoryPanels DefaultPanel = EInventoryPanels::P1;
 };

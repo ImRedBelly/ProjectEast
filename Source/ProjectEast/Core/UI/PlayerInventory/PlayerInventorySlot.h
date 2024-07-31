@@ -89,7 +89,7 @@ protected:
 	void ShowItemComparison() const;
 	void HideItemComparison() const;
 
-	void SetToolTipPositionAndAlignment();
+	void SetToolTipPositionAndAlignment() const;
 	void RefreshTooltipGamepad();
 	void RefreshToolTip();
 	void DropOnTheGround() const;
@@ -110,6 +110,7 @@ protected:
 private:
 	UFUNCTION()
 	void OnHovered();
+	
 	UFUNCTION()
 	void OnUnhovered();
 	
@@ -128,12 +129,7 @@ private:
 	FKey KeyInput;
 
 	int32 SlotIndex;
-
-	float HorizontalPosition;
-	float VerticalPosition;
-	float HorizontalAlignment;
-	float VerticalAlignment;
-
+	
 	bool bIsInitialInputDelay;
 	FTimerHandle DelayTimer;
 	

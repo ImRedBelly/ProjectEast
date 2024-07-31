@@ -108,7 +108,7 @@ void UPlayerInventorySlot::NativeOnRemovedFromFocusPath(const FFocusEvent& InFoc
 	if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
 		GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::None);
 
-	SetToolTip(ButtonItem);
+	ButtonItem->SetToolTip(nullptr);
 	BorderObject->SetBrushColor(BorderUnHovered);
 	HideItemComparison();
 	if (IsValid(CachedToolTip))
@@ -447,7 +447,7 @@ void UPlayerInventorySlot::HideItemComparison() const
 		CachedToolTip->HideComparisonToolTip();
 }
 
-void UPlayerInventorySlot::SetToolTipPositionAndAlignment()
+void UPlayerInventorySlot::SetToolTipPositionAndAlignment() const
 {
 	FVector2D HorizontalFirstPixelPosition;
 	FVector2D HorizontalFirstViewportPosition;
@@ -464,8 +464,8 @@ void UPlayerInventorySlot::SetToolTipPositionAndAlignment()
 
 	bool HorizontalValue = UKismetMathLibrary::InRange_FloatFloat(HorizontalSecondPixelPosition.X, 0.0f, HorizontalMaxValue, true, true);
 
-	HorizontalPosition = HorizontalValue ? HorizontalSecondViewportPosition.X : HorizontalFirstViewportPosition.X;
-	HorizontalAlignment = HorizontalValue ? 0.0f : 1.0f;
+	float HorizontalPosition = HorizontalValue ? HorizontalSecondViewportPosition.X : HorizontalFirstViewportPosition.X;
+	float HorizontalAlignment = HorizontalValue ? 0.0f : 1.0f;
 	
 
 	FVector2D VerticalFirstPixelPosition;
@@ -483,8 +483,8 @@ void UPlayerInventorySlot::SetToolTipPositionAndAlignment()
 
 	bool VerticalValue = UKismetMathLibrary::InRange_FloatFloat(VerticalSecondPixelPosition.Y, 0.0f, VerticalMaxValue, true, true);
 
-	VerticalPosition = VerticalValue ? VerticalSecondViewportPosition.Y : VerticalFirstViewportPosition.Y;
-	VerticalAlignment = VerticalValue ? 0.0f : 1.0f;
+	float VerticalPosition = VerticalValue ? VerticalSecondViewportPosition.Y : VerticalFirstViewportPosition.Y;
+	float VerticalAlignment = VerticalValue ? 0.0f : 1.0f;
 
 	 CachedToolTip->SetPositionInViewport(FVector2D(HorizontalPosition, VerticalPosition), false);
 	 CachedToolTip->SetAlignmentInViewport(FVector2D(HorizontalAlignment, VerticalAlignment));
@@ -613,9 +613,7 @@ void UPlayerInventorySlot::SetItemQuantity() const
 
 
 void UPlayerInventorySlot::OverwriteSlot(FItemData* ItemData)
-{
-	UE_LOG(LogTemp, Warning, TEXT("CurrentItemData: %s"), *FString::FromInt(ItemData->Index));
-	
+{	
 	CurrentItemData = ItemData;
 	SetButtonStyle(CurrentItemData);
 	SetItemQuantity();
