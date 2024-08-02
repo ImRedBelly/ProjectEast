@@ -5,25 +5,33 @@
 #include "Components/ActorComponent.h"
 #include "PlayerEquipment.generated.h"
 
-
 class UPlayerInventory;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddedToEquipment, FItemData, ItemData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemovedFromEquipment, FItemData, ItemData);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTEAST_API UPlayerEquipment : public UActorComponent
 {
 	GENERATED_BODY()
-	
+
 public:
-	void ServerTransferItemFromInventory(FItemData* ItemData, FItemData* InSlotData, UPlayerInventory* PlayerInventory, EInputMethodType RightClick);
+	FOnAddedToEquipment OnAddedToEquipment;
+	FOnRemovedFromEquipment OnRemovedFromEquipment;
+
+	UPROPERTY(EditAnywhere)
+	bool bIsEnableOffHand;
+
+	void ServerTransferItemFromInventory(FItemData* ItemData, FItemData* InSlotData, UInventoryCore* PlayerInventory,EInputMethodType RightClick);
+	void ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* CurrentItemData);
 	void RemoveItemFromEquipmentArray(FItemData* ItemData);
 	void AddToStackInEquipment(FItemData* ItemData, FItemData* Element);
 	bool TryToAddToPartialStack(FItemData* ItemData);
 	void DetachItemFromEquipment(FItemData* ItemData);
 	bool CanItemBeEquipped(FItemData* ItemData);
 	TTuple<bool, FItemData*> GetItemByEquipmentSlot(EItemSlot Slot) const;
+	TMap<EItemSlot, FItemData*> GetEquipmentData() { return EquipmentData; }
 
-	bool bIsEnableOffHand;
-	
 private:
 	TMap<EItemSlot, FItemData*> EquipmentData;
 };

@@ -62,19 +62,13 @@ struct FRandomizedLootTable
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRefreshInventory, EInventoryPanels, Panel);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemovedFromInventoryArray, FItemData&, ItemData);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddedToInventoryArray, FItemData&, ItemData);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHighlightInventorySlot, uint32, Index);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedActivePanel, EInventoryPanels, Panel);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedOwnerGold);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedCurrentWeight);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedMaxWeight);
 
 

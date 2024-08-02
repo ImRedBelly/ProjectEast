@@ -4,7 +4,11 @@
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UPlayerEquipment::ServerTransferItemFromInventory(FItemData* ItemData, FItemData* InSlotData,
-                                                       UPlayerInventory* PlayerInventory, EInputMethodType RightClick)
+                                                       UInventoryCore* PlayerInventory, EInputMethodType RightClick)
+{
+}
+
+void UPlayerEquipment::ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* CurrentItemData)
 {
 }
 

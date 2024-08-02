@@ -63,7 +63,6 @@ void UStorageSlot::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnRemovedFromFocusPath(InFocusEvent);
 	OnItemUnhovered();
-
 }
 
 void UStorageSlot::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -111,7 +110,7 @@ void UStorageSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPoin
 		Operation->ItemData = CurrentItemData;
 		Operation->Inventory = ActorInventory;
 		Operation->ItemDataDragAndDropPanel = DragAndDropPanel;
-		Operation->DraggerFrom = EItemDestination::InventorySlot;
+		Operation->DraggerFrom = EItemDestination::StorageSlot;
 
 		OutOperation = Operation;
 	}
@@ -152,7 +151,7 @@ bool UStorageSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDrop
 						InventoryUtility::AreItemsStackable(CurrentItemData, Operation->ItemData))
 					{
 						Operation->ShowIconWrongSlot();
-						BorderObject->SetBrushColor(FLinearColor(0, 737911, 0.0f, 0.028426f));
+						BorderObject->SetBrushColor(FLinearColor(0.737911, 0.0f, 0.028426f));
 						return true;
 					}
 					else
@@ -346,14 +345,14 @@ void UStorageSlot::RefreshToolTip()
 	{
 		if (HasUserFocusedDescendants(GetOwningPlayer()))
 		{
-			SetToolTip(ButtonItem);
+			ButtonItem->SetToolTip(nullptr);
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
 				CachedToolTip->RemoveFromParent();
 
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
-			CachedToolTip->AddToViewport();
+			CachedToolTip->AddToViewport(1);
 			SetToolTipPositionAndAlignment();
 		}
 	}
@@ -361,15 +360,14 @@ void UStorageSlot::RefreshToolTip()
 	{
 		if (IsHovered())
 		{
-			SetToolTip(ButtonItem);
+			ButtonItem->SetToolTip(nullptr);
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
 				CachedToolTip->RemoveFromParent();
 
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
-			CachedToolTip->AddToViewport();
-			SetToolTip(ButtonItem);
+			ButtonItem->SetToolTip(CachedToolTip);
 		}
 	}
 }

@@ -21,6 +21,7 @@ public:
 	static bool AreItemsTheSame(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool AreItemsStackable(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool AreItemSlotsEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
+	static bool AreWeaponTypesEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool IsStackableAndHaveStacks(const FItemData* ItemData, uint32 Quantity);
 	static TTuple<bool, uint32> HasPartialStack(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);

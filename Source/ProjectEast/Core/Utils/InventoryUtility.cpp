@@ -129,6 +129,13 @@ bool InventoryUtility::AreItemSlotsEqual(const FItemData* ItemDataFirst, const F
 	return ItemDataFirst->EquipmentSlot == ItemDataSecond->EquipmentSlot || (ResultFirst && ResultSecond);
 }
 
+bool InventoryUtility::AreWeaponTypesEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
+{
+	if(IsItemClassValid(ItemDataSecond))
+		return ItemDataFirst->Class.GetDefaultObject()->WeaponType == ItemDataSecond->Class.GetDefaultObject()->WeaponType;
+	return false;
+}
+
 bool InventoryUtility::CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
 {
 	if (IsItemClassValid(ItemDataSecond))

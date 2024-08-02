@@ -509,14 +509,14 @@ void UPlayerInventorySlot::RefreshToolTip()
 	{
 		if (HasUserFocusedDescendants(GetOwningPlayer()))
 		{
-			SetToolTip(ButtonItem);
+			ButtonItem->SetToolTip(nullptr);
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
 				CachedToolTip->RemoveFromParent();
 			
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
-			CachedToolTip->AddToViewport();
+			CachedToolTip->AddToViewport(1);
 			SetToolTipPositionAndAlignment();
 		}
 	}
@@ -524,15 +524,14 @@ void UPlayerInventorySlot::RefreshToolTip()
 	{
 		if (IsHovered())
 		{
-			SetToolTip(ButtonItem);
+			ButtonItem->SetToolTip(nullptr);
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
 				CachedToolTip->RemoveFromParent();
 			
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
-			CachedToolTip->AddToViewport();
-			SetToolTip(ButtonItem);
+			ButtonItem->SetToolTip(CachedToolTip);
 		}
 	}
 }
