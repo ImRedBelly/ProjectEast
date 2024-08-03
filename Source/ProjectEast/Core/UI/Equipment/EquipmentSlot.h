@@ -16,6 +16,8 @@ public:
 	void OverwriteSlot(UEquipmentPanel* EquipmentPanel, FItemData* ItemData);
 	
 protected:
+	UPROPERTY(EditAnywhere)
+	EItemSlot EquipmentSLot; 
 	UPROPERTY(meta=(BindWidget))
 	UImage* BorderImage;
 	UPROPERTY(meta=(BindWidget))
@@ -33,7 +35,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	FText LabelCharacterText;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	FSlateBrush EmptySlotStyle;
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor BorderHovered;
@@ -91,5 +93,4 @@ private:
 
 	FItemData* CurrentItemData;
 
-	EItemSlot EquipmentSLot; 
 };

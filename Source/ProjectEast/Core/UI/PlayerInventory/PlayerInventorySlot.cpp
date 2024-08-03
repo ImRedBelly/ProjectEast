@@ -198,7 +198,7 @@ bool UPlayerInventorySlot::NativeOnDragOver(const FGeometry& InGeometry, const F
 				{
 					if (InventoryUtility::AreItemsTheSame(CurrentItemData, DraggedData))
 					{
-						if (CachedPlayerEquipment->CanItemBeEquipped(CurrentItemData))
+						if (CachedPlayerEquipment->CanItemBeEquipped(CurrentItemData).Get<0>())
 							return ShowSwapSlotAndGreenBorderColor(Operation);
 						return ShowDropSlotAndGreenBorderColor(Operation);
 					}
@@ -208,7 +208,7 @@ bool UPlayerInventorySlot::NativeOnDragOver(const FGeometry& InGeometry, const F
 						{
 							if (InventoryUtility::CanWeaponsBeSwapped(CurrentItemData, Operation->ItemData))
 							{
-								if (CachedPlayerEquipment->CanItemBeEquipped(CurrentItemData))
+								if (CachedPlayerEquipment->CanItemBeEquipped(CurrentItemData).Get<0>())
 									return ShowSwapSlotAndGreenBorderColor(Operation);
 							}
 		

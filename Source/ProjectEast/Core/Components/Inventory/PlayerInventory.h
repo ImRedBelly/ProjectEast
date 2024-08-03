@@ -3,13 +3,14 @@
 #include "CoreMinimal.h"
 #include "InventoryCore.h"
 #include "Components/ActorComponent.h"
-#include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
-#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
 #include "ProjectEast/Core/UI/PlayerInventory/PlayerInventoryWidget.h"
+#include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
+#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "PlayerInventory.generated.h"
 
 
+class UStorageWindow;
 class IInteractable;
 class AMainPlayerController;
 
@@ -31,13 +32,20 @@ public:
 	void ClientInitializeInventory(APlayerController* PlayerController);
 	void InputInteraction() const;
 	void ServerTakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer);
-	void OpenLootBarWidget();
-	void CloseLootBarWidget();
 	void InputCloseWidget();
 	void InputInventory();
 
+	void OpenLootBarWidget();
+	void CloseLootBarWidget();
+
 	void OpenInventoryWidget();
 	void CloseInventoryWidget();
+
+	void OpenStorageWidget();
+	void CloseStorageWidget();
+
+	void OpenVendorWidget();
+	void CloseVendorWidget();
 
 	void ServerTakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
 	void ServerDropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer);
@@ -57,6 +65,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UInventoryWindow> DefaultInventoryWindow;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UStorageWindow> DefaultStorageWindow;
 
 
 	
@@ -72,11 +82,6 @@ private:
 
 	void ClientItemLooted(FItemData* ItemData);
 	void ClientTakeItemReturnValue(bool Success, FText FailureMessage, bool RemoveInteraction) const;
-
-	void OpenVendorWidget();
-	void CloseVendorWidget();
-	void OpenStorageWidget();
-	void CloseStorageWidget();
 
 	void TakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
 	void TakeAllItems();
@@ -100,6 +105,7 @@ private:
 	
 	AMainPlayerController* CashedPlayerController;
 	UInventoryWindow* CashedInventoryWindow;
+	UStorageWindow* CashedStorageWindow;
 
 	bool bIsLootBarOpen;
 

@@ -122,6 +122,7 @@ bool UEquipmentSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 {
 	if (UItemDataDragDropOperation* DragOperation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
+		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "AAAA");
 		if (!InventoryUtility::AreItemSlotsEqual(DragOperation->ItemData, CurrentItemData))
 		{
 			if (CachedPlayerEquipment->bIsEnableOffHand)
@@ -142,12 +143,12 @@ bool UEquipmentSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 		case EItemDestination::EquipmentSlot:
 			{
 				if (InventoryUtility::IsItemClassValid(CurrentItemData))
+				{
 					if (InventoryUtility::AreWeaponTypesEqual(DragOperation->ItemData, CurrentItemData))
-						CachedPlayerEquipment->
-							ServerTransferItemFromEquipment(DragOperation->ItemData, CurrentItemData);
-					else
-						CachedPlayerEquipment->
-							ServerTransferItemFromEquipment(DragOperation->ItemData, CurrentItemData);
+						CachedPlayerEquipment->ServerTransferItemFromEquipment(DragOperation->ItemData, CurrentItemData);
+				}
+				else
+					CachedPlayerEquipment->ServerTransferItemFromEquipment(DragOperation->ItemData, CurrentItemData);
 			}
 		default: ;
 		}
@@ -168,7 +169,7 @@ bool UEquipmentSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 			if (InventoryUtility::CanWeaponsBeSwapped(Operation->ItemData, CurrentItemData))
 				return TryWeaponsSwapped(Operation);
 			return ReturnWrongSlot(Operation);
-		}
+		}	
 		return ReturnWrongSlot(Operation);
 	}
 	return true;
@@ -185,6 +186,8 @@ void UEquipmentSlot::EmptySlot() const
 
 void UEquipmentSlot::OnRightClick()
 {
+	if(InventoryUtility::IsItemClassValid(CurrentItemData))
+		CachedPlayerInventory->ServerTransferItemFromEquipment(CurrentItemData, nullptr, EInputMethodType::RightClick, CachedPlayerEquipment);
 }
 
 void UEquipmentSlot::RefreshToolTip()
@@ -395,7 +398,7 @@ void UEquipmentSlot::OnUnhovered()
 
 bool UEquipmentSlot::TryWeaponsSwapped(UItemDataDragDropOperation* Operation)
 {
-	if (CachedPlayerEquipment->CanItemBeEquipped(Operation->ItemData))
+	if (CachedPlayerEquipment->CanItemBeEquipped(Operation->ItemData).Get<0>())
 	{
 		Operation->ShowIconSwap();
 		BorderImage->SetBrushTintColor(FLinearColor(0.116971f, 0.48515f, 0.08022f));

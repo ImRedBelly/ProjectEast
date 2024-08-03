@@ -5,13 +5,13 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Components/TextBlock.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
 
 void UStorageSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-	SetButtonStyle(CurrentItemData);
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
 	
 	ButtonItem->OnClicked.AddDynamic(this, &UStorageSlot::OnItemClick);
@@ -316,6 +316,10 @@ void UStorageSlot::EmptySlot()
 void UStorageSlot::OverwriteSlot(FItemData* ItemData)
 {
 	CurrentItemData = ItemData;
+	if(CurrentItemData->Quantity > 0)
+		TextQuantity->SetText(FText::FromString(FString::FromInt(CurrentItemData->Quantity)));
+	else
+		TextQuantity->SetText(FText());
 	SetButtonStyle(CurrentItemData);
 	RefreshToolTip();
 }

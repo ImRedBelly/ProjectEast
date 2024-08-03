@@ -41,9 +41,11 @@ void AMainPlayerController::CloseActiveWidget()
 {
 	switch (ActiveWidget)
 	{
-	case EWidgetType::None:
 	case EWidgetType::Inventory:
 		PlayerInventory->CloseInventoryWidget();
+		break;
+	case EWidgetType::Storage:
+		PlayerInventory->CloseStorageWidget();
 		break;
 	default: ;
 	}
@@ -60,8 +62,22 @@ void AMainPlayerController::OpenNewWidget(EWidgetType WidgetType)
 	{
 	case EWidgetType::Inventory:
 		PlayerInventory->OpenInventoryWidget();
+		break;
+	case EWidgetType::Storage:
+		PlayerInventory->OpenStorageWidget();
+		break;
 	default: ;
 	}
+}
+
+void AMainPlayerController::SetActiveWidget(EWidgetType WidgetType)
+{
+	ActiveWidget = WidgetType;
+}
+
+EWidgetType AMainPlayerController::GetActiveWidget()
+{
+	return ActiveWidget;
 }
 
 void AMainPlayerController::SwitchWidgetTo(EWidgetType WidgetType)
@@ -114,8 +130,7 @@ void AMainPlayerController::StartInteractionWithObject(UInteractableComponent* I
 		if (IsValid(InteractableComponent->GetOwner()))
 		{
 			CachedObject = InteractableComponent->GetOwner();
-			UInventoryCore* InventoryCore = Cast<UInventoryCore>(
-				CachedObject->GetComponentByClass(UInventoryCore::StaticClass()));
+			UInventoryCore* InventoryCore = Cast<UInventoryCore>(CachedObject->GetComponentByClass(UInventoryCore::StaticClass()));
 			if (IsValid(InventoryCore) && InventoryCore->GetComponentClassCanReplicate())
 			{
 				PlayerInventory->ServerUpdateItems(CachedObject);

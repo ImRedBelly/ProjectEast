@@ -30,6 +30,8 @@ public:
 
 	virtual bool IsUsingGamepad() override;
 	virtual void OpenNewWidget(EWidgetType WidgetType) override;
+	virtual void SetActiveWidget(EWidgetType WidgetType) override;
+	virtual EWidgetType GetActiveWidget() override;
 	virtual void SwitchWidgetTo(EWidgetType WidgetType) override;
 	
 	virtual void InitializeInteractionWithObject(UInteractableComponent* InteractableComponent) override;

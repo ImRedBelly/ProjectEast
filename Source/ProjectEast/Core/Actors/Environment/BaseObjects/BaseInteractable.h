@@ -16,8 +16,7 @@ class PROJECTEAST_API ABaseInteractable : public AActor, public IInteractable
 
 public:
 	ABaseInteractable();
-
-
+	
 	virtual void Initialize() override;
 	virtual bool CanBeInteractedWith() override;
 

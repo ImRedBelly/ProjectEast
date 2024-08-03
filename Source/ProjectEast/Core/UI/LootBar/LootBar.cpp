@@ -137,7 +137,12 @@ void ULootBar::UpdateButtonIcons()
 
 void ULootBar::TakeItem()
 {
-	auto ItemData = OwnerInventory->GetInventoryAndSize(EInventoryPanels::P1).Get<0>()[FocusedIndex];
+	auto Inventory = OwnerInventory->GetInventoryAndSize(EInventoryPanels::P1).Get<0>();
+
+	if(FocusedIndex >= Inventory.Num())
+		FocusedIndex = 0;
+	auto ItemData = Inventory[FocusedIndex];
+	
 	if (InventoryUtility::IsItemClassValid(ItemData))
 		PlayerInventory->ServerTakeItem(ItemData, OwnerInventory, GetOwningPlayer());
 	if (IsValid(OwnerInventory))

@@ -8,6 +8,7 @@
 class UPlayerInventory;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddedToEquipment, FItemData, ItemData);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemovedFromEquipment, FItemData, ItemData);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -19,16 +20,23 @@ public:
 	FOnAddedToEquipment OnAddedToEquipment;
 	FOnRemovedFromEquipment OnRemovedFromEquipment;
 
+
 	UPROPERTY(EditAnywhere)
 	bool bIsEnableOffHand;
+	UPROPERTY(EditAnywhere)
+	bool bIsCheckRequiredLevel;
 
-	void ServerTransferItemFromInventory(FItemData* ItemData, FItemData* InSlotData, UInventoryCore* PlayerInventory,EInputMethodType RightClick);
+	virtual void BeginPlay() override;
+	void BuildEquipment();
+
+	void ServerTransferItemFromInventory(FItemData* ItemData, FItemData* InSlotData, UInventoryCore* PlayerInventory,
+	                                     EInputMethodType RightClick);
 	void ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* CurrentItemData);
 	void RemoveItemFromEquipmentArray(FItemData* ItemData);
 	void AddToStackInEquipment(FItemData* ItemData, FItemData* Element);
 	bool TryToAddToPartialStack(FItemData* ItemData);
 	void DetachItemFromEquipment(FItemData* ItemData);
-	bool CanItemBeEquipped(FItemData* ItemData);
+	TTuple<bool, FText> CanItemBeEquipped(FItemData* ItemData);
 	TTuple<bool, FItemData*> GetItemByEquipmentSlot(EItemSlot Slot) const;
 	TMap<EItemSlot, FItemData*> GetEquipmentData() { return EquipmentData; }
 

@@ -1,6 +1,5 @@
-﻿#include "EquipmentPanel.h"
-
-#include "EquipmentSlot.h"
+﻿#include "EquipmentSlot.h"
+#include "EquipmentPanel.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 

@@ -4,6 +4,7 @@
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
+#include "ProjectEast/Core/UI/Storage/StorageWindow.h"
 
 
 void UPlayerInventory::BeginPlay()
@@ -122,13 +123,9 @@ void UPlayerInventory::CloseInventoryWidget()
 void UPlayerInventory::InputCloseWidget()
 {
 	if (bIsInteractableActorWidgetOpen)
-	{
 		CashedPlayerController->EndInteractionWithObject(GetCurrentInteractable());
-	}
 	else
-	{
 		CashedPlayerController->CloseActiveWidget();
-	}
 }
 
 void UPlayerInventory::InputInteraction() const
@@ -143,8 +140,7 @@ void UPlayerInventory::InputInteraction() const
 		if (!bIsInteractableActorWidgetOpen)
 		{
 			if (IObjectInteraction* ObjectInteraction = Cast<IObjectInteraction>(CashedPlayerController))
-				ObjectInteraction->InitializeInteractionWithObject(
-					InventoryUtility::GetCurrentInteractableObject(CashedPlayerController));
+				ObjectInteraction->InitializeInteractionWithObject(InventoryUtility::GetCurrentInteractableObject(CashedPlayerController));
 		}
 	}
 }
@@ -228,10 +224,49 @@ void UPlayerInventory::CloseVendorWidget()
 
 void UPlayerInventory::OpenStorageWidget()
 {
+	InventoryUtility::PlaySoundOnOpeningWidget();
+	bIsInteractableActorWidgetOpen = true;
+	
+	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(CashedPlayerController))
+	{
+		WidgetManager->SetActiveWidget(EWidgetType::Storage);
+		WidgetManager->SetActiveTab(EWidgetType::Storage);
+		WidgetManager->StartPlayerCapture();
+	}
+	
+	CashedStorageWindow = CreateWidget<UStorageWindow>(CashedPlayerController, DefaultStorageWindow);
+	if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
+		CashedStorageWindow->AddToViewport(1);
+	else
+		CashedStorageWindow->AddToPlayerScreen(1);
+	FInputModeGameAndUI InputMode;
+	InputMode.SetWidgetToFocus(CashedStorageWindow->TakeWidget());
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	InputMode.SetHideCursorDuringCapture(true);
+	CashedPlayerController->SetInputMode(InputMode);
+	CashedPlayerController->SetShowMouseCursor(true);
+	CashedPlayerController->SetIgnoreMoveInput(true);
+	CashedPlayerController->SetIgnoreLookInput(true);
 }
 
 void UPlayerInventory::CloseStorageWidget()
 {
+	CashedPlayerController->SetActiveWidget(EWidgetType::None);
+	CashedPlayerController->SetActiveTab(EWidgetType::None);
+	CashedPlayerController->StopPlayerCapture();
+	bIsInteractableActorWidgetOpen = false;
+
+	if (IsValid(CashedStorageWindow))
+		CashedStorageWindow->RemoveFromParent();
+
+
+	FInputModeGameOnly InputMode;
+	CashedPlayerController->SetInputMode(InputMode);
+
+	CashedPlayerController->SetShowMouseCursor(false);
+	CashedPlayerController->SetIgnoreMoveInput(false);
+	CashedPlayerController->SetIgnoreLookInput(false);
+	ServerChangeDroppedIndex(0);
 }
 
 void UPlayerInventory::TakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer)
