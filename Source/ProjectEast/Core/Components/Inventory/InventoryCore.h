@@ -197,7 +197,7 @@ protected:
 	void BuildInventory(EInventoryPanels Panel);
 	void BuildInitialInventory();
 	void SortInventoryByPanel(ESortMethod Method, EInventoryPanels Panel);
-	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 Index);
+	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex);
 	void AddToStackInInventory(FItemData* ItemData, int32 Index);
 	void ApplyChangesToInventoryArray(EInventoryPanels Panel, TArray<FItemData*> Inventory);
 	virtual TTuple<bool, FText> TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,

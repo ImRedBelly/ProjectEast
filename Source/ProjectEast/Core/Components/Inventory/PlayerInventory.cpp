@@ -51,6 +51,7 @@ void UPlayerInventory::ServerSpawnInteractable(FItemData* ItemData, AActor* Owni
 
 void UPlayerInventory::ServerDropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer)
 {
+	DropItemOnTheGround(ItemData, Initiator, OwningPlayer);
 }
 
 void UPlayerInventory::ServerChangeDroppedIndex(uint32 DroppedIndex)
@@ -291,8 +292,14 @@ void UPlayerInventory::TakeAllItems()
 {
 }
 
-void UPlayerInventory::DropItemOnTheGround()
+void UPlayerInventory::DropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer)
 {
+	switch (Initiator)
+	{
+	case EItemDestination::InventorySlot:
+		RemoveItemFromInventoryArray(ItemData);
+		break;
+	}
 }
 
 void UPlayerInventory::SpawnLootBagNearThePlayer()

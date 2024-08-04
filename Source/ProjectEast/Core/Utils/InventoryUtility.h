@@ -31,7 +31,8 @@ public:
 	static TTuple<bool, uint32> FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);
 	static float CalculateStackedItemWeight(FItemData* ItemData);
 	static float CalculateStackedItemValue(FItemData* ItemData);
-	static void TakeAllItemsFromInventory(AActor* Interactor, UInventoryCore* ActorInventory);;
+	static void TakeAllItemsFromInventory(AActor* Interactor, UInventoryCore* ActorInventory);
+	static bool CanItemBeRemoved(FItemData* ItemData);
 	static TArray<FItemData*> GetAllItemsOfType(TArray<FItemData*> ItemData, EItemsType ItemsType);
 	static uint32 FindAmountOfEmptySlots(TArray<FItemData*> ItemData);
 

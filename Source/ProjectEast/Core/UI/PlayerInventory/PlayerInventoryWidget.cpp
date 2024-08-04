@@ -191,8 +191,7 @@ void UPlayerInventoryWidget::BuildInventorySlots(TArray<FItemData*> ItemData, in
 	uint32 CurrentColumn = 0;
 
 	GridPanel->ClearChildren();
-	
-	for (int i = 0; i < Size; ++i)
+		for (int i = 0; i < Size; ++i)
 	{
 		FItemData* CurrentItemData = new FItemData();
 		if (ItemData.IsValidIndex(i))

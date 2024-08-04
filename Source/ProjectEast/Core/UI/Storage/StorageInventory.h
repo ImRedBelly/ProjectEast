@@ -75,6 +75,4 @@ private:
 	uint32 RowLength = 5;
 	uint32 FocusedSlot;
 	uint32 SampleSlotsToDisplay = 30;
-
-	FVector2D DraggedImageSize;
 };

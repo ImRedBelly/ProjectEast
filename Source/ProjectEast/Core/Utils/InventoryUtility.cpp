@@ -231,6 +231,11 @@ void InventoryUtility::TakeAllItemsFromInventory(AActor* Interactor, UInventoryC
 	}
 }
 
+bool InventoryUtility::CanItemBeRemoved(FItemData* ItemData)
+{
+	return ItemData->Class.GetDefaultObject()->RemoveType != EItemRemoveType::CannotBeRemoved;
+}
+
 TArray<FItemData*> InventoryUtility::GetAllItemsOfType(TArray<FItemData*> ItemData, EItemsType ItemsType)
 {
 	TArray<FItemData*> ItemsDataByType;

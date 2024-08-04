@@ -85,7 +85,7 @@ private:
 
 	void TakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
 	void TakeAllItems();
-	void DropItemOnTheGround();
+	void DropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer);
 	void SpawnLootBagNearThePlayer();
 	void SpawnItemMeshNearThePlayer();
 	void IsCollidingWithLootBag();

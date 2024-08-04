@@ -9,7 +9,7 @@ void UStorageInventory::NativeConstruct()
 	Super::NativeConstruct();
 	PlayAnimation(AnimationConstruct, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f, false);
 
-	CachedPlayerInventory = Cast<AMainPlayerController>(GetOwningPlayer())->GetPlayerInventory();
+	CachedPlayerInventory = InventoryUtility::GetPlayerInventory(GetOwningPlayer());
 	SetOwnerInventory();
 	if (IsValid(CachedOwnerInventory))
 	{
@@ -146,7 +146,7 @@ void UStorageInventory::BuildInventorySlots(TArray<FItemData*> ItemData, int32 S
 
 
 		UStorageSlot* StorageSlot = CreateWidget<UStorageSlot>(GetOwningPlayer(), DefaultStorageSlot);
-		StorageSlot->InitializeSlot(CurrentItemData, this, CachedOwnerInventory, CachedPlayerInventory, i, DraggedImageSize);
+		StorageSlot->InitializeSlot(CurrentItemData, this, CachedOwnerInventory, CachedPlayerInventory, i);
 
 		UUniformGridSlot* CurrentSlot = GridPanel->AddChildToUniformGrid(StorageSlot, CurrentRow, CurrentColumn);
 		CurrentSlot->SetHorizontalAlignment(HAlign_Fill);

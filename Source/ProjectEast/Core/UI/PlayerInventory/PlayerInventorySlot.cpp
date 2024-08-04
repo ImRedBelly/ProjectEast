@@ -163,6 +163,7 @@ bool UPlayerInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 			return true;
 		}
 	}
+
 	switch (DragOperation->DraggerFrom)
 	{
 	case EItemDestination::InventorySlot:
@@ -363,7 +364,7 @@ void UPlayerInventorySlot::OnEndDraggedFromOtherInventory(UItemDataDragDropOpera
 	}
 	else
 	{
-		CachedPlayerInventory->ServerTransferItemFromInventory(CachedReceiverInventory, Operation->ItemData,
+		CachedPlayerInventory->ServerTransferItemFromInventory(CachedPlayerInventory, Operation->ItemData,
 		                                                       CurrentItemData,
 		                                                       EInputMethodType::DragAndDrop, Operation->Inventory,
 		                                                       GetOwningPlayer());
@@ -681,14 +682,14 @@ bool UPlayerInventorySlot::IsUsingGamepad() const
 {
 	if (IsValid(CachedPlayerController))
 		return CachedPlayerController->IsUsingGamepad();
-	
 	return false;
 }
 
 bool UPlayerInventorySlot::IsAnyPopUpActive() const
 {
 	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
-		return WidgetManager->GetActivePopup() != EWidgetType::None;
+		return WidgetManager->GetCurrentPopupType() != EWidgetType::None;
+
 	return false;
 }
 

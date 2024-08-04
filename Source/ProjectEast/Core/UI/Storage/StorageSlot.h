@@ -15,7 +15,7 @@ class PROJECTEAST_API UStorageSlot : public UUserWidget
 
 public:
 	void InitializeSlot(FItemData* ItemData, UStorageInventory* ParentWidget, UInventoryCore* OwnerInv,
-		UPlayerInventory* PlayerInv, int IndexSlot, FVector2D DragImageSize);
+		UPlayerInventory* PlayerInv, int IndexSlot);
 	
 	void HighlightSlot();
 
@@ -36,7 +36,9 @@ protected:
 	FLinearColor BorderHovered;
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor BorderUnHovered;
-
+	UPROPERTY(EditDefaultsOnly)
+	FVector2D DraggedImageSize = FVector2D(100,100);
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UToolTip> DefaultToolTip;
 	UPROPERTY(EditAnywhere)
@@ -83,10 +85,9 @@ private:
 	UToolTip* CachedToolTip;
 
 	FItemData* CurrentItemData;
-	FVector2D DraggedImageSize;
 	uint32 SlotIndex;
 
-	FText SetQuantity() const;
+	FText GetQuantity() const;
 	void SetButtonStyle(FItemData* ItemData) const;
 	void EmptySlot();
 	void OverwriteSlot(FItemData* ItemData);

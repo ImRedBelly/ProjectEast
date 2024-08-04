@@ -122,7 +122,7 @@ bool UEquipmentSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 {
 	if (UItemDataDragDropOperation* DragOperation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
-		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "AAAA");
+		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "Is Drop Item In Equipment");
 		if (!InventoryUtility::AreItemSlotsEqual(DragOperation->ItemData, CurrentItemData))
 		{
 			if (CachedPlayerEquipment->bIsEnableOffHand)

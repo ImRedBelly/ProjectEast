@@ -149,8 +149,7 @@ void UInventoryCore::ServerTransferItemFromInventory(UInventoryCore* Receiver, F
                                                      FItemData* InSlotData, EInputMethodType Method,
                                                      UInventoryCore* Sender, AActor* OwningPlayer)
 {
-	auto TransferData = Receiver->TransferItemFromInventory(ItemData, InSlotData,
-	                                                        Method, Sender, OwningPlayer);
+	auto TransferData = Receiver->TransferItemFromInventory(ItemData, InSlotData, Method, Sender, OwningPlayer);
 	ClientTransferItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>());
 }
 
@@ -354,8 +353,8 @@ void UInventoryCore::RemoveItemFromInventoryArray(FItemData* ItemData)
 {
 	if (InventoryUtility::SwitchHasOwnerAuthority(this))
 	{
-		TArray<FItemData*> LocalInventory = GetInventoryAndSize(InventoryUtility::GetInventoryPanelFromItem(ItemData)).
-			Get<0>();
+		auto NewInventory = InventoryUtility::GetInventoryPanelFromItem(ItemData);
+		TArray<FItemData*> LocalInventory = GetInventoryAndSize(NewInventory).Get<0>();
 		if (bIsUseInventorySize)
 		{
 			if (LocalInventory.IsValidIndex(ItemData->Index))
@@ -369,12 +368,14 @@ void UInventoryCore::RemoveItemFromInventoryArray(FItemData* ItemData)
 		{
 			LocalInventory.Remove(ItemData);
 		}
-		ApplyChangesToInventoryArray(InventoryUtility::GetInventoryPanelFromItem(ItemData), LocalInventory);
+
+		
+		ApplyChangesToInventoryArray(NewInventory, LocalInventory);
 
 		if (UKismetSystemLibrary::IsStandalone(GetWorld()))
 		{
 			CallOnRemovedFromInventoryArray(*ItemData);
-			CallOnRefreshInventory(InventoryUtility::GetInventoryPanelFromItem(ItemData));
+			CallOnRefreshInventory(NewInventory);
 		}
 		else
 		{
@@ -453,14 +454,11 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromInventory(FItemData* ItemDat
                                                               EInputMethodType InputMethod, UInventoryCore* Sender,
                                                               AActor* OwningPlayer)
 {
-	FItemData* LocalItemData = ItemData;
-	if (InventoryUtility::IsItemClassValid(LocalItemData) && IsValid(Sender))
+	if (InventoryUtility::IsItemClassValid(ItemData) && IsValid(Sender))
 	{
-		if (Sender->CheckOwnerGold())
-		{
-			if (HasEnoughGold(ItemData))
-				return MakeTuple(false, FText::FromString(MessageNotEnoughGold));
-		}
+		
+		if (Sender->CheckOwnerGold() && !HasEnoughGold(ItemData))
+			return MakeTuple(false, FText::FromString(MessageNotEnoughGold));
 
 		auto InventoryData = GetInventoryAndSize(InventoryUtility::GetInventoryPanelFromItem(ItemData));
 		auto PartialData = InventoryUtility::HasPartialStack(InventoryData.Get<0>(), ItemData);
@@ -480,9 +478,7 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromInventory(FItemData* ItemDat
 					break;
 				}
 			case EInputMethodType::DragAndDrop:
-				{
 					AddItemToInventoryArray(ItemData, IsSlotData->Index);
-				}
 				break;
 			}
 		}
@@ -491,11 +487,13 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromInventory(FItemData* ItemDat
 
 		if (Sender->CheckOwnerGold() && CheckOwnerGold())
 		{
-			auto DeltaGold = InventoryUtility::CalculateStackedItemValue(LocalItemData);
+			auto DeltaGold = InventoryUtility::CalculateStackedItemValue(ItemData);
 			RemoveGoldFromOwner(DeltaGold);
 			Sender->AddGoldToOwner(DeltaGold);
 		}
-		RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(LocalItemData));
+					
+		Sender->RemoveItemFromInventoryArray(ItemData);
+		Sender->RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
 		return MakeTuple(true, FText());
 	}
 	return MakeTuple(false, FText());
@@ -697,7 +695,7 @@ void UInventoryCore::OnRep_MaxInventoryWeight()
 {
 }
 
-void UInventoryCore::AddItemToInventoryArray(FItemData* ItemData, int32 Index)
+void UInventoryCore::AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex)
 {
 	if (InventoryUtility::SwitchHasOwnerAuthority(this))
 	{
@@ -707,23 +705,21 @@ void UInventoryCore::AddItemToInventoryArray(FItemData* ItemData, int32 Index)
 		auto InventoryData = GetInventoryAndSize(InventoryPanel);
 
 		TArray<FItemData*> CurrentInventoryArray = InventoryData.Get<0>();
-		if (bIsUseInventorySize || Index >= 0)
+		if (bIsUseInventorySize || SlotIndex >= 0)
 		{
-			ItemData->Index = Index;
-			ItemData->bIsEquipped = false;
-			CurrentInventoryArray[Index] = ItemData;
+			FItemData* NewItemData = InventoryUtility::CopyItemData(ItemData);
+			NewItemData->Index = SlotIndex;
+			NewItemData->bIsEquipped = false;
+			CurrentInventoryArray[SlotIndex] = NewItemData;
 
 			ApplyChangesToInventoryArray(InventoryPanel, CurrentInventoryArray);
-
+	
 
 			if (UKismetSystemLibrary::IsStandalone(GetWorld()))
 			{
 				SwitchActivePanel(InventoryPanel);
-
-				if (OnRefreshInventory.IsBound())
-					OnRefreshInventory.Broadcast(InventoryPanel);
-				if (OnHighlightInventorySlot.IsBound())
-					OnHighlightInventorySlot.Broadcast(ItemData->Index);
+				CallOnRefreshInventory(InventoryPanel);
+				CallOnHighlightSlot(NewItemData->Index);
 			}
 			else
 			{

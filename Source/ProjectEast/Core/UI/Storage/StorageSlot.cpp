@@ -13,7 +13,7 @@ void UStorageSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-	
+
 	ButtonItem->OnClicked.AddDynamic(this, &UStorageSlot::OnItemClick);
 	ButtonItem->OnHovered.AddDynamic(this, &UStorageSlot::OnItemHovered);
 	ButtonItem->OnUnhovered.AddDynamic(this, &UStorageSlot::OnItemUnhovered);
@@ -23,11 +23,11 @@ void UStorageSlot::NativeDestruct()
 {
 	if (IsValid(CachedToolTip))
 		CachedToolTip->RemoveFromParent();
-	
+
 	ButtonItem->OnClicked.RemoveDynamic(this, &UStorageSlot::OnItemClick);
 	ButtonItem->OnHovered.RemoveDynamic(this, &UStorageSlot::OnItemHovered);
 	ButtonItem->OnUnhovered.RemoveDynamic(this, &UStorageSlot::OnItemUnhovered);
-	
+
 	Super::NativeDestruct();
 }
 
@@ -100,18 +100,15 @@ void UStorageSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPoin
 		if (IsValid(PlayerInventory))
 			PlayerInventory->SwitchedActivePanel(CurrentItemData->Class.GetDefaultObject()->InventoryPanel);
 
-		UItemDataDragAndDropPanel* DragAndDropPanel = CreateWidget<UItemDataDragAndDropPanel>(
-			this, ItemDataDragAndDropPanel);
+		UItemDataDragAndDropPanel* DragAndDropPanel = CreateWidget<UItemDataDragAndDropPanel>(this, ItemDataDragAndDropPanel);
 		DragAndDropPanel->InitializePanel(CurrentItemData->Class.GetDefaultObject()->ImageItem, DraggedImageSize);
 
-		auto Operation = Cast<UItemDataDragDropOperation>(
-			UWidgetBlueprintLibrary::CreateDragDropOperation(ItemDataDragDropOperation));
+		auto Operation = Cast<UItemDataDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(ItemDataDragDropOperation));
 		Operation->DefaultDragVisual = DragAndDropPanel;
 		Operation->ItemData = CurrentItemData;
 		Operation->Inventory = ActorInventory;
 		Operation->ItemDataDragAndDropPanel = DragAndDropPanel;
 		Operation->DraggerFrom = EItemDestination::StorageSlot;
-
 		OutOperation = Operation;
 	}
 }
@@ -125,11 +122,11 @@ bool UStorageSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 		{
 		case EItemDestination::InventorySlot:
 			DraggedFromInventory(DragOperation, CurrentItemData);
-			break;
+			return true;
 		case EItemDestination::VendorSlot:
 		case EItemDestination::StorageSlot:
 			DraggedFromOtherInventory(DragOperation, CurrentItemData);
-			break;
+			return true;
 		default: ;
 		}
 	}
@@ -235,14 +232,14 @@ void UStorageSlot::OnItemClick()
 		{
 			if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
 				WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, ActorInventory, PlayerInventory,
-												   EInputMethodType::RightClick, EItemDestination::StorageSlot,
-												   EItemDestination::InventorySlot, this);
+				                                   EInputMethodType::RightClick, EItemDestination::StorageSlot,
+				                                   EItemDestination::InventorySlot, this);
 		}
 		else
 		{
 			PlayerInventory->ServerTransferItemFromInventory(PlayerInventory, CurrentItemData,
-															 nullptr, EInputMethodType::RightClick, ActorInventory,
-															 GetOwningPlayer());
+			                                                 nullptr, EInputMethodType::RightClick, ActorInventory,
+			                                                 GetOwningPlayer());
 		}
 	}
 }
@@ -254,7 +251,7 @@ void UStorageSlot::OnItemHovered()
 		StopAnimation(AnimationHighlight);
 		if (IsValid(CachedToolTip))
 			CachedToolTip->RemoveFromParent();
-		
+
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
 
@@ -275,7 +272,7 @@ void UStorageSlot::OnItemUnhovered()
 		CachedToolTip->RemoveFromParent();
 }
 
-FText UStorageSlot::SetQuantity() const
+FText UStorageSlot::GetQuantity() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 
@@ -316,23 +313,19 @@ void UStorageSlot::EmptySlot()
 void UStorageSlot::OverwriteSlot(FItemData* ItemData)
 {
 	CurrentItemData = ItemData;
-	if(CurrentItemData->Quantity > 0)
-		TextQuantity->SetText(FText::FromString(FString::FromInt(CurrentItemData->Quantity)));
-	else
-		TextQuantity->SetText(FText());
+	TextQuantity->SetText(GetQuantity());
 	SetButtonStyle(CurrentItemData);
 	RefreshToolTip();
 }
 
 
 void UStorageSlot::InitializeSlot(FItemData* ItemData, UStorageInventory* ParentWidget, UInventoryCore* OwnerInv,
-	UPlayerInventory* PlayerInv, int IndexSlot, FVector2D DragImageSize)
+                                  UPlayerInventory* PlayerInv, int IndexSlot)
 {
 	CachedParentWidget = ParentWidget;
 	ActorInventory = OwnerInv;
 	PlayerInventory = PlayerInv;
 	SlotIndex = IndexSlot;
-	DraggedImageSize = DragImageSize;
 
 	OverwriteSlot(ItemData);
 }
@@ -446,15 +439,14 @@ void UStorageSlot::SetToolTipPositionAndAlignment() const
 bool UStorageSlot::IsAnyPopupActive() const
 {
 	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
-		return WidgetManager->GetCurrentPopupType() != EWidgetType::Vendor;
+		return WidgetManager->GetCurrentPopupType() != EWidgetType::None;
 
 	return false;
 }
 
 void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, FItemData* ItemData) const
 {
-	if (!InventoryUtility::IsItemClassValid(ItemData) || (InventoryUtility::AreItemsTheSame(
-			Operation->ItemData, ItemData) &&
+	if (!InventoryUtility::IsItemClassValid(ItemData) || (InventoryUtility::AreItemsTheSame(Operation->ItemData, ItemData) &&
 		InventoryUtility::AreItemsStackable(Operation->ItemData, ItemData)))
 	{
 		switch (PlayerInventory->GetItemRemoveType(Operation->ItemData))

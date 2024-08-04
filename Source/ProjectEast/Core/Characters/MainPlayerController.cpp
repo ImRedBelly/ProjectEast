@@ -80,6 +80,11 @@ EWidgetType AMainPlayerController::GetActiveWidget()
 	return ActiveWidget;
 }
 
+EWidgetType AMainPlayerController::GetActivePopup()
+{
+	return EWidgetType::Inventory;
+}
+
 void AMainPlayerController::SwitchWidgetTo(EWidgetType WidgetType)
 {
 	if(WidgetType != ActiveWidget)

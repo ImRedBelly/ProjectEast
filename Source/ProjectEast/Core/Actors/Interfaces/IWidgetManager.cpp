@@ -36,7 +36,7 @@ void IWidgetManager::SwitchTabTo(EWidgetType WidgetType)
 
 EWidgetType IWidgetManager::GetCurrentPopupType()
 {
-	return EWidgetType::Inventory;
+	return EWidgetType::None;
 }
 
 void IWidgetManager::StartPlayerCapture()
