@@ -6,6 +6,7 @@
 #include "ProjectEast/Core/Actors/Interfaces/IWidgetManager.h"
 #include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
+#include "ProjectEast/Core/Actors/Other/PlayerCapture.h"
 #include "MainPlayerController.generated.h"
 
 class UPlayerInventory;
@@ -34,6 +35,8 @@ public:
 	virtual EWidgetType GetActiveWidget() override;
 	virtual EWidgetType GetActivePopup() override;
 	virtual void SwitchWidgetTo(EWidgetType WidgetType) override;
+	virtual void StartPlayerCapture() override;
+	virtual void StopPlayerCapture() override;
 	
 	virtual void InitializeInteractionWithObject(UInteractableComponent* InteractableComponent) override;
 	virtual void StartInteractionWithObject(UInteractableComponent* InteractableComponent) override;
@@ -42,6 +45,7 @@ public:
 
 	UPlayerInventory* GetPlayerInventory() const;
 	UPlayerEquipment* GetPlayerEquipment() const;
+	APlayerCapture* GetPlayerCapture() const;
 	UMainWindow* GetMainWindow() const;
 
 	FOnGamepadToggled OnGamepadToggled;
@@ -75,5 +79,7 @@ protected:
 private:
 	EWidgetType ActiveWidget;
 	AActor* CachedObject;
+	
 	UMainWindow* CachedMainWindow;
+	APlayerCapture* CachedPlayerCapture;
 };

@@ -1,4 +1,5 @@
 ﻿#include "MainPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
@@ -23,6 +24,12 @@ void AMainPlayerController::BeginPlay()
 		CachedMainWindow->AddToPlayerScreen();
 	else
 		CachedMainWindow->AddToViewport();
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCapture::StaticClass(), FoundActors);
+
+	if(FoundActors.Num() > 0)
+		CachedPlayerCapture = Cast<APlayerCapture>(FoundActors[0]);
 }
 
 void AMainPlayerController::InitializeInteraction(UInteractableComponent* InteractableComponent)
@@ -93,6 +100,16 @@ void AMainPlayerController::SwitchWidgetTo(EWidgetType WidgetType)
 		OpenNewWidget(WidgetType);
 		ActiveWidget = WidgetType;
 	}
+}
+
+void AMainPlayerController::StartPlayerCapture()
+{
+	CachedPlayerCapture->StartCapture();
+}
+
+void AMainPlayerController::StopPlayerCapture()
+{
+	CachedPlayerCapture->EndCapture();
 }
 
 void AMainPlayerController::OnPossess(APawn* InPawn)
@@ -177,6 +194,11 @@ UPlayerInventory* AMainPlayerController::GetPlayerInventory() const
 UPlayerEquipment* AMainPlayerController::GetPlayerEquipment() const
 {
 	return PlayerEquipment;
+}
+
+APlayerCapture* AMainPlayerController::GetPlayerCapture() const
+{
+	return CachedPlayerCapture;
 }
 
 UMainWindow* AMainPlayerController::GetMainWindow() const
