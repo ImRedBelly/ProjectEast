@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
+#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "InventoryCore.generated.h"
 
 class UPlayerEquipment;
@@ -117,7 +118,7 @@ public:
 	static void ServerMoveItemToSlot(UInventoryCore* Inventory, EInventoryPanels Panel, int32 MoveFrom, int32 MoveTo);
 	static void ServerSplitItemsInInventory(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData* ItemData,
 	                                        FItemData* InSlotData, FItemData* StackableLeft, EInputMethodType Method,
-	                                        EInputMethodType Initiator, EInputMethodType Destination,
+	                                        EItemDestination Initiator, EItemDestination Destination,
 	                                        AActor* OwningPlayer);
 	static void ServerSortInventory(UInventoryCore* Inventory, ESortMethod Method, EInventoryPanels SinglePanel,
 	                                bool EveryPanel);
@@ -143,6 +144,7 @@ public:
 	EItemRemoveType GetItemRemoveType(FItemData* ItemData) const;
 	void AddGoldToOwner(float Gold);
 
+	float GetOwnerGold() const { return OwnerGold; }
 	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
 	bool IsRefreshOnClosingWidget() const { return bIsRefreshOnClosingWidget; }
 
@@ -225,8 +227,8 @@ protected:
 	FItemData* RandomizeItemParameters(FItemData* ItemData);
 	virtual void SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
 	                                   FItemData* StackableLeft,
-	                                   EInputMethodType Method, EInputMethodType Initiator,
-	                                   EInputMethodType Destination, AActor* OwningPlayer);
+	                                   EInputMethodType Method, EItemDestination Initiator,
+	                                   EItemDestination Destination, AActor* OwningPlayer);
 	virtual void ConfirmationPopupAccepted(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
 	                                       EInputMethodType Method,
 	                                       EInputMethodType Initiator, EInputMethodType Destination,

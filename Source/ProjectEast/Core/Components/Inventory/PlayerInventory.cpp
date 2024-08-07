@@ -379,7 +379,7 @@ TTuple<bool, FText> UPlayerInventory::TransferItemFromInventory(FItemData* ItemD
 
 void UPlayerInventory::SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
                                              FItemData* StackableLeft, EInputMethodType Method,
-                                             EInputMethodType Initiator, EInputMethodType Destination,
+                                             EItemDestination Initiator, EItemDestination Destination,
                                              AActor* OwningPlayer)
 {
 	Super::SplitItemsInInventory(Sender, ItemData, InSlotData, StackableLeft, Method, Initiator, Destination,

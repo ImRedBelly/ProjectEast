@@ -164,8 +164,8 @@ void UInventoryCore::ServerTransferItemFromEquipment(FItemData* ItemData, FItemD
 void UInventoryCore::ServerSplitItemsInInventory(UInventoryCore* Receiver, UInventoryCore* Sender, FItemData* ItemData,
                                                  FItemData* InSlotData, FItemData* StackableLeft,
                                                  EInputMethodType Method,
-                                                 EInputMethodType Initiator,
-                                                 EInputMethodType Destination, AActor* OwningPlayer)
+                                                 EItemDestination Initiator,
+                                                 EItemDestination Destination, AActor* OwningPlayer)
 {
 	Receiver->SplitItemsInInventory(Sender, ItemData, InSlotData, StackableLeft, Method, Initiator, Destination,
 	                                OwningPlayer);
@@ -636,9 +636,14 @@ FItemData* UInventoryCore::RandomizeItemParameters(FItemData* ItemData)
 
 void UInventoryCore::SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
                                            FItemData* StackableLeft, EInputMethodType Method,
-                                           EInputMethodType Initiator, EInputMethodType Destination,
+                                           EItemDestination Initiator, EItemDestination Destination,
                                            AActor* OwningPlayer)
 {
+	auto TransferData = TransferItemFromInventory(ItemData, InSlotData, Method, Sender, OwningPlayer);
+	Sender->ClientTransferItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>());
+	if(TransferData.Get<0>())
+		if(InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
+			Sender->AddItemToInventoryArray(StackableLeft, StackableLeft->Index);
 }
 
 void UInventoryCore::ConfirmationPopupAccepted(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
@@ -757,10 +762,10 @@ void UInventoryCore::AddItemToInventoryArray(FItemData* ItemData, int32 SlotInde
 
 void UInventoryCore::AddToStackInInventory(FItemData* ItemData, int32 Index)
 {
-	ItemData->Index = Index;
-	ItemData->Quantity = GetItemBySlot(InventoryUtility::GetInventoryPanelFromItem(ItemData),
-	                                   Index)->Quantity + ItemData->Quantity;
-	AddItemToInventoryArray(ItemData, Index);
+	auto NewItemData = InventoryUtility::CopyItemData(ItemData);
+	NewItemData->Index = Index;
+	NewItemData->Quantity = GetItemBySlot(InventoryUtility::GetInventoryPanelFromItem(ItemData), Index)->Quantity + ItemData->Quantity;
+	AddItemToInventoryArray(NewItemData, Index);
 }
 
 void UInventoryCore::AddWeightToInventory(float Weight)

@@ -24,9 +24,12 @@ void UStorageSlot::NativeDestruct()
 	if (IsValid(CachedToolTip))
 		CachedToolTip->RemoveFromParent();
 
-	ButtonItem->OnClicked.RemoveDynamic(this, &UStorageSlot::OnItemClick);
-	ButtonItem->OnHovered.RemoveDynamic(this, &UStorageSlot::OnItemHovered);
-	ButtonItem->OnUnhovered.RemoveDynamic(this, &UStorageSlot::OnItemUnhovered);
+	if(IsValid(ButtonItem))
+	{
+		ButtonItem->OnClicked.RemoveDynamic(this, &UStorageSlot::OnItemClick);
+		ButtonItem->OnHovered.RemoveDynamic(this, &UStorageSlot::OnItemHovered);
+		ButtonItem->OnUnhovered.RemoveDynamic(this, &UStorageSlot::OnItemUnhovered);
+	}
 
 	Super::NativeDestruct();
 }
@@ -231,14 +234,14 @@ void UStorageSlot::OnItemClick()
 		if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 		{
 			if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
-				WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, ActorInventory, PlayerInventory,
+				WidgetManager->OpenSplitStackPopup(CurrentItemData, new FItemData(), ActorInventory, PlayerInventory,
 				                                   EInputMethodType::RightClick, EItemDestination::StorageSlot,
 				                                   EItemDestination::InventorySlot, this);
 		}
 		else
 		{
 			PlayerInventory->ServerTransferItemFromInventory(PlayerInventory, CurrentItemData,
-			                                                 nullptr, EInputMethodType::RightClick, ActorInventory,
+			                                                 new FItemData(), EInputMethodType::RightClick, ActorInventory,
 			                                                 GetOwningPlayer());
 		}
 	}
@@ -471,13 +474,13 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 			break;
 		case EItemRemoveType::OnConfirmation:
 			{
+				BorderObject->SetBrushColor(BorderUnHovered);
 				if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
 					WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", Operation->ItemData,
 					                                     ItemData,
 					                                     PlayerInventory, ActorInventory, EInputMethodType::DragAndDrop,
 					                                     Operation->DraggerFrom, EItemDestination::StorageSlot,
 					                                     nullptr);
-				BorderObject->SetBrushColor(BorderUnHovered);
 			}
 			break;
 		case EItemRemoveType::CannotBeRemoved:

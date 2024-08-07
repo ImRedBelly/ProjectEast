@@ -112,6 +112,30 @@ void AMainPlayerController::StopPlayerCapture()
 	CachedPlayerCapture->EndCapture();
 }
 
+void AMainPlayerController::CloseActivePopup()
+{
+	ActivePopup = EWidgetPopup::None;
+	if(IsValid(CachedSplitStackPopup))
+		CachedSplitStackPopup->RemoveFromParent();
+}
+
+void AMainPlayerController::OpenSplitStackPopup(FItemData* ItemData, FItemData* InSlotData,
+                                                UInventoryCore* Sender, UInventoryCore* Receiver, EInputMethodType InputMethod,
+                                                EItemDestination Initiator, EItemDestination Destination, UUserWidget* SenderWidget)
+{
+	
+	CachedSplitStackPopup = CreateWidget<USplitStackPopup>(this, DefaultSplitStackPopup);
+	CachedSplitStackPopup->InitializePopup(ItemData, InSlotData, Sender, Receiver, InputMethod, Initiator, Destination, SenderWidget);
+
+	if(!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
+		CachedSplitStackPopup->AddToViewport(1);
+	else
+		CachedSplitStackPopup->AddToPlayerScreen(1);
+
+	CachedSplitStackPopup->SetKeyboardFocus();
+	ActivePopup = EWidgetPopup::SplitStackPopup;
+}
+
 void AMainPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

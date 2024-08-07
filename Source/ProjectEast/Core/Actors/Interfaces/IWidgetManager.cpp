@@ -47,15 +47,19 @@ void IWidgetManager::StopPlayerCapture()
 {
 }
 
-void IWidgetManager::OpenSplitStackPopup(FItemData* ItemData, const FItemData* ItemData1,
-                                         const UInventoryCore* InventoryCore, UInventoryCore* PlayerInventory, EInputMethodType RightClick,
-                                         EItemDestination InventorySlot, EItemDestination DropBar, UUserWidget* PlayerInventoryWidget)
+void IWidgetManager::OpenSplitStackPopup(FItemData* ItemData, FItemData* InSlotData,
+                                         UInventoryCore* Sender, UInventoryCore* Receiver,
+                                         EInputMethodType InputMethod,
+                                         EItemDestination Initiator, EItemDestination Destination,
+                                         UUserWidget* SenderWidget)
 {
 }
 
 void IWidgetManager::OpenConfirmationPopup(const FString Str, FItemData* ItemData, const FItemData* ItemData1,
-	const UInventoryCore* InventoryCore, UInventoryCore* PlayerInventory, EInputMethodType RightClick,
-	EItemDestination InventorySlot, EItemDestination DropBar, UUserWidget* UserWidget)
+                                           const UInventoryCore* InventoryCore, UInventoryCore* PlayerInventory,
+                                           EInputMethodType RightClick,
+                                           EItemDestination InventorySlot, EItemDestination DropBar,
+                                           UUserWidget* UserWidget)
 {
 }
 

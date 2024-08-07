@@ -5,7 +5,6 @@
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
 #include "ProjectEast/Core/UI/PlayerInventory/PlayerInventoryWidget.h"
-#include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "PlayerInventory.generated.h"
 
@@ -93,8 +92,8 @@ private:
 	virtual TTuple<bool, FText> TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
 	EInputMethodType InputMethod, UInventoryCore* Sender, AActor* OwningPlayer) override;
 	virtual void SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
-	FItemData* StackableLeft, EInputMethodType Method, EInputMethodType Initiator,
-	EInputMethodType Destination, AActor* OwningPlayer) override;
+	FItemData* StackableLeft, EInputMethodType Method, EItemDestination Initiator,
+	EItemDestination Destination, AActor* OwningPlayer) override;
 	virtual void ConfirmationPopupAccepted(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
 										   EInputMethodType Method,
 										   EInputMethodType Initiator, EInputMethodType Destination,

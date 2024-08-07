@@ -132,6 +132,16 @@ enum class EWidgetType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EWidgetPopup : uint8
+{
+	None UMETA(DisplayName = "None"),
+	SplitStackPopup UMETA(DisplayName = "SplitStackPopup"),
+	ConfirmationPopup UMETA(DisplayName = "ConfirmationPopup"),
+	TextDocumentPopup UMETA(DisplayName = "TextDocumentPopup"),
+
+};
+
+UENUM(BlueprintType)
 enum class EStateCategoryType : uint8
 {
 	None UMETA(DisplayName = "None"),

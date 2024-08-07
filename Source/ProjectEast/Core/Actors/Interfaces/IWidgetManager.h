@@ -27,14 +27,16 @@ public:
 	virtual void OpenNewWidget(EWidgetType WidgetType);
 	virtual void SwitchWidgetTo(EWidgetType WidgetType);
 	virtual void SwitchTabTo(EWidgetType WidgetType);
-	virtual void OpenSplitStackPopup(FItemData* ItemData, const FItemData* ItemData1, const UInventoryCore* InventoryCore,
-	                         UInventoryCore* PlayerInventory, EInputMethodType RightClick,
-	                         EItemDestination InventorySlot,
-	                         EItemDestination DropBar, UUserWidget* PlayerInventoryWidget);
+	virtual void OpenSplitStackPopup(FItemData* ItemData, FItemData* InSlotData,
+	                                 UInventoryCore* Sender, UInventoryCore* Receiver,
+	                                 EInputMethodType InputMethod,
+	                                 EItemDestination Initiator, EItemDestination Destination,
+	                                 UUserWidget* SenderWidget);
 	virtual void OpenConfirmationPopup(const FString Str, FItemData* ItemData, const FItemData* ItemData1,
-	                           const UInventoryCore* InventoryCore, UInventoryCore* PlayerInventory,
-	                           EInputMethodType RightClick,
-	                           EItemDestination InventorySlot, EItemDestination DropBar, UUserWidget* UserWidget);
+	                                   const UInventoryCore* InventoryCore, UInventoryCore* PlayerInventory,
+	                                   EInputMethodType RightClick,
+	                                   EItemDestination InventorySlot, EItemDestination DropBar,
+	                                   UUserWidget* UserWidget);
 	virtual void OpenTextDocumentPopup(FItemData* ItemData, UUserWidget* ParentWidget);
 
 	virtual void CloseActivePopup();

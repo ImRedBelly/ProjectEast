@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "WeightView.generated.h"
 
@@ -12,4 +13,9 @@ class PROJECTEAST_API UWeightView : public UUserWidget
 
 public:
 	void SetItemData(FItemData* ItemData);
+	void SetValue(float Weight);
+
+protected:
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TextValue;
 };

@@ -93,7 +93,6 @@ protected:
 	void RefreshTooltipGamepad();
 	void RefreshToolTip();
 	void DropOnTheGround() const;
-	void OnRightClick();
 	void EmptySlot();
 	void SetItemQuantity() const;
 
@@ -109,8 +108,9 @@ protected:
 
 private:
 	UFUNCTION()
+	void OnRightClick();
+	UFUNCTION()
 	void OnHovered();
-	
 	UFUNCTION()
 	void OnUnhovered();
 	

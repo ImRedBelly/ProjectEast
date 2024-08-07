@@ -59,6 +59,8 @@ void UPlayerInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	
+	ButtonItem->OnClicked.AddDynamic(this, &UPlayerInventorySlot::OnRightClick);
 	ButtonItem->OnHovered.AddDynamic(this, &UPlayerInventorySlot::OnHovered);
 	ButtonItem->OnUnhovered.AddDynamic(this, &UPlayerInventorySlot::OnUnhovered);
 }
@@ -68,6 +70,7 @@ void UPlayerInventorySlot::NativeDestruct()
 	if (IsValid(CachedToolTip))
 		CachedToolTip->RemoveFromParent();
 
+	ButtonItem->OnClicked.RemoveDynamic(this, &UPlayerInventorySlot::OnRightClick);
 	ButtonItem->OnHovered.RemoveDynamic(this, &UPlayerInventorySlot::OnHovered);
 	ButtonItem->OnUnhovered.RemoveDynamic(this, &UPlayerInventorySlot::OnUnhovered);
 	Super::NativeDestruct();
@@ -565,7 +568,7 @@ void UPlayerInventorySlot::OnRightClick()
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer());
 		{
 			switch (WidgetManager->GetActiveWidget())
 			{
@@ -575,6 +578,7 @@ void UPlayerInventorySlot::OnRightClick()
 				break;
 			case EWidgetType::Vendor:
 			case EWidgetType::Storage:
+				
 				if (WidgetManager->GetActiveTab() == EWidgetType::Equipment)
 					OpenInventoryWindow();
 				else
@@ -719,12 +723,12 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 				                                   EItemDestination::VendorSlot,
 				                                   CachedPlayerInventoryWidget);
 			}
-			else
-			{
-				CachedPlayerInventory->ServerTransferItemFromInventory(CachedReceiverInventory, CurrentItemData,
-				                                                       nullptr, EInputMethodType::RightClick,
-				                                                       CachedPlayerInventory, GetOwningPlayer());
-			}
+		}
+		else
+		{
+			CachedPlayerInventory->ServerTransferItemFromInventory(CachedReceiverInventory, CurrentItemData,
+			                                                       nullptr, EInputMethodType::RightClick,
+			                                                       CachedPlayerInventory, GetOwningPlayer());
 		}
 		break;
 	case EItemRemoveType::OnConfirmation:

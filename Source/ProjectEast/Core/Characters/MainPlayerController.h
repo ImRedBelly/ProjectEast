@@ -7,6 +7,7 @@
 #include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "ProjectEast/Core/Actors/Other/PlayerCapture.h"
+#include "ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.h"
 #include "MainPlayerController.generated.h"
 
 class UPlayerInventory;
@@ -14,6 +15,7 @@ class UInputMappingContext;
 class UInteractionComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGamepadToggled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedWidget, EWidgetType, WidgetType);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedTab, EWidgetType, WidgetType);
 
 UCLASS()
@@ -37,6 +39,10 @@ public:
 	virtual void SwitchWidgetTo(EWidgetType WidgetType) override;
 	virtual void StartPlayerCapture() override;
 	virtual void StopPlayerCapture() override;
+	virtual void CloseActivePopup() override;
+	virtual void OpenSplitStackPopup(FItemData* ItemData, FItemData* InSlotData,
+	UInventoryCore* Sender, UInventoryCore* Receiver, EInputMethodType InputMethod,
+	EItemDestination Initiator, EItemDestination Destination, UUserWidget* SenderWidget) override;
 	
 	virtual void InitializeInteractionWithObject(UInteractableComponent* InteractableComponent) override;
 	virtual void StartInteractionWithObject(UInteractableComponent* InteractableComponent) override;
@@ -49,12 +55,15 @@ public:
 	UMainWindow* GetMainWindow() const;
 
 	FOnGamepadToggled OnGamepadToggled;
+	FOnSwitchedWidget OnSwitchedWidget;
 	FOnSwitchedTab OnSwitchedTab;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<UMainWindow> DefaultMainWindow;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
+	TSubclassOf<USplitStackPopup> DefaultSplitStackPopup;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInteractionComponent* InteractionComponent;
 
@@ -78,8 +87,10 @@ protected:
 
 private:
 	EWidgetType ActiveWidget;
+	EWidgetPopup ActivePopup;
 	AActor* CachedObject;
 	
 	UMainWindow* CachedMainWindow;
+	USplitStackPopup* CachedSplitStackPopup;
 	APlayerCapture* CachedPlayerCapture;
 };

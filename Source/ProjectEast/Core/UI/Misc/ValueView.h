@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ValueView.generated.h"
 
@@ -12,5 +13,10 @@ class PROJECTEAST_API UValueView : public UUserWidget
 
 
 public:
+	
 	void SetItemData(FItemData* ItemData);
+	void SetValue(float Value);
+protected:
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TextValue;
 };
