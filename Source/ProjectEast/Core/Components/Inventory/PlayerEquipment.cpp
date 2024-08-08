@@ -33,6 +33,10 @@ void UPlayerEquipment::RemoveItemFromEquipmentArray(FItemData* ItemData)
 {
 }
 
+void UPlayerEquipment::AddItemToEquipmentArray(FItemData* ItemData, EItemSlot ItemSlot)
+{
+}
+
 void UPlayerEquipment::AddToStackInEquipment(FItemData* ItemData, FItemData* Element)
 {
 }

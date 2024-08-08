@@ -33,6 +33,7 @@ public:
 	                                     EInputMethodType RightClick);
 	void ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* CurrentItemData);
 	void RemoveItemFromEquipmentArray(FItemData* ItemData);
+	void AddItemToEquipmentArray(FItemData* ItemData, EItemSlot ItemSlot);
 	void AddToStackInEquipment(FItemData* ItemData, FItemData* Element);
 	bool TryToAddToPartialStack(FItemData* ItemData);
 	void DetachItemFromEquipment(FItemData* ItemData);

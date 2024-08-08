@@ -57,7 +57,7 @@ bool UDropBar::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& I
 			if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 			{
 				if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
-					WidgetManager->OpenSplitStackPopup(Operation->ItemData, nullptr, nullptr,
+					WidgetManager->OpenSplitStackPopup(Operation->ItemData, new FItemData(), nullptr,
 													   PlayerInventory,EInputMethodType::DragAndDrop, Operation->DraggerFrom,
 													   EItemDestination::DropBar, nullptr);
 			}

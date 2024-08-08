@@ -143,6 +143,8 @@ public:
 	void SwitchedActivePanel(EInventoryPanels Panel);
 	EItemRemoveType GetItemRemoveType(FItemData* ItemData) const;
 	void AddGoldToOwner(float Gold);
+	void AddToStackInInventory(FItemData* ItemData, int32 Index);
+	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex);
 
 	float GetOwnerGold() const { return OwnerGold; }
 	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
@@ -199,8 +201,6 @@ protected:
 	void BuildInventory(EInventoryPanels Panel);
 	void BuildInitialInventory();
 	void SortInventoryByPanel(ESortMethod Method, EInventoryPanels Panel);
-	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex);
-	void AddToStackInInventory(FItemData* ItemData, int32 Index);
 	void ApplyChangesToInventoryArray(EInventoryPanels Panel, TArray<FItemData*> Inventory);
 	virtual TTuple<bool, FText> TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
 	                                                      EInputMethodType InputMethod,

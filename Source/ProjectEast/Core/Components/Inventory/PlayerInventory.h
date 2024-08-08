@@ -9,6 +9,7 @@
 #include "PlayerInventory.generated.h"
 
 
+class ALootBag;
 class UStorageWindow;
 class IInteractable;
 class AMainPlayerController;
@@ -66,7 +67,8 @@ protected:
 	TSubclassOf<UInventoryWindow> DefaultInventoryWindow;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UStorageWindow> DefaultStorageWindow;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<ALootBag> DefaultLootBag;
 
 	
 private:
@@ -85,9 +87,9 @@ private:
 	void TakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
 	void TakeAllItems();
 	void DropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer);
-	void SpawnLootBagNearThePlayer();
+	void SpawnLootBagNearThePlayer(FItemData* ItemData, AActor* OwningPlayer);
 	void SpawnItemMeshNearThePlayer();
-	void IsCollidingWithLootBag();
+	ALootBag* IsCollidingWithLootBag(FVector StartPosition, FVector EndPosition) const;
 
 	virtual TTuple<bool, FText> TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
 	EInputMethodType InputMethod, UInventoryCore* Sender, AActor* OwningPlayer) override;
@@ -106,7 +108,10 @@ private:
 	UInventoryWindow* CashedInventoryWindow;
 	UStorageWindow* CashedStorageWindow;
 
-	bool bIsLootBarOpen;
 
 	UInteractableComponent* GetCurrentInteractable() const;
+
+	ALootBag* CachedLootBag; 
+	uint32 MainDroppedIndex;
+	bool bIsLootBarOpen;
 };

@@ -1,6 +1,7 @@
 ﻿#include "PlayerInventory.h"
 #include "PlayerEquipment.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ProjectEast/Core/Actors/Environment/Miscellaneous/LootBag.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
@@ -43,6 +44,7 @@ void UPlayerInventory::ServerTakeAllItems(UInventoryCore* Sender, AActor* Owning
 
 void UPlayerInventory::ServerSpawnLootBag(FItemData* ItemData, AActor* OwningPlayer)
 {
+	SpawnLootBagNearThePlayer(ItemData, OwningPlayer);
 }
 
 void UPlayerInventory::ServerSpawnInteractable(FItemData* ItemData, AActor* OwningPlayer)
@@ -56,6 +58,7 @@ void UPlayerInventory::ServerDropItemOnTheGround(FItemData* ItemData, EItemDesti
 
 void UPlayerInventory::ServerChangeDroppedIndex(uint32 DroppedIndex)
 {
+	MainDroppedIndex = DroppedIndex;
 }
 
 void UPlayerInventory::ServerModifyItemDurability(FItemData* ItemData, uint32 Amount, AActor* OwningPlayer)
@@ -298,20 +301,71 @@ void UPlayerInventory::DropItemOnTheGround(FItemData* ItemData, EItemDestination
 	{
 	case EItemDestination::InventorySlot:
 		RemoveItemFromInventoryArray(ItemData);
+	case EItemDestination::EquipmentSlot:
+		if(UPlayerEquipment* PlayerEquipment = InventoryUtility::GetPlayerEquipment(OwningPlayer))
+		{
+			PlayerEquipment->RemoveItemFromEquipmentArray(ItemData);
+			PlayerEquipment->DetachItemFromEquipment(ItemData);
+		}
 		break;
+	default: ;
 	}
+	
+	RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
+	ServerSpawnLootBag(ItemData, OwningPlayer);
 }
 
-void UPlayerInventory::SpawnLootBagNearThePlayer()
+void UPlayerInventory::SpawnLootBagNearThePlayer(FItemData* ItemData, AActor* OwningPlayer)
 {
+	if(AMainPlayerController* PlayerController = Cast<AMainPlayerController>(OwningPlayer))
+	{
+		if(MainDroppedIndex == 0)
+		{
+			auto Pawn = PlayerController->GetPawn();
+			FVector StartPosition = (Pawn->GetActorLocation() + Pawn->GetActorForwardVector() * 50) - FVector(0,0,50);
+			FVector EndPosition = StartPosition - FVector(0,0,100);
+
+			auto LootBag = IsCollidingWithLootBag(StartPosition, EndPosition);
+			if(IsValid(LootBag))
+				CachedLootBag = LootBag;
+			else
+			{
+				FActorSpawnParameters Parameters;
+				Parameters.Owner = OwningPlayer;
+				Parameters.TransformScaleMethod = ESpawnActorScaleMethod::OverrideRootScale;
+				Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
+				CachedLootBag = GetWorld()->SpawnActor<ALootBag>(DefaultLootBag, StartPosition, FRotator::ZeroRotator, Parameters);				
+			}
+		}
+		
+		MainDroppedIndex++;
+		if(UInventoryCore* Inventory = Cast<UInventoryCore>(CachedLootBag->GetComponentByClass(UInventoryCore::StaticClass())))
+		{
+			auto InventoryData = Inventory->GetInventoryAndSize(InventoryUtility::GetInventoryPanelFromItem(ItemData));
+			auto PartialData = InventoryUtility::HasPartialStack(InventoryData.Get<0>(), ItemData);
+			if(PartialData.Get<0>())
+				Inventory->AddItemToInventoryArray(ItemData, PartialData.Get<1>());
+			else
+				Inventory->AddItemToInventoryArray(ItemData, -1);
+		}
+	}
 }
 
 void UPlayerInventory::SpawnItemMeshNearThePlayer()
 {
 }
 
-void UPlayerInventory::IsCollidingWithLootBag()
+ALootBag* UPlayerInventory::IsCollidingWithLootBag(FVector StartPosition, FVector EndPosition) const
 {
+	FHitResult Result;
+	UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPosition, EndPosition, 
+											UEngineTypes::ConvertToTraceType(ECC_Visibility), false,
+											TArray<AActor*>(), EDrawDebugTrace::None, Result, true);
+	if(Result.bBlockingHit)
+		if(auto LootBag = Cast<ALootBag>(Result.GetActor()))
+			return LootBag;
+	
+	return nullptr;
 }
 
 TTuple<bool, FText> UPlayerInventory::TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
@@ -382,8 +436,69 @@ void UPlayerInventory::SplitItemsInInventory(UInventoryCore* Sender, FItemData* 
                                              EItemDestination Initiator, EItemDestination Destination,
                                              AActor* OwningPlayer)
 {
-	Super::SplitItemsInInventory(Sender, ItemData, InSlotData, StackableLeft, Method, Initiator, Destination,
-	                             OwningPlayer);
+	switch (Initiator)
+	{
+	case EItemDestination::InventorySlot:
+		{
+			switch (Destination)
+			{
+			case EItemDestination::InventorySlot:
+				{
+					RemoveItemFromInventoryArray(ItemData);
+					if (InventoryUtility::IsItemClassValid(InSlotData))
+						AddToStackInInventory(ItemData, InSlotData->Index);
+					else
+						AddItemToInventoryArray(ItemData, InSlotData->Index);
+				}
+				break;
+			case EItemDestination::DropBar:
+				DropItemOnTheGround(ItemData, EItemDestination::InventorySlot, OwningPlayer);
+				break;
+			}
+			
+			if (InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
+				AddItemToInventoryArray(StackableLeft, StackableLeft->Index);
+		}
+		break;
+	case EItemDestination::EquipmentSlot:
+		{
+			auto PlayerEquipment = InventoryUtility::GetPlayerEquipment(OwningPlayer);
+			if(IsValid(PlayerEquipment))
+			{
+				switch (Destination)
+				{
+				case EItemDestination::InventorySlot:
+					{
+						PlayerEquipment->RemoveItemFromEquipmentArray(ItemData);
+						if(InventoryUtility::IsItemClassValid(ItemData))
+							AddToStackInInventory(ItemData, InSlotData->Index);
+						else
+							AddItemToInventoryArray(ItemData, InSlotData->Index);
+
+						if (InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
+							PlayerEquipment->AddItemToEquipmentArray(StackableLeft, StackableLeft->EquipmentSlot);
+					}
+					break;
+				case EItemDestination::DropBar:
+					{
+						DropItemOnTheGround(ItemData, EItemDestination::EquipmentSlot, OwningPlayer);
+						if (InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
+							PlayerEquipment->AddItemToEquipmentArray(StackableLeft, StackableLeft->EquipmentSlot);
+					}
+					break;
+				}
+			}
+		}
+		break;
+	case EItemDestination::VendorSlot:
+	case EItemDestination::StorageSlot:
+		auto Data = TransferItemFromInventory(ItemData, InSlotData, Method, Sender, OwningPlayer);
+		ClientTransferItemReturnValue(Data.Get<0>(), Data.Get<1>());
+		if(Data.Get<0>())
+			if(InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
+				Sender->AddItemToInventoryArray(StackableLeft, StackableLeft->Index);
+		break;
+	}
 }
 
 void UPlayerInventory::ConfirmationPopupAccepted(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
