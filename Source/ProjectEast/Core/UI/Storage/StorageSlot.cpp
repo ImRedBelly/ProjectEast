@@ -233,7 +233,7 @@ void UStorageSlot::OnItemClick()
 	{
 		if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 		{
-			if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+			if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 				WidgetManager->OpenSplitStackPopup(CurrentItemData, new FItemData(), ActorInventory, PlayerInventory,
 				                                   EInputMethodType::RightClick, EItemDestination::StorageSlot,
 				                                   EItemDestination::InventorySlot, this);
@@ -441,7 +441,7 @@ void UStorageSlot::SetToolTipPositionAndAlignment() const
 
 bool UStorageSlot::IsAnyPopupActive() const
 {
-	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 		return WidgetManager->GetCurrentPopupType() != EWidgetType::None;
 
 	return false;
@@ -458,7 +458,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 			{
 				if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 				{
-					if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+					if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 						WidgetManager->OpenSplitStackPopup(Operation->ItemData, ItemData, PlayerInventory,
 						                                   ActorInventory,
 						                                   EInputMethodType::DragAndDrop, Operation->DraggerFrom,
@@ -475,7 +475,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 		case EItemRemoveType::OnConfirmation:
 			{
 				BorderObject->SetBrushColor(BorderUnHovered);
-				if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 					WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", Operation->ItemData,
 					                                     ItemData,
 					                                     PlayerInventory, ActorInventory, EInputMethodType::DragAndDrop,
@@ -485,7 +485,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 			break;
 		case EItemRemoveType::CannotBeRemoved:
 			{
-				if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 					WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
 			}
 			break;

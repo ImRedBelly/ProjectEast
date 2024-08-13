@@ -58,8 +58,8 @@ void UInteractionWidget::SetFillDecimalValue(float Value) const
 
 void UInteractionWidget::SetIconInteraction() const
 {
-	UTexture2D* Texture = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonBottom);
-	ImageInteraction->SetBrushFromTexture(Texture);
+	// UTexture2D* Texture = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonBottom);
+	// ImageInteraction->SetBrushFromTexture(Texture);
 }
 
 void UInteractionWidget::SetAppropriateFillingBackground() const

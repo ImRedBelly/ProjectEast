@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
@@ -9,12 +10,11 @@ class UInteractableComponent;
 class InventoryUtility
 {
 public:
-	static void Initialize(UDataTable* GamepadIcons);
-
 	static UInteractableComponent* GetCurrentInteractableObject(AActor* OwningPlayer);
-	static UTexture2D* GetGamepadIcon(EGamepadButtonType GamepadInputs);
+	//static UTexture2D* GetGamepadIcon(EGamepadButtonType GamepadInputs);
 	static UPlayerInventory* GetPlayerInventory(AActor* OwningPlayer);
 	static UPlayerEquipment* GetPlayerEquipment(AActor* OwningPlayer);
+	static UConsumableBuffs* GetConsumableBuffs(AActor* OwningPlayer);
 	static TTuple<bool, UInventoryCore*> GetInventoryFromInteractable(UInteractableComponent* InteractableComponent);
 	static bool SwitchHasOwnerAuthority(UActorComponent* ActorComponent);
 	static bool IsItemClassValid(const FItemData* ItemData);
@@ -48,8 +48,6 @@ public:
 	static void PlaySoundOnItemDropped();
 	static void PlaySoundOnTabSwitched();
 	static void PlaySoundOnItemPickedUp();
-
-	static UDataTable* GamepadIconsTable;
 
 	static TArray<FItemData*> CommonSortingItems;
 	static TArray<FItemData*> SuperiorSortingItems;

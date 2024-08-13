@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "InputMappingContext.h"
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
@@ -10,7 +11,6 @@ class UWallRunComponent;
 class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
-class UInputMappingContext;
 class UPlayerMovementComponent;
 struct FInputActionValue;
 
@@ -39,7 +39,9 @@ public:
 protected:
 #pragma region InputActions
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
+	UInputMappingContext* GeneralMappingContext;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputMappingContext* UIMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
@@ -67,15 +69,27 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* OpenInventoryAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* PauseAction;
 
+private:
+	UInputMappingContext* CurrentMappingContext;
+	
 #pragma endregion InputActions
-
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Chatacter | Camera")
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Chatacter | Camera")
 	USpringArmComponent* SpringArmComponent;
 
+public:
+	void SetGeneralMappingContext();
+	void SetUIMappingContext();
+	void SetMappingContext(UInputMappingContext* MappingContext);
+	
+protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -189,6 +203,7 @@ protected:
 private:
 	void OnInteractive();
 	void OnOpenInventory();
+	void OnPause();
 
 #pragma endregion Interactive
 

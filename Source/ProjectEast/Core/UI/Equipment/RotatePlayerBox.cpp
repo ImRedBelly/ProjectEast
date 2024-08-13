@@ -4,7 +4,7 @@
 void URotatePlayerBox::NativeConstruct()
 {
 	Super::NativeConstruct();
-	PlayerCapture = Cast<AMainPlayerController>(GetOwningPlayer())->GetPlayerCapture();
+	PlayerCapture = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager()->GetPlayerCapture();
 }
 
 FReply URotatePlayerBox::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

@@ -1,7 +1,6 @@
 ﻿#include "DropBar.h"
-
-#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UDropBar::NativeConstruct()
@@ -56,7 +55,8 @@ bool UDropBar::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& I
 		case EItemRemoveType::Default:
 			if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 			{
-				if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+				
+				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 					WidgetManager->OpenSplitStackPopup(Operation->ItemData, new FItemData(), nullptr,
 													   PlayerInventory,EInputMethodType::DragAndDrop, Operation->DraggerFrom,
 													   EItemDestination::DropBar, nullptr);
@@ -68,7 +68,7 @@ bool UDropBar::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& I
 			break;
 		case EItemRemoveType::OnConfirmation:
 			{
-				if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 					WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", Operation->ItemData,
 					                                     nullptr, nullptr, PlayerInventory,
 					                                     EInputMethodType::DragAndDrop,
@@ -77,7 +77,7 @@ bool UDropBar::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& I
 			break;
 		case EItemRemoveType::CannotBeRemoved:
 			{
-				if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 					WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
 			}
 			break;

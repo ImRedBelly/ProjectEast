@@ -1,6 +1,4 @@
 ﻿#include "MainPlayerController.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
@@ -13,23 +11,7 @@ AMainPlayerController::AMainPlayerController()
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	PlayerInventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	PlayerEquipment = CreateDefaultSubobject<UPlayerEquipment>(TEXT("PlayerEquipment"));
-}
-
-void AMainPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-	CachedMainWindow = CreateWidget<UMainWindow>(this, DefaultMainWindow);
-
-	if (UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
-		CachedMainWindow->AddToPlayerScreen();
-	else
-		CachedMainWindow->AddToViewport();
-
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCapture::StaticClass(), FoundActors);
-
-	if(FoundActors.Num() > 0)
-		CachedPlayerCapture = Cast<APlayerCapture>(FoundActors[0]);
+	WidgetManager = CreateDefaultSubobject<UWidgetManager>(TEXT("WidgetManager"));
 }
 
 void AMainPlayerController::InitializeInteraction(UInteractableComponent* InteractableComponent)
@@ -40,100 +22,21 @@ void AMainPlayerController::InitializeInteraction(UInteractableComponent* Intera
 
 void AMainPlayerController::OnInteraction() const
 {
-	if (!IsAnyMainWidgetOpen())
+	if (!WidgetManager->IsAnyMainWidgetOpen())
 		PlayerInventory->InputInteraction();
 }
 
-void AMainPlayerController::CloseActiveWidget()
-{
-	switch (ActiveWidget)
-	{
-	case EWidgetType::Inventory:
-		PlayerInventory->CloseInventoryWidget();
-		break;
-	case EWidgetType::Storage:
-		PlayerInventory->CloseStorageWidget();
-		break;
-	default: ;
-	}
-}
 
 bool AMainPlayerController::IsUsingGamepad()
 {
 	return false;
 }
 
-void AMainPlayerController::OpenNewWidget(EWidgetType WidgetType)
+
+void AMainPlayerController::BeginPlay()
 {
-	switch (WidgetType)
-	{
-	case EWidgetType::Inventory:
-		PlayerInventory->OpenInventoryWidget();
-		break;
-	case EWidgetType::Storage:
-		PlayerInventory->OpenStorageWidget();
-		break;
-	default: ;
-	}
-}
-
-void AMainPlayerController::SetActiveWidget(EWidgetType WidgetType)
-{
-	ActiveWidget = WidgetType;
-}
-
-EWidgetType AMainPlayerController::GetActiveWidget()
-{
-	return ActiveWidget;
-}
-
-EWidgetType AMainPlayerController::GetActivePopup()
-{
-	return EWidgetType::Inventory;
-}
-
-void AMainPlayerController::SwitchWidgetTo(EWidgetType WidgetType)
-{
-	if(WidgetType != ActiveWidget)
-	{
-		CloseActiveWidget();
-		OpenNewWidget(WidgetType);
-		ActiveWidget = WidgetType;
-	}
-}
-
-void AMainPlayerController::StartPlayerCapture()
-{
-	CachedPlayerCapture->StartCapture();
-}
-
-void AMainPlayerController::StopPlayerCapture()
-{
-	CachedPlayerCapture->EndCapture();
-}
-
-void AMainPlayerController::CloseActivePopup()
-{
-	ActivePopup = EWidgetPopup::None;
-	if(IsValid(CachedSplitStackPopup))
-		CachedSplitStackPopup->RemoveFromParent();
-}
-
-void AMainPlayerController::OpenSplitStackPopup(FItemData* ItemData, FItemData* InSlotData,
-                                                UInventoryCore* Sender, UInventoryCore* Receiver, EInputMethodType InputMethod,
-                                                EItemDestination Initiator, EItemDestination Destination, UUserWidget* SenderWidget)
-{
-	
-	CachedSplitStackPopup = CreateWidget<USplitStackPopup>(this, DefaultSplitStackPopup);
-	CachedSplitStackPopup->InitializePopup(ItemData, InSlotData, Sender, Receiver, InputMethod, Initiator, Destination, SenderWidget);
-
-	if(!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
-		CachedSplitStackPopup->AddToViewport(1);
-	else
-		CachedSplitStackPopup->AddToPlayerScreen(1);
-
-	CachedSplitStackPopup->SetKeyboardFocus();
-	ActivePopup = EWidgetPopup::SplitStackPopup;
+	Super::BeginPlay();
+	WidgetManager->InitializeWidgetManager(this, PlayerInventory);
 }
 
 void AMainPlayerController::OnPossess(APawn* InPawn)
@@ -156,7 +59,7 @@ void AMainPlayerController::InputActionInventory()
 
 void AMainPlayerController::InitializeComponents()
 {
-	InventoryUtility::Initialize(GamepadIcons);
+	//InventoryUtility::Initialize(GamepadIcons);
 	InteractionComponent->InitializeInteraction(this);
 	PlayerInventory->InitializeInventory(this);
 }
@@ -176,7 +79,8 @@ void AMainPlayerController::StartInteractionWithObject(UInteractableComponent* I
 		if (IsValid(InteractableComponent->GetOwner()))
 		{
 			CachedObject = InteractableComponent->GetOwner();
-			UInventoryCore* InventoryCore = Cast<UInventoryCore>(CachedObject->GetComponentByClass(UInventoryCore::StaticClass()));
+			UInventoryCore* InventoryCore = Cast<UInventoryCore>(
+				CachedObject->GetComponentByClass(UInventoryCore::StaticClass()));
 			if (IsValid(InventoryCore) && InventoryCore->GetComponentClassCanReplicate())
 			{
 				PlayerInventory->ServerUpdateItems(CachedObject);
@@ -220,22 +124,13 @@ UPlayerEquipment* AMainPlayerController::GetPlayerEquipment() const
 	return PlayerEquipment;
 }
 
-APlayerCapture* AMainPlayerController::GetPlayerCapture() const
+UWidgetManager* AMainPlayerController::GetWidgetManager() const
 {
-	return CachedPlayerCapture;
+	return WidgetManager;
 }
 
-UMainWindow* AMainPlayerController::GetMainWindow() const
-{
-	return CachedMainWindow;
-}
 
 void AMainPlayerController::ClientInitializeInteractionWithObject(UInteractableComponent* InteractableComponent)
 {
 	InitializeInteraction(InteractableComponent);
-}
-
-bool AMainPlayerController::IsAnyMainWidgetOpen() const
-{
-	return ActiveWidget != EWidgetType::None;
 }

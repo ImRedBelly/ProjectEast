@@ -26,7 +26,7 @@ FReply UStorageWindow::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEv
 {
 	if (InKeyEvent.GetKey() == EKeys::Gamepad_RightShoulder)
 	{
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->SwitchTabTo(EWidgetType::Equipment);
 
 		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
@@ -38,7 +38,7 @@ FReply UStorageWindow::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEv
 
 	if (InKeyEvent.GetKey() == EKeys::Gamepad_LeftShoulder)
 	{
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->SwitchTabTo(EWidgetType::Equipment);
 
 		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))

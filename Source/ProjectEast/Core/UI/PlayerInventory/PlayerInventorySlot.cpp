@@ -10,7 +10,6 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
-#include "ProjectEast/Core/Actors/Interfaces/IWidgetManager.h"
 #include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
@@ -357,7 +356,7 @@ void UPlayerInventorySlot::OnEndDraggedFromOtherInventory(UItemDataDragDropOpera
 	//TODO Метод создан чтобы не дублировать код!
 	if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 	{
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->OpenSplitStackPopup(Operation->ItemData, CurrentItemData, Operation->Inventory,
 			                                   CachedPlayerInventory,
 			                                   EInputMethodType::DragAndDrop, Operation->DraggerFrom,
@@ -542,7 +541,7 @@ void UPlayerInventorySlot::RefreshToolTip()
 
 void UPlayerInventorySlot::DropOnTheGround() const
 {
-	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 	{
 		if (CachedPlayerInventory->GetItemRemoveType(CurrentItemData) == EItemRemoveType::OnConfirmation)
 			WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
@@ -568,7 +567,7 @@ void UPlayerInventorySlot::OnRightClick()
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer());
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 		{
 			switch (WidgetManager->GetActiveWidget())
 			{
@@ -644,7 +643,7 @@ void UPlayerInventorySlot::SetButtonStyle(FItemData* ItemData) const
 
 EWidgetType UPlayerInventorySlot::GetActiveWidgetType() const
 {
-	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 		return WidgetManager->GetCurrentPopupType();
 	return EWidgetType::None;
 }
@@ -665,7 +664,7 @@ bool UPlayerInventorySlot::AttemptSplitting(UItemDataDragDropOperation* Operatio
 			{
 				if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 				{
-					if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+					if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 					{
 						WidgetManager->OpenSplitStackPopup(Operation->ItemData, CurrentItemData,
 						                                   nullptr, CachedPlayerInventory,
@@ -691,7 +690,7 @@ bool UPlayerInventorySlot::IsUsingGamepad() const
 
 bool UPlayerInventorySlot::IsAnyPopUpActive() const
 {
-	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 		return WidgetManager->GetCurrentPopupType() != EWidgetType::None;
 
 	return false;
@@ -715,7 +714,7 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 	case EItemRemoveType::Default:
 		if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 		{
-			if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+			if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			{
 				WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, CachedPlayerInventory,
 				                                   CachedReceiverInventory,
@@ -732,7 +731,7 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 		}
 		break;
 	case EItemRemoveType::OnConfirmation:
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 		{
 			WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, nullptr,
 			                                     CachedPlayerInventory,
@@ -742,7 +741,7 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 		}	
 		break;
 	case EItemRemoveType::CannotBeRemoved:
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
 		break;
 	}
@@ -755,7 +754,7 @@ void UPlayerInventorySlot::TryToUseAnItem() const
 	{
 		ItemData->bIsAlreadyUsed = true;
 		CachedPlayerInventory->ServerAddItemToInventory(CachedPlayerInventory, ItemData, ItemData->Index);
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->OpenTextDocumentPopup(ItemData, CachedPlayerInventoryWidget);
 	}
 }

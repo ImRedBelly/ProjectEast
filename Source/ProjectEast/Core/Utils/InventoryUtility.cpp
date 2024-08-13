@@ -5,8 +5,6 @@
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/Data/FGamepadButtonData.h"
 
-
-UDataTable* InventoryUtility::GamepadIconsTable = nullptr;
 TArray<FItemData*> InventoryUtility::CommonSortingItems;
 TArray<FItemData*> InventoryUtility::SuperiorSortingItems;
 TArray<FItemData*> InventoryUtility::EpicSortingItems;
@@ -25,11 +23,6 @@ TArray<FItemData*> InventoryUtility::CurrencySortingItems;
 TArray<FItemData*> InventoryUtility::CraftingRecipeSortingItems;
 
 
-void InventoryUtility::Initialize(UDataTable* GamepadIcons)
-{
-	GamepadIconsTable = GamepadIcons;
-}
-
 UInteractableComponent* InventoryUtility::GetCurrentInteractableObject(AActor* OwningPlayer)
 {
 	UInteractionComponent* InteractionComponent = Cast<UInteractionComponent>(
@@ -43,17 +36,10 @@ UInteractableComponent* InventoryUtility::GetCurrentInteractableObject(AActor* O
 	return nullptr;
 }
 
-UTexture2D* InventoryUtility::GetGamepadIcon(EGamepadButtonType GamepadInputs)
-{
-	for (FName RowName : GamepadIconsTable->GetRowNames())
-	{
-		auto DataTableRowInfo = GamepadIconsTable->FindRow<FGamepadButtonData>(RowName, TEXT(""));
-		if (DataTableRowInfo->InputType == GamepadInputs)
-			return DataTableRowInfo->InputIcon;
-	}
-
-	return GamepadIconsTable->FindRow<FGamepadButtonData>(GamepadIconsTable->GetRowNames()[0], TEXT(""))->InputIcon;
-}
+// UTexture2D* InventoryUtility::GetGamepadIcon(EGamepadButtonType GamepadInputs)
+// {
+// 	return nullptr;
+// }
 
 UPlayerInventory* InventoryUtility::GetPlayerInventory(AActor* OwningPlayer)
 {
@@ -75,6 +61,18 @@ UPlayerEquipment* InventoryUtility::GetPlayerEquipment(AActor* OwningPlayer)
 			OwningPlayer->GetComponentByClass(UPlayerEquipment::StaticClass()));
 		if (IsValid(Equipment))
 			return Equipment;
+	}
+	return nullptr;
+}
+
+UConsumableBuffs* InventoryUtility::GetConsumableBuffs(AActor* OwningPlayer)
+{
+	if (IsValid(OwningPlayer))
+	{
+		UConsumableBuffs* ConsumableBuffs = Cast<UConsumableBuffs>(
+			OwningPlayer->GetComponentByClass(UConsumableBuffs::StaticClass()));
+		if (IsValid(ConsumableBuffs))
+			return ConsumableBuffs;
 	}
 	return nullptr;
 }

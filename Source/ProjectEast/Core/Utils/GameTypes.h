@@ -122,6 +122,7 @@ UENUM(BlueprintType)
 enum class EWidgetType : uint8
 {
 	None UMETA(DisplayName = "None"),
+	Pause UMETA(DisplayName = "Pause"),
 	Inventory UMETA(DisplayName = "Inventory"),
 	Equipment UMETA(DisplayName = "Equipment"),
 	Crafting UMETA(DisplayName = "Crafting"),

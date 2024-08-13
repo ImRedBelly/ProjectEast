@@ -3,8 +3,8 @@
 #include "PlayerInventoryWidget.h"
 #include "Components/UniformGridSlot.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
+#include "ProjectEast/Core/Characters/PlayerCharacter.h"
 #include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
-#include "ProjectEast/Core/Actors/Interfaces/IWidgetManager.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 
 void UPlayerInventoryWidget::AssignCurrentlyFocusedSlot(UPlayerInventorySlot* PlayerInventorySlot)
@@ -34,12 +34,18 @@ void UPlayerInventoryWidget::NativeConstruct()
 	CreateInventoryP4();
 	SetActivePanel();
 	SetInitialInputDelayForSlot();
+
+
+	if(auto a = Cast<APlayerCharacter>(CachedPlayerController->GetCharacter()))
+		a->SetUIMappingContext();
 }
 
 void UPlayerInventoryWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 	UnbindEventDispatchers();
+	if(auto a = Cast<APlayerCharacter>(CachedPlayerController->GetCharacter()))
+			a->SetGeneralMappingContext();
 	if (CachedPlayerInventory->IsRefreshOmClosingWidget())
 		CachedPlayerInventory->ServerSortInventory(CachedPlayerInventory,
 		                                           ESortMethod::Quicksort, EInventoryPanels::P1, true);
@@ -367,7 +373,7 @@ bool UPlayerInventoryWidget::IsUsingGamepad() const
 
 bool UPlayerInventoryWidget::IsAnyPopupActive() const
 {
-	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 		return WidgetManager->GetCurrentPopupType() != EWidgetType::Vendor;
 
 	return false;

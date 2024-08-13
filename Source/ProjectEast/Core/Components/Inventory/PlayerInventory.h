@@ -38,7 +38,6 @@ public:
 	void OpenLootBarWidget();
 	void CloseLootBarWidget();
 
-	void OpenInventoryWidget();
 	void CloseInventoryWidget();
 
 	void OpenStorageWidget();
@@ -47,6 +46,7 @@ public:
 	void OpenVendorWidget();
 	void CloseVendorWidget();
 
+	void ServerChangeDroppedIndex(uint32 DroppedIndex);
 	void ServerTakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
 	void ServerDropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer);
 	
@@ -78,7 +78,6 @@ private:
 
 	void ServerSpawnLootBag(FItemData* ItemData, AActor* OwningPlayer);
 	void ServerSpawnInteractable(FItemData* ItemData, AActor* OwningPlayer);
-	void ServerChangeDroppedIndex(uint32 DroppedIndex);
 	void ServerModifyItemDurability(FItemData* ItemData, uint32 Amount, AActor* OwningPlayer);
 
 	void ClientItemLooted(FItemData* ItemData);

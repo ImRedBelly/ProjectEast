@@ -252,7 +252,7 @@ void UEquipmentSlot::DropOnTheGround()
 		{
 			if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 			{
-				if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 					WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, nullptr, CachedPlayerInventory,
 					                                   EInputMethodType::RightClick,
 					                                   EItemDestination::EquipmentSlot, EItemDestination::DropBar,
@@ -263,14 +263,14 @@ void UEquipmentSlot::DropOnTheGround()
 				                                                 GetOwningPlayer());
 		}
 	case EItemRemoveType::OnConfirmation:
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, nullptr,
 			                                     nullptr, CachedPlayerInventory, EInputMethodType::RightClick,
 			                                     EItemDestination::EquipmentSlot,
 			                                     EItemDestination::DropBar, this);
 		break;
 	case EItemRemoveType::CannotBeRemoved:
-		if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
 		break;
 	}
@@ -358,7 +358,7 @@ FText UEquipmentSlot::GetLabelCharacter()
 
 EWidgetType UEquipmentSlot::GetActiveWidgetType() const
 {
-	if (IWidgetManager* WidgetManager = Cast<IWidgetManager>(GetOwningPlayer()))
+	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 		return WidgetManager->GetActiveWidget();
 	return EWidgetType::None;
 }

@@ -125,14 +125,14 @@ bool ULootBar::IsValidateOwnerInventory() const
 
 void ULootBar::UpdateButtonIcons()
 {
-	UTexture2D* TextureTake = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonBottom);
-	ImageButtonTake->SetBrushFromTexture(TextureTake);
-
-	UTexture2D* TextureTakeAll = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonLeft);
-	ImageButtonTakeAll->SetBrushFromTexture(TextureTakeAll);
-
-	UTexture2D* TextureClose = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonRight);
-	ImageButtonClose->SetBrushFromTexture(TextureClose);
+	// UTexture2D* TextureTake = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonBottom);
+	// ImageButtonTake->SetBrushFromTexture(TextureTake);
+	//
+	// UTexture2D* TextureTakeAll = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonLeft);
+	// ImageButtonTakeAll->SetBrushFromTexture(TextureTakeAll);
+	//
+	// UTexture2D* TextureClose = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonRight);
+	// ImageButtonClose->SetBrushFromTexture(TextureClose);
 }
 
 void ULootBar::TakeItem()

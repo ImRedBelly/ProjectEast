@@ -56,18 +56,35 @@ void APlayerCharacter::SetStateStrafe(bool state) const
 	PlayerMovementComponent->bOrientRotationToMovement = !state;
 }
 
-void APlayerCharacter::BeginPlay()
+void APlayerCharacter::SetGeneralMappingContext()
 {
-	Super::BeginPlay();
+	SetMappingContext(GeneralMappingContext);
+}
 
+void APlayerCharacter::SetUIMappingContext()
+{
+	SetMappingContext(UIMappingContext);
+}
+
+void APlayerCharacter::SetMappingContext(UInputMappingContext* MappingContext)
+{
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			if (IsValid(CurrentMappingContext))
+				Subsystem->RemoveMappingContext(CurrentMappingContext);
+			CurrentMappingContext = MappingContext;
+			Subsystem->AddMappingContext(CurrentMappingContext, 0);
 		}
 	}
+}
+
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	SetGeneralMappingContext();
 }
 
 void APlayerCharacter::Tick(float DeltaSeconds)
@@ -76,12 +93,6 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 	UpdateIKSettings(DeltaSeconds);
 	TryChangeSprintState();
 	TryChangeTargetArmLength();
-	//
-	// PlayerMovementComponent->GravityScale = GetIsWallRun() ? 0.1f : 1.5f;
-	//
-	// PlayerMovementComponent->SetPlaneConstraintNormal(GetIsWallRun()
-	// 	                                                  ? FVector(0, 0, 1)
-	// 	                                                  : FVector(0, 0, 0));
 }
 
 
@@ -131,9 +142,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		//                                    this, &APlayerCharacter::OnEndSliding);
 
 		//Interaction
+
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::OnInteractive);
+		EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Started, this,&APlayerCharacter::OnOpenInventory);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this,&APlayerCharacter::OnPause);
+
 		
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &APlayerCharacter::OnInteractive);
-		EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Started, this, &APlayerCharacter::OnOpenInventory);
 		//
 	}
 }
@@ -376,7 +391,13 @@ void APlayerCharacter::OnInteractive()
 void APlayerCharacter::OnOpenInventory()
 {
 	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
-		PlayerController->OpenNewWidget(EWidgetType::Inventory);
+		PlayerController->GetWidgetManager()->OpenNewWidget(EWidgetType::Inventory);
+}
+
+void APlayerCharacter::OnPause()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->GetWidgetManager()->OpenNewWidget(EWidgetType::Pause);
 }
 
 void APlayerCharacter::UpdateIKSettings(float DeltaSeconds)

@@ -3,12 +3,11 @@
 #include "CoreMinimal.h"
 #include "StorageInventory.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/InvalidationBox.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
-#include "ProjectEast/Core/UI/Equipment/EquipmentPanel.h"
-#include "ProjectEast/Core/UI/PlayerInventory/GoldWeightBar.h"
-#include "ProjectEast/Core/UI/PlayerInventory/UpperUIBar.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
+#include "ProjectEast/Core/UI/Equipment/EquipmentPanel.h"
+#include "ProjectEast/Core/UI/PlayerInventory/UpperUIBar.h"
+#include "ProjectEast/Core/UI/PlayerInventory/GoldWeightBar.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "StorageWindow.generated.h"
 
 UCLASS()

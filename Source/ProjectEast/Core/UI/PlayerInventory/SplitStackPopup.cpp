@@ -105,7 +105,7 @@ void USplitStackPopup::OnPressedAccept()
 void USplitStackPopup::OnPressedCancel() const
 {
 	if(IsValid(CachedController))
-		CachedController->CloseActivePopup();
+		CachedController->GetWidgetManager()->CloseActivePopup();
 	if(IsValid(CachedSenderWidget))
 		CachedSenderWidget->SetKeyboardFocus();
 }

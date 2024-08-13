@@ -17,7 +17,7 @@ void AStorage::ClientStartInteraction(AActor* Interactor)
 		if (auto Controller = Cast<APlayerController>(Interactor))
 			Controller->SetIgnoreMoveInput(true);
 
-		if (auto WidgetManager = Cast<IWidgetManager>(Interactor))
+		if (auto WidgetManager = Cast<AMainPlayerController>(Interactor)->GetWidgetManager())
 		 	WidgetManager->SwitchWidgetTo(EWidgetType::Storage);
 	}
 }
@@ -32,7 +32,7 @@ void AStorage::ClientEndInteraction(AActor* Interactor)
 		if (auto Controller = Cast<APlayerController>(Interactor))
 			Controller->ResetIgnoreMoveInput();
 
-		if (auto WidgetManager = Cast<IWidgetManager>(Interactor))
+		if (auto WidgetManager = Cast<AMainPlayerController>(Interactor)->GetWidgetManager())
 		{
 			if (WidgetManager->GetActiveWidget() == EWidgetType::Storage)
 				WidgetManager->CloseActiveWidget();
