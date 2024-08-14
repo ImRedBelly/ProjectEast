@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
+#include "ProjectEast/Core/Actors/Inventory/ItemConsumable.h"
 #include "MainItemData.generated.h"
 
 class ABaseItemPickUp;
@@ -89,9 +90,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Item Equip")
 	USkeletalMesh* SkeletalMesh;
 
-	//UPROPERTY(EditDefaultsOnly, Category="Item Consumable Buff")
-	//ABaseConsumable* ConsumableClass;
-
+	UPROPERTY(EditDefaultsOnly, Category="Item Consumable Buff")
+	TSubclassOf<AItemConsumable> ConsumableClass;
+	
 	UPROPERTY(EditDefaultsOnly, Category="Item Interactable")
 	ABaseItemPickUp* InteractableClass;
 	

@@ -8,7 +8,6 @@
 class UPlayerInventory;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddedToEquipment, FItemData, ItemData);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemovedFromEquipment, FItemData, ItemData);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -32,11 +31,14 @@ public:
 	void ServerTransferItemFromInventory(FItemData* ItemData, FItemData* InSlotData, UInventoryCore* PlayerInventory,
 	                                     EInputMethodType RightClick);
 	void ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* CurrentItemData);
+	void ServerRemoveItemQuantity(FItemData* ItemData, int8 Quantity);
 	void RemoveItemFromEquipmentArray(FItemData* ItemData);
 	void AddItemToEquipmentArray(FItemData* ItemData, EItemSlot ItemSlot);
 	void AddToStackInEquipment(FItemData* ItemData, FItemData* Element);
+	void RemoveItemQuantity(FItemData* ItemData, int8 Quantity);
 	bool TryToAddToPartialStack(FItemData* ItemData);
 	void DetachItemFromEquipment(FItemData* ItemData);
+	
 	TTuple<bool, FText> CanItemBeEquipped(FItemData* ItemData);
 	TTuple<bool, FItemData*> GetItemByEquipmentSlot(EItemSlot Slot) const;
 	TMap<EItemSlot, FItemData*> GetEquipmentData() { return EquipmentData; }

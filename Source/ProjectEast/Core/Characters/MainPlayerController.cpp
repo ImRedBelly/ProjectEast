@@ -1,5 +1,4 @@
 ﻿#include "MainPlayerController.h"
-#include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
@@ -11,6 +10,7 @@ AMainPlayerController::AMainPlayerController()
 	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComponent"));
 	PlayerInventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	PlayerEquipment = CreateDefaultSubobject<UPlayerEquipment>(TEXT("PlayerEquipment"));
+	ConsumableBuffs = CreateDefaultSubobject<UConsumableBuffs>(TEXT("ConsumableBuffs"));
 	WidgetManager = CreateDefaultSubobject<UWidgetManager>(TEXT("WidgetManager"));
 }
 
@@ -122,6 +122,11 @@ UPlayerInventory* AMainPlayerController::GetPlayerInventory() const
 UPlayerEquipment* AMainPlayerController::GetPlayerEquipment() const
 {
 	return PlayerEquipment;
+}
+
+UConsumableBuffs* AMainPlayerController::GetConsumableBuffs() const
+{
+	return ConsumableBuffs;
 }
 
 UWidgetManager* AMainPlayerController::GetWidgetManager() const

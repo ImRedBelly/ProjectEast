@@ -72,6 +72,15 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* PauseAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* UsePocket1Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* UsePocket2Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* UsePocket3Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* UsePocket4Action;
 
 private:
 	UInputMappingContext* CurrentMappingContext;
@@ -204,6 +213,10 @@ private:
 	void OnInteractive();
 	void OnOpenInventory();
 	void OnPause();
+	void UsePocket1();
+	void UsePocket2();
+	void UsePocket3();
+	void UsePocket4();
 
 #pragma endregion Interactive
 

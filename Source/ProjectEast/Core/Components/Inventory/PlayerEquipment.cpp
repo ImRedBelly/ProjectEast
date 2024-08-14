@@ -29,6 +29,11 @@ void UPlayerEquipment::ServerTransferItemFromEquipment(FItemData* ItemData, FIte
 {
 }
 
+void UPlayerEquipment::ServerRemoveItemQuantity(FItemData* ItemData, int8 Quantity)
+{
+	RemoveItemQuantity(ItemData, Quantity);
+}
+
 void UPlayerEquipment::RemoveItemFromEquipmentArray(FItemData* ItemData)
 {
 }
@@ -38,6 +43,10 @@ void UPlayerEquipment::AddItemToEquipmentArray(FItemData* ItemData, EItemSlot It
 }
 
 void UPlayerEquipment::AddToStackInEquipment(FItemData* ItemData, FItemData* Element)
+{
+}
+
+void UPlayerEquipment::RemoveItemQuantity(FItemData* ItemData, int8 Quantity)
 {
 }
 
@@ -80,5 +89,5 @@ TTuple<bool, FItemData*> UPlayerEquipment::GetItemByEquipmentSlot(EItemSlot Slot
 		if (InventoryUtility::IsItemClassValid(ItemData))
 			return MakeTuple(true, ItemData);
 	}
-	return MakeTuple(false, nullptr);
+	return MakeTuple(false, new FItemData());
 }
