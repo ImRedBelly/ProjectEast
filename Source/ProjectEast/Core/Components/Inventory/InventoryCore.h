@@ -21,11 +21,11 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UMainItemData> Class;
 	UPROPERTY(EditDefaultsOnly)
-	uint32 Quantity;
+	int32 Quantity;
 	UPROPERTY(EditDefaultsOnly)
-	uint32 Durability;
+	int32 Durability;
 	UPROPERTY(EditDefaultsOnly)
-	uint32 Index;
+	int32 Index;
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsEquipped;
 	UPROPERTY(EditDefaultsOnly)
@@ -145,10 +145,12 @@ public:
 	void AddGoldToOwner(float Gold);
 	void AddToStackInInventory(FItemData* ItemData, int32 Index);
 	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex);
+	void AddWeightToInventory(float Weight);
 
 	float GetOwnerGold() const { return OwnerGold; }
 	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
 	bool IsRefreshOnClosingWidget() const { return bIsRefreshOnClosingWidget; }
+	TTuple<bool, FText> TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,EInputMethodType InputMethod,UPlayerEquipment* Sender);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -205,13 +207,9 @@ protected:
 	virtual TTuple<bool, FText> TransferItemFromInventory(FItemData* ItemData, FItemData* IsSlotData,
 	                                                      EInputMethodType InputMethod,
 	                                                      UInventoryCore* Sender, AActor* OwningPlayer);
-	TTuple<bool, FText> TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,
-	                                              EInputMethodType InputMethod,
-	                                              UPlayerEquipment* Sender);
 	virtual void SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem);
 	bool HasEnoughGold(FItemData* ItemData) const;
 	void RemoveGoldFromOwner(float Gold);
-	void AddWeightToInventory(float Weight);
 	bool IsInventoryOverweight() const;
 	TTuple<bool, int> GetEmptyInventorySlot(FItemData* ItemData);
 	FItemData* GetItemBySlot(EInventoryPanels Panel, uint32 SlitIndex);

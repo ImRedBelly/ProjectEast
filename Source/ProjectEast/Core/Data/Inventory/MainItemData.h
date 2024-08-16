@@ -2,8 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "ProjectEast/Core/Utils/GameTypes.h"
+#include "ProjectEast/Core/Actors/Inventory/BaseEquippable.h"
 #include "ProjectEast/Core/Actors/Inventory/ItemConsumable.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "MainItemData.generated.h"
 
 class ABaseItemPickUp;
@@ -85,8 +86,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Loot Randomization")
 	uint32 MaxRandDurability;
 	
-	//UPROPERTY(EditDefaultsOnly, Category="Item Equip")
-	//ABaseEquippable* EquippableClass;
+	UPROPERTY(EditDefaultsOnly, Category="Item Equip")
+	TSubclassOf<ABaseEquippable> EquippableClass;
 	UPROPERTY(EditDefaultsOnly, Category="Item Equip")
 	USkeletalMesh* SkeletalMesh;
 

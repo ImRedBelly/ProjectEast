@@ -97,7 +97,7 @@ void UEquipmentPanel::CreateEquipment()
 		{
 			auto FindItemSlot = GetWidgetSlotByItemSlot(Slots[i]);
 			if(IsValid(FindItemSlot))
-				FindItemSlot->OverwriteSlot(this, *CachedPlayerEquipment->GetEquipmentData().Find(Slots[i]));
+				FindItemSlot->OverwriteSlot(this, CachedPlayerEquipment->GetEquipmentData().Find(Slots[i]));
 		}
 	}
 }

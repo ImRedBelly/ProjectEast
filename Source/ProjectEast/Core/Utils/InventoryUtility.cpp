@@ -129,8 +129,9 @@ bool InventoryUtility::AreItemSlotsEqual(const FItemData* ItemDataFirst, const F
 
 bool InventoryUtility::AreWeaponTypesEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
 {
-	if(IsItemClassValid(ItemDataSecond))
-		return ItemDataFirst->Class.GetDefaultObject()->WeaponType == ItemDataSecond->Class.GetDefaultObject()->WeaponType;
+	if (IsItemClassValid(ItemDataSecond))
+		return ItemDataFirst->Class.GetDefaultObject()->WeaponType == ItemDataSecond->Class.GetDefaultObject()->
+			WeaponType;
 	return false;
 }
 
@@ -146,7 +147,7 @@ bool InventoryUtility::CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const
 		ItemDataSecond->Class.GetDefaultObject()->Type == EItemsType::Shield);
 }
 
-bool InventoryUtility::IsStackableAndHaveStacks(const FItemData* ItemData, uint32 Quantity)
+bool InventoryUtility::IsStackableAndHaveStacks(const FItemData* ItemData, int32 Quantity)
 {
 	return ItemData->Class.GetDefaultObject()->bIsStackable && ItemData->Quantity > Quantity;
 }
@@ -206,6 +207,17 @@ TTuple<bool, uint32> InventoryUtility::FindItemIndex(const TArray<FItemData*> It
 			return MakeTuple(true, i);
 
 	return MakeTuple(false, 0);
+}
+
+TTuple<bool, EItemSlot> InventoryUtility::FindEmptyEquipmentSlot(TMap<EItemSlot, FItemData> EquipmentData,
+                                                                 TArray<EItemSlot> SlotsToSearch, EItemSlot DefaultSlot)
+{
+	for (auto Slot : SlotsToSearch)
+		if (EquipmentData.Contains(Slot))
+			if (IsItemClassValid(&EquipmentData[Slot]))
+				return MakeTuple(true, Slot);
+
+	return MakeTuple(false, DefaultSlot);
 }
 
 float InventoryUtility::CalculateStackedItemWeight(FItemData* ItemData)
@@ -268,7 +280,22 @@ FItemData* InventoryUtility::CopyItemData(FItemData* ItemData)
 	NewItemData->bIsEquipped = ItemData->bIsEquipped;
 	NewItemData->bIsAlreadyUsed = ItemData->bIsAlreadyUsed;
 	NewItemData->ValueModifier = ItemData->ValueModifier;
-	return  NewItemData;
+	return NewItemData;
+}
+
+FItemData* InventoryUtility::CopyItemData(FItemData ItemData)
+{
+	FItemData* NewItemData = new FItemData();
+	NewItemData->ID = ItemData.ID;
+	NewItemData->EquipmentSlot = ItemData.EquipmentSlot;
+	NewItemData->Class = ItemData.Class;
+	NewItemData->Quantity = ItemData.Quantity;
+	NewItemData->Durability = ItemData.Durability;
+	NewItemData->Index = ItemData.Index;
+	NewItemData->bIsEquipped = ItemData.bIsEquipped;
+	NewItemData->bIsAlreadyUsed = ItemData.bIsAlreadyUsed;
+	NewItemData->ValueModifier = ItemData.ValueModifier;
+	return NewItemData;
 }
 
 TArray<FItemData*> InventoryUtility::QuickSortItems(TArray<FItemData*> ItemData)
@@ -290,8 +317,8 @@ TArray<FItemData*> InventoryUtility::SortItemsByType(TArray<FItemData*> ItemData
 	for (int i = 0; i < ItemData.Num(); ++i)
 	{
 		if (!IsItemClassValid(ItemData[i]))
-		continue;
-		
+			continue;
+
 		EItemsType Type = ItemData[i]->Class.GetDefaultObject()->Type;
 
 		switch (Type)
@@ -340,7 +367,7 @@ TArray<FItemData*> InventoryUtility::SortItemsByType(TArray<FItemData*> ItemData
 	SortedItems.Append(OtherSortingItems);
 	SortedItems.Append(CurrencySortingItems);
 	SortedItems.Append(CraftingRecipeSortingItems);
-	
+
 	return SortedItems;
 }
 
@@ -351,9 +378,9 @@ TArray<FItemData*> InventoryUtility::SortItemsByRarity(TArray<FItemData*> ItemDa
 	{
 		if (!IsItemClassValid(ItemData[i]))
 			continue;
-		
+
 		EItemRarity Rarity = ItemData[i]->Class.GetDefaultObject()->Rarity;
-		
+
 		switch (Rarity)
 		{
 		case EItemRarity::Common:

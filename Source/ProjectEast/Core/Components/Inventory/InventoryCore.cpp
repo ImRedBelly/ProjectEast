@@ -1,6 +1,7 @@
 ﻿#include "InventoryCore.h"
 #include "PlayerEquipment.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
@@ -887,14 +888,16 @@ void UInventoryCore::RemoveItemQuantity(FItemData* ItemData, uint32 Quantity)
 {
 	FItemData* LocalItemData = ItemData;
 
-	if (LocalItemData->Quantity > Quantity)
+	
+	if (UKismetMathLibrary::Greater_IntInt(LocalItemData->Quantity, Quantity))
 	{
 		RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(LocalItemData));
 		ItemData->Quantity -= Quantity;
 		AddItemToInventoryArray(ItemData, ItemData->Index);
 		AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(LocalItemData));
 	}
-	else if (LocalItemData->Quantity <= Quantity)
+	
+	else if (UKismetMathLibrary::LessEqual_IntInt(LocalItemData->Quantity ,Quantity))
 	{
 		RemoveItemFromInventoryArray(ItemData);
 		RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
