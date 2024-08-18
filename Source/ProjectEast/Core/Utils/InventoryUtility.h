@@ -29,7 +29,7 @@ public:
 	static TTuple<bool, int32> FindEmptySlotInArray(const TArray<FItemData*> ItemData);
 	static TTuple<bool, FItemData*> FindItemByID(const TArray<FItemData*> ItemData, FString ID);
 	static TTuple<bool, uint32> FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);
-	static TTuple<bool, EItemSlot> FindEmptyEquipmentSlot(TMap<EItemSlot, FItemData> EquipmentData, TArray<EItemSlot> SlotsToSearch, EItemSlot DefaultSlot);
+	static TTuple<bool, EItemSlot> FindEmptyEquipmentSlot(TMap<EItemSlot, FItemData*> EquipmentData, TArray<EItemSlot> SlotsToSearch, EItemSlot DefaultSlot);
 	static float CalculateStackedItemWeight(FItemData* ItemData);
 	static float CalculateStackedItemValue(FItemData* ItemData);
 	static void TakeAllItemsFromInventory(AActor* Interactor, UInventoryCore* ActorInventory);

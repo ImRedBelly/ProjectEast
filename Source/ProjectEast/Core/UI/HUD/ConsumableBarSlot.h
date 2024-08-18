@@ -73,11 +73,11 @@ private:
 	void RefreshSlot();
 
 	UFUNCTION()
-	void OnRefreshItem(FItemData ItemData);
+	void OnRefreshItem(FItemData& ItemData);
 	UFUNCTION()
 	void OnItemUsed(EItemSlot UsedSLot, float Cooldown);
 	UFUNCTION()
-	void RefreshSlot(FItemData ItemData);
+	void RefreshSlot(FItemData& ItemData);
 	UFUNCTION()
 	void UpdateIconInput();
 

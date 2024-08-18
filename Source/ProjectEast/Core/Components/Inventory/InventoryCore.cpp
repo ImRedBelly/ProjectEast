@@ -155,8 +155,7 @@ void UInventoryCore::ServerTransferItemFromInventory(UInventoryCore* Receiver, F
 }
 
 void UInventoryCore::ServerTransferItemFromEquipment(FItemData* ItemData, FItemData* InSlotData,
-                                                     EInputMethodType Method,
-                                                     UPlayerEquipment* Sender)
+                                                     EInputMethodType Method, UPlayerEquipment* Sender)
 {
 	auto TransferData = TransferItemFromEquipment(ItemData, InSlotData, Method, Sender);
 	ClientTransferItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>());
@@ -500,11 +499,9 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromInventory(FItemData* ItemDat
 	return MakeTuple(false, FText());
 }
 
-TTuple<bool, FText> UInventoryCore::TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,
-                                                              EInputMethodType InputMethod, UPlayerEquipment* Sender)
+TTuple<bool, FText> UInventoryCore::TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData, EInputMethodType InputMethod, UPlayerEquipment* Sender)
 {
-	FItemData* LocalItemData = ItemData;
-	if (InventoryUtility::IsItemClassValid(LocalItemData) && IsValid(Sender))
+	if (InventoryUtility::IsItemClassValid(ItemData) && IsValid(Sender))
 	{
 		auto InventoryData = GetInventoryAndSize(InventoryUtility::GetInventoryPanelFromItem(ItemData));
 		auto PartialData = InventoryUtility::HasPartialStack(InventoryData.Get<0>(), ItemData);
@@ -531,8 +528,8 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromEquipment(FItemData* ItemDat
 			}
 		}
 
-		Sender->RemoveItemFromEquipmentArray(LocalItemData);
-		Sender->DetachItemFromEquipment(LocalItemData);
+		Sender->RemoveItemFromEquipmentArray(ItemData);
+		Sender->DetachItemFromEquipment(ItemData);
 
 		return MakeTuple(true, FText());
 	}
@@ -746,11 +743,9 @@ void UInventoryCore::AddItemToInventoryArray(FItemData* ItemData, int32 SlotInde
 				if (UKismetSystemLibrary::IsStandalone(GetWorld()))
 				{
 					SwitchActivePanel(InventoryPanel);
-
-					if (OnRefreshInventory.IsBound())
-						OnRefreshInventory.Broadcast(InventoryPanel);
-					if (OnHighlightInventorySlot.IsBound())
-						OnHighlightInventorySlot.Broadcast(ItemData->Index);
+					CallOnRefreshInventory(InventoryPanel);
+					CallOnAddedToInventorySlot(*ItemData);
+					CallOnHighlightSlot(ItemData->Index);
 				}
 				else
 				{

@@ -36,11 +36,6 @@ UInteractableComponent* InventoryUtility::GetCurrentInteractableObject(AActor* O
 	return nullptr;
 }
 
-// UTexture2D* InventoryUtility::GetGamepadIcon(EGamepadButtonType GamepadInputs)
-// {
-// 	return nullptr;
-// }
-
 UPlayerInventory* InventoryUtility::GetPlayerInventory(AActor* OwningPlayer)
 {
 	if (IsValid(OwningPlayer))
@@ -119,6 +114,7 @@ bool InventoryUtility::AreItemSlotsEqual(const FItemData* ItemDataFirst, const F
 		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket2)
 		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket3)
 		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket4);
+	
 	auto ResultSecond = (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket1)
 		|| (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket2)
 		|| (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket3)
@@ -143,8 +139,8 @@ bool InventoryUtility::CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const
 			return true;
 
 	return ItemDataFirst->Class.GetDefaultObject()->WeaponType == EWeaponType::OneHand &&
-	(ItemDataSecond->Class.GetDefaultObject()->Type == EItemsType::Weapon ||
-		ItemDataSecond->Class.GetDefaultObject()->Type == EItemsType::Shield);
+	(ItemDataSecond->EquipmentSlot == EItemSlot::Weapon ||
+		ItemDataSecond->EquipmentSlot == EItemSlot::Shield);
 }
 
 bool InventoryUtility::IsStackableAndHaveStacks(const FItemData* ItemData, int32 Quantity)
@@ -209,12 +205,12 @@ TTuple<bool, uint32> InventoryUtility::FindItemIndex(const TArray<FItemData*> It
 	return MakeTuple(false, 0);
 }
 
-TTuple<bool, EItemSlot> InventoryUtility::FindEmptyEquipmentSlot(TMap<EItemSlot, FItemData> EquipmentData,
+TTuple<bool, EItemSlot> InventoryUtility::FindEmptyEquipmentSlot(TMap<EItemSlot, FItemData*> EquipmentData,
                                                                  TArray<EItemSlot> SlotsToSearch, EItemSlot DefaultSlot)
 {
 	for (auto Slot : SlotsToSearch)
 		if (EquipmentData.Contains(Slot))
-			if (IsItemClassValid(&EquipmentData[Slot]))
+			if (IsItemClassValid(EquipmentData[Slot]))
 				return MakeTuple(true, Slot);
 
 	return MakeTuple(false, DefaultSlot);

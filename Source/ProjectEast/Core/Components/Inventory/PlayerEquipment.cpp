@@ -30,16 +30,16 @@ void UPlayerEquipment::BuildEquipment()
 		EItemSlot EnumValue = static_cast<EItemSlot>(i);
 		if (EquipmentData.Find(EnumValue))
 		{
-			FItemData NewItemData = EquipmentData[EnumValue];
-			NewItemData.EquipmentSlot = EnumValue;
-			NewItemData.bIsEquipped = true;
+			FItemData* NewItemData = EquipmentData[EnumValue];
+			NewItemData->EquipmentSlot = EnumValue;
+			NewItemData->bIsEquipped = true;
 			EquipmentData[EnumValue] = NewItemData;
 		}
 		else
 		{
-			FItemData NewItemData;
-			NewItemData.EquipmentSlot = EnumValue;
-			NewItemData.bIsEquipped = false;
+			FItemData* NewItemData = new FItemData();
+			NewItemData->EquipmentSlot = EnumValue;
+			NewItemData->bIsEquipped = false;
 			EquipmentData.Add(EnumValue, NewItemData);
 		}
 	}
@@ -127,34 +127,31 @@ void UPlayerEquipment::ServerToggleAllEquippableSockets(bool IsInCombat)
 
 void UPlayerEquipment::UpdateAddedItem(FItemData* ItemData)
 {
-	EquipmentData.Add(ItemData->EquipmentSlot, *ItemData);
+	EquipmentData.Add(ItemData->EquipmentSlot, ItemData);
 	if (OnAddedToEquipment.IsBound())
-		OnAddedToEquipment.Broadcast(EquipmentData[ItemData->EquipmentSlot]);
+		OnAddedToEquipment.Broadcast(*EquipmentData[ItemData->EquipmentSlot]);
 	if (OnItemAttach.IsBound())
-		OnItemAttach.Broadcast(EquipmentData[ItemData->EquipmentSlot]);
+		OnItemAttach.Broadcast(*EquipmentData[ItemData->EquipmentSlot]);
 }
 
 void UPlayerEquipment::UpdateRemovedItem(FItemData* ItemData)
 {
 	EquipmentData.Remove(ItemData->EquipmentSlot);
-	FItemData NewItemData;
-	NewItemData.EquipmentSlot = ItemData->EquipmentSlot;
-	EquipmentData.Add(ItemData->EquipmentSlot, NewItemData);
+	EquipmentData.Add(ItemData->EquipmentSlot, ItemData);
 	if (OnRemovedFromEquipment.IsBound())
-		OnRemovedFromEquipment.Broadcast(EquipmentData[ItemData->EquipmentSlot]);
+		OnRemovedFromEquipment.Broadcast(*EquipmentData[ItemData->EquipmentSlot]);
 	if (OnItemDetach.IsBound())
-		OnItemDetach.Broadcast(EquipmentData[ItemData->EquipmentSlot]);
+		OnItemDetach.Broadcast(*EquipmentData[ItemData->EquipmentSlot]);
 }
 
 void UPlayerEquipment::AddItemToEquipmentArray(FItemData* ItemData, EItemSlot Slot)
 {
 	if (InventoryUtility::SwitchHasOwnerAuthority(this))
 	{
-		FItemData NewItemData;
-		NewItemData.EquipmentSlot = Slot;
-		NewItemData.bIsEquipped = true;
+		ItemData->EquipmentSlot = Slot;
+		ItemData->bIsEquipped = true;
 
-		EquipmentData.Add(Slot, NewItemData);
+		EquipmentData.Add(Slot, ItemData);
 		if (UKismetSystemLibrary::IsStandalone(GetWorld()))
 		{
 			if (OnAddedToEquipment.IsBound())
@@ -169,10 +166,12 @@ void UPlayerEquipment::RemoveItemFromEquipmentArray(FItemData* ItemData)
 {
 	if (InventoryUtility::SwitchHasOwnerAuthority(this))
 	{
-		EquipmentData.Remove(ItemData->EquipmentSlot);
-		FItemData NewItemData;
-		NewItemData.EquipmentSlot = ItemData->EquipmentSlot;
-		EquipmentData.Add(ItemData->EquipmentSlot, NewItemData);
+		auto CurrentSlot = ItemData->EquipmentSlot;
+		
+		EquipmentData.Remove(CurrentSlot);
+		FItemData* EmptyItemData = new FItemData();
+		EmptyItemData->EquipmentSlot = CurrentSlot;
+		EquipmentData.Add(CurrentSlot, EmptyItemData);
 
 		if (UKismetSystemLibrary::IsStandalone(GetWorld()))
 		{
@@ -189,7 +188,7 @@ void UPlayerEquipment::AddToStackInEquipment(FItemData* ItemData, EItemSlot Slot
 	if (EquipmentData.Contains(Slot))
 	{
 		FItemData* NewItemData = InventoryUtility::CopyItemData(EquipmentData[Slot]);
-		NewItemData->Quantity = ItemData->Quantity + EquipmentData[Slot].Quantity;
+		NewItemData->Quantity = ItemData->Quantity + EquipmentData[Slot]->Quantity;
 		AddItemToEquipmentArray(NewItemData, NewItemData->EquipmentSlot);
 	}
 }
@@ -313,22 +312,25 @@ TTuple<bool, FItemData*> UPlayerEquipment::GetItemByEquipmentSlot(EItemSlot Slot
 		if (InventoryUtility::IsItemClassValid(ItemData))
 			return MakeTuple(true, ItemData);
 	}
-	return MakeTuple(false, new FItemData());
+
+	FItemData* NewItemData = new FItemData();
+	NewItemData->EquipmentSlot = Slot;
+	return MakeTuple(false, NewItemData);
 }
 
 TTuple<bool, FItemData*> UPlayerEquipment::GetItemByID(FString ItemID) const
 {
 	for (auto KV : EquipmentData)
-		if (KV.Value.ID == ItemID)
-			return MakeTuple(true, &KV.Value);
-	return MakeTuple(false, nullptr);
+		if (KV.Value->ID == ItemID)
+			return MakeTuple(true, KV.Value);
+	return MakeTuple(false, new FItemData());
 }
 
 TArray<FItemData*> UPlayerEquipment::GetEquipmentItems() const
 {
 	TArray<FItemData*> Elements;
 	for (auto KV : EquipmentData)
-		Elements.Add(&KV.Value);
+		Elements.Add(KV.Value);
 	return Elements;
 }
 
@@ -371,9 +373,13 @@ FItemData* UPlayerEquipment::AssignItemFromEquipmentSlot(FItemData* ItemData)
 			}
 			else
 				return GetItemByEquipmentSlot(EItemSlot::Weapon).Get<1>();
+			
 		}
 		else
-			return GetItemByEquipmentSlot(ItemData->EquipmentSlot).Get<1>();
+		{
+			AAA = 	GetItemByEquipmentSlot(ItemData->EquipmentSlot);
+			return AAA.Get<1>();
+		}
 	}
 }
 
@@ -469,7 +475,7 @@ void UPlayerEquipment::TryToUnequipAssociatedSlot(FItemData* ItemData, UInventor
 				auto Item = GetItemByEquipmentSlot(AssociatedSlot);
 				if(Item.Get<0>())
 				{
-					auto TransferData = Inventory->TransferItemFromEquipment(Item.Get<1>(), nullptr, EInputMethodType::RightClick, this);
+					auto TransferData = Inventory->TransferItemFromEquipment(Item.Get<1>(), new FItemData(), EInputMethodType::RightClick, this);
 					Inventory->ClientTransferItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>());
 				}
 			}
@@ -492,9 +498,7 @@ void UPlayerEquipment::TryToUnequipAssociatedSlot(FItemData* ItemData, UInventor
 	}
 }
 
-TTuple<bool, FText> UPlayerEquipment::TransferItemFromInventoryToEquipment(FItemData* ItemData, FItemData* InSlotData,
-                                                                           UInventoryCore* Inventory,
-                                                                           EInputMethodType Method)
+TTuple<bool, FText> UPlayerEquipment::TransferItemFromInventoryToEquipment(FItemData* ItemData, FItemData* InSlotData, UInventoryCore* Inventory,EInputMethodType Method)
 {
 	FItemData* InSlotItemData = InSlotData;
 	auto EquippedData = CanItemBeEquipped(ItemData);
@@ -502,6 +506,7 @@ TTuple<bool, FText> UPlayerEquipment::TransferItemFromInventoryToEquipment(FItem
 	{
 		if (Method == EInputMethodType::RightClick)
 			InSlotItemData = AssignItemFromEquipmentSlot(ItemData);
+		
 		if (InventoryUtility::IsItemClassValid(InSlotItemData))
 		{
 			if (InventoryUtility::AreItemsTheSame(ItemData, InSlotItemData)
@@ -526,7 +531,7 @@ TTuple<bool, FText> UPlayerEquipment::TransferItemFromInventoryToEquipment(FItem
 		{
 			Inventory->RemoveItemFromInventoryArray(ItemData);
 			AddItemToEquipmentArray(ItemData, InSlotItemData->EquipmentSlot);
-			AttachItemToEquipment(ItemData);
+			//AttachItemToEquipment(ItemData);
 			TryToUnequipAssociatedSlot(ItemData, Inventory);
 			return MakeTuple(true, FText());
 		}

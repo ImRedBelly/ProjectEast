@@ -181,7 +181,7 @@ EWidgetType UWidgetManager::GetActivePopup()
 
 EWidgetType UWidgetManager::GetCurrentPopupType()
 {
-	return EWidgetType::Inventory;
+	return EWidgetType::None;
 }
 
 

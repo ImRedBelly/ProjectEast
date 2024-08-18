@@ -62,6 +62,7 @@ void AMainPlayerController::InitializeComponents()
 	//InventoryUtility::Initialize(GamepadIcons);
 	InteractionComponent->InitializeInteraction(this);
 	PlayerInventory->InitializeInventory(this);
+	PlayerEquipment->InitializeEquipment();
 }
 
 void AMainPlayerController::InitializeInteractionWithObject(UInteractableComponent* InteractableComponent)

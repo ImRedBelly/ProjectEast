@@ -35,14 +35,14 @@ void UEquipmentPanel::SetFocusToSlot(EItemSlot ItemSlot)
 	}
 }
 
-void UEquipmentPanel::EmptyEquipmentSlot(FItemData ItemData)
+void UEquipmentPanel::EmptyEquipmentSlot(FItemData& ItemData)
 {
 	FItemData* LocalItemData = &ItemData;
 	if (InventoryUtility::IsItemClassValid(LocalItemData))
 		GetWidgetSlotByItemSlot(LocalItemData->EquipmentSlot)->EmptySlot();
 }
 
-void UEquipmentPanel::OverwriteEquipmentSlot(FItemData ItemData)
+void UEquipmentPanel::OverwriteEquipmentSlot(FItemData& ItemData)
 {
 	FItemData* LocalItemData = &ItemData;
 	if (InventoryUtility::IsItemClassValid(LocalItemData))
@@ -93,12 +93,11 @@ void UEquipmentPanel::CreateEquipment()
 	CachedPlayerEquipment->GetEquipmentData().GetKeys(Slots);
 	for (int i = 0; i < Slots.Num(); ++i)
 	{
-		if(CachedPlayerEquipment->GetEquipmentData().Contains(Slots[i]))
-		{
-			auto FindItemSlot = GetWidgetSlotByItemSlot(Slots[i]);
-			if(IsValid(FindItemSlot))
-				FindItemSlot->OverwriteSlot(this, CachedPlayerEquipment->GetEquipmentData().Find(Slots[i]));
-		}
+		auto FindItemSlot = GetWidgetSlotByItemSlot(Slots[i]);
+		auto FindItem = CachedPlayerEquipment->GetEquipmentData().Find(Slots[i]);
+
+		if (IsValid(FindItemSlot))
+			FindItemSlot->OverwriteSlot(this, *FindItem);
 	}
 }
 
@@ -110,7 +109,7 @@ void UEquipmentPanel::BindEventDispatchers()
 
 void UEquipmentPanel::UnbindEventDispatchers()
 {
-	if(IsValid(CachedPlayerEquipment))
+	if (IsValid(CachedPlayerEquipment))
 	{
 		CachedPlayerEquipment->OnAddedToEquipment.RemoveDynamic(this, &UEquipmentPanel::OverwriteEquipmentSlot);
 		CachedPlayerEquipment->OnRemovedFromEquipment.RemoveDynamic(this, &UEquipmentPanel::EmptyEquipmentSlot);

@@ -50,9 +50,9 @@ protected:
 	virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 
 	UFUNCTION()
-	void EmptyEquipmentSlot(FItemData ItemData);
+	void EmptyEquipmentSlot(FItemData& ItemData);
 	UFUNCTION()
-	void OverwriteEquipmentSlot(FItemData ItemData);
+	void OverwriteEquipmentSlot(FItemData& ItemData);
 	
 	void SetFocusToSlot(EItemSlot ItemSlot);
 	UEquipmentSlot* GetWidgetSlotByItemSlot(EItemSlot ItemSlot) const;

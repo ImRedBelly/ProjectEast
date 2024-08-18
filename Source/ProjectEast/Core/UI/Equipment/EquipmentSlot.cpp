@@ -15,7 +15,7 @@ void UEquipmentSlot::NativeConstruct()
 	Super::NativeConstruct();
 	CachedPlayerInventory = Cast<AMainPlayerController>(GetOwningPlayer())->GetPlayerInventory();
 	CachedPlayerEquipment = Cast<AMainPlayerController>(GetOwningPlayer())->GetPlayerEquipment();
-	
+
 	ButtonItem->OnClicked.AddDynamic(this, &UEquipmentSlot::OnRightClick);
 	ButtonItem->OnHovered.AddDynamic(this, &UEquipmentSlot::OnHovered);
 	ButtonItem->OnUnhovered.AddDynamic(this, &UEquipmentSlot::OnUnhovered);
@@ -26,7 +26,7 @@ void UEquipmentSlot::NativeDestruct()
 	Super::NativeDestruct();
 	if (IsValid(CachedToolTip))
 		CachedToolTip->RemoveFromParent();
-	
+
 	ButtonItem->OnClicked.RemoveDynamic(this, &UEquipmentSlot::OnRightClick);
 	ButtonItem->OnHovered.RemoveDynamic(this, &UEquipmentSlot::OnHovered);
 	ButtonItem->OnUnhovered.RemoveDynamic(this, &UEquipmentSlot::OnUnhovered);
@@ -73,7 +73,7 @@ void UEquipmentSlot::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UD
 	if (auto Operation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
 		Operation->ClearDraggableIcon();
-		BorderImage->SetBrushTintColor(BorderUnHovered);
+		BorderImage->SetColorAndOpacity(BorderUnHovered);
 	}
 }
 
@@ -122,21 +122,16 @@ bool UEquipmentSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 {
 	if (UItemDataDragDropOperation* DragOperation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
-		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "Is Drop Item In Equipment");
 		if (!InventoryUtility::AreItemSlotsEqual(DragOperation->ItemData, CurrentItemData))
-		{
 			if (CachedPlayerEquipment->bIsEnableOffHand)
-				InventoryUtility::CanWeaponsBeSwapped(DragOperation->ItemData, CurrentItemData);
-		}
-
-
+				if(!InventoryUtility::CanWeaponsBeSwapped(DragOperation->ItemData, CurrentItemData))
+					return true;
+ 
 		switch (DragOperation->DraggerFrom)
 		{
 		case EItemDestination::InventorySlot:
 			{
-				CachedPlayerEquipment->ServerTransferItemFromInventory(DragOperation->ItemData, CurrentItemData,
-				                                                       DragOperation->Inventory,
-				                                                       EInputMethodType::DragAndDrop);
+				CachedPlayerEquipment->ServerTransferItemFromInventory(DragOperation->ItemData, CurrentItemData,DragOperation->Inventory,EInputMethodType::DragAndDrop);
 				BorderImage->SetColorAndOpacity(BorderUnHovered);
 				return true;
 			}
@@ -153,7 +148,7 @@ bool UEquipmentSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 		default: ;
 		}
 	}
-	return false;
+	return true;
 }
 
 bool UEquipmentSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
@@ -169,14 +164,15 @@ bool UEquipmentSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 			if (InventoryUtility::CanWeaponsBeSwapped(Operation->ItemData, CurrentItemData))
 				return TryWeaponsSwapped(Operation);
 			return ReturnWrongSlot(Operation);
-		}	
+		}
 		return ReturnWrongSlot(Operation);
 	}
 	return true;
 }
 
-void UEquipmentSlot::EmptySlot() const
+void UEquipmentSlot::EmptySlot() 
 {
+	CurrentItemData = InventoryUtility::CopyItemData(EmptyItemData);
 	CurrentItemData->EquipmentSlot = EquipmentSLot;
 	SetButtonStyle(CurrentItemData);
 	ButtonItem->SetToolTip(nullptr);
@@ -186,8 +182,10 @@ void UEquipmentSlot::EmptySlot() const
 
 void UEquipmentSlot::OnRightClick()
 {
-	if(InventoryUtility::IsItemClassValid(CurrentItemData))
-		CachedPlayerInventory->ServerTransferItemFromEquipment(CurrentItemData, nullptr, EInputMethodType::RightClick, CachedPlayerEquipment);
+	if (InventoryUtility::IsItemClassValid(CurrentItemData))
+	{
+		CachedPlayerInventory->ServerTransferItemFromEquipment(CurrentItemData, new FItemData(), EInputMethodType::RightClick, CachedPlayerEquipment);
+	}
 }
 
 void UEquipmentSlot::RefreshToolTip()
@@ -253,7 +251,7 @@ void UEquipmentSlot::DropOnTheGround()
 			if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 			{
 				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-					WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, nullptr, CachedPlayerInventory,
+					WidgetManager->OpenSplitStackPopup(CurrentItemData, new FItemData(), nullptr, CachedPlayerInventory,
 					                                   EInputMethodType::RightClick,
 					                                   EItemDestination::EquipmentSlot, EItemDestination::DropBar,
 					                                   this);
@@ -264,7 +262,7 @@ void UEquipmentSlot::DropOnTheGround()
 		}
 	case EItemRemoveType::OnConfirmation:
 		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-			WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, nullptr,
+			WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, new FItemData(),
 			                                     nullptr, CachedPlayerInventory, EInputMethodType::RightClick,
 			                                     EItemDestination::EquipmentSlot,
 			                                     EItemDestination::DropBar, this);
@@ -330,18 +328,29 @@ void UEquipmentSlot::SetButtonStyle(FItemData* ItemData) const
 	{
 		auto Texture = ItemData->Class.GetDefaultObject()->ImageItem;
 		if (IsValid(Texture))
+		{
 			ImageItem->SetBrushFromTexture(Texture);
+			ImageItem->SetBrushTintColor(FLinearColor(1,1,1));
+		}
 	}
 	else
 		ImageItem->SetBrush(EmptySlotStyle);
-
+	
 	SetItemQuantity();
 }
 
 void UEquipmentSlot::OverwriteSlot(UEquipmentPanel* EquipmentPanel, FItemData* ItemData)
 {
 	CachedEquipmentPanel = EquipmentPanel;
-	CurrentItemData = ItemData;
+
+	if (InventoryUtility::IsItemClassValid(ItemData))
+		CurrentItemData = InventoryUtility::CopyItemData(ItemData);
+	else
+	{
+		CurrentItemData = InventoryUtility::CopyItemData(EmptyItemData);
+		CurrentItemData->EquipmentSlot = EquipmentSLot;
+	}
+
 	SetButtonStyle(CurrentItemData);
 	RefreshToolTip();
 }
@@ -381,7 +390,7 @@ void UEquipmentSlot::OnHovered()
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
 
 		ButtonItem->SetToolTip(CachedToolTip);
-		BorderImage->SetBrushTintColor(BorderHovered);
+		BorderImage->SetColorAndOpacity(BorderHovered);
 	}
 }
 
@@ -391,7 +400,7 @@ void UEquipmentSlot::OnUnhovered()
 		GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::None);
 
 	ButtonItem->SetToolTip(nullptr);
-	BorderImage->SetBrushTintColor(BorderUnHovered);
+	BorderImage->SetColorAndOpacity(BorderUnHovered);
 	if (IsValid(CachedToolTip))
 		CachedToolTip->RemoveFromParent();
 }
@@ -401,18 +410,18 @@ bool UEquipmentSlot::TryWeaponsSwapped(UItemDataDragDropOperation* Operation)
 	if (CachedPlayerEquipment->CanItemBeEquipped(Operation->ItemData).Get<0>())
 	{
 		Operation->ShowIconSwap();
-		BorderImage->SetBrushTintColor(FLinearColor(0.116971f, 0.48515f, 0.08022f));
+		BorderImage->SetColorAndOpacity(GoodColor);
 		return true;
 	}
-	
+
 	Operation->ShowIconWrongSlot();
-	BorderImage->SetBrushTintColor(FLinearColor(0.737911, 0.0f, 0.028426f));
+	BorderImage->SetColorAndOpacity(BadColor);
 	return true;
 }
 
 bool UEquipmentSlot::ReturnWrongSlot(UItemDataDragDropOperation* Operation)
 {
 	Operation->ShowIconWrongSlot();
-	BorderImage->SetBrushTintColor(FLinearColor(0.737911, 0.0f, 0.028426f));
+	BorderImage->SetColorAndOpacity(BadColor);
 	return true;
 }

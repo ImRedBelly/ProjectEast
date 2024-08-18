@@ -699,10 +699,7 @@ bool UPlayerInventorySlot::IsAnyPopUpActive() const
 void UPlayerInventorySlot::OpenInventoryWindow() const
 {
 	if(CurrentItemData->EquipmentSlot != EItemSlot::None)
-	{
-		CachedPlayerEquipment->ServerTransferItemFromInventory(CurrentItemData, new FItemData(),
-			CachedPlayerInventory, EInputMethodType::RightClick);
-	}
+		CachedPlayerEquipment->ServerTransferItemFromInventory(CurrentItemData, new FItemData(), CachedPlayerInventory, EInputMethodType::RightClick);
 	else
 		TryToUseAnItem();
 }

@@ -12,7 +12,7 @@ class PROJECTEAST_API UEquipmentSlot : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void EmptySlot() const;
+	void EmptySlot();
 	void OverwriteSlot(UEquipmentPanel* EquipmentPanel, FItemData* ItemData);
 	
 protected:
@@ -37,10 +37,14 @@ protected:
 	FText LabelCharacterText;
 	UPROPERTY(EditAnywhere)
 	FSlateBrush EmptySlotStyle;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	FLinearColor BorderHovered;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	FLinearColor BorderUnHovered;
+	UPROPERTY(EditAnywhere)
+	FLinearColor GoodColor;
+	UPROPERTY(EditAnywhere)
+	FLinearColor BadColor;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UToolTip> DefaultToolTip;
@@ -91,6 +95,8 @@ private:
 	UEquipmentPanel* CachedEquipmentPanel;
 	UToolTip* CachedToolTip;
 
+	UPROPERTY(EditDefaultsOnly)
+	FItemData EmptyItemData;
 	FItemData* CurrentItemData;
 
 };

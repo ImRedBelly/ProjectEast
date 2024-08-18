@@ -100,7 +100,7 @@ private:
 										   EInputMethodType Initiator, EInputMethodType Destination,
 										   AActor* OwningPlayer) override;
 	bool AttemptUsingTransferredItem(FItemData* ItemData, UInventoryCore* Sender);
-	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 Index) override;
+	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex) override;
 	virtual void SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem) override;
 	
 	AMainPlayerController* CashedPlayerController;

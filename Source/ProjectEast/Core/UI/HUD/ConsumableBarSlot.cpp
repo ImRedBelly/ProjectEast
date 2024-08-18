@@ -79,7 +79,7 @@ void UConsumableBarSlot::OnItemUsed(EItemSlot UsedSLot, float Cooldown)
 	}
 }
 
-void UConsumableBarSlot::OnRefreshItem(FItemData ItemData)
+void UConsumableBarSlot::OnRefreshItem(FItemData& ItemData)
 {
 	RefreshSlot();
 }
@@ -116,7 +116,7 @@ void UConsumableBarSlot::UpdateIconInput()
 		ImageInput->SetBrushFromTexture(IconInput);
 }
 
-void UConsumableBarSlot::RefreshSlot(FItemData ItemData)
+void UConsumableBarSlot::RefreshSlot(FItemData& ItemData)
 {
 	RefreshSlot();
 }

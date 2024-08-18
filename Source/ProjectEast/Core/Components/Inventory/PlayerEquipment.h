@@ -12,13 +12,13 @@ class UPlayerInventory;
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTEAST_API UPlayerEquipment : public UActorComponent
 {
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddedToEquipment, FItemData, ItemData);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddedToEquipment, FItemData&, ItemData);
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemAttach, FItemData, ItemData);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemAttach, FItemData&, ItemData);
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemDetach, FItemData, ItemData);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemDetach, FItemData&, ItemData);
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemovedFromEquipment, FItemData, ItemData);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemovedFromEquipment, FItemData&, ItemData);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUpdateEquipmentMesh, EItemSlot, Slot, USkeletalMesh*, Mesh);
 
@@ -94,15 +94,15 @@ public:
 	void DestroyEquippableActor(FItemData* ItemData);
 	void TryToUnequipAssociatedSlot(FItemData* ItemData, UInventoryCore* Inventory);
 
-	TMap<EItemSlot, FItemData> GetEquipmentData() { return EquipmentData; }
+	TMap<EItemSlot, FItemData*> GetEquipmentData() { return EquipmentData; }
 
 
 	TMap<EItemSlot, ABaseEquippable*> EquippableReferences;
-	TMap<EItemSlot, FItemData> EquipmentData;
+	TMap<EItemSlot, FItemData*> EquipmentData;
 
 private:
 	UActorLeveling* ActorLeveling;
 
 
-
+	TTuple<bool, FItemData*> AAA;
 };

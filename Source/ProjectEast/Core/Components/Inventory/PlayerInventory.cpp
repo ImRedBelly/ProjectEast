@@ -83,7 +83,6 @@ void UPlayerInventory::ClientTakeItemReturnValue(bool Success, FText FailureMess
 
 void UPlayerInventory::CloseInventoryWidget()
 {
-	
 }
 
 void UPlayerInventory::InputCloseWidget()
@@ -106,7 +105,8 @@ void UPlayerInventory::InputInteraction() const
 		if (!bIsInteractableActorWidgetOpen)
 		{
 			if (IObjectInteraction* ObjectInteraction = Cast<IObjectInteraction>(CashedPlayerController))
-				ObjectInteraction->InitializeInteractionWithObject(InventoryUtility::GetCurrentInteractableObject(CashedPlayerController));
+				ObjectInteraction->InitializeInteractionWithObject(
+					InventoryUtility::GetCurrentInteractableObject(CashedPlayerController));
 		}
 	}
 }
@@ -207,7 +207,7 @@ void UPlayerInventory::TakeItem(FItemData* ItemData, UInventoryCore* Sender, AAc
 		                                              OwningPlayer);
 
 		auto InventoryData = Sender->GetInventoryAndSize(EInventoryPanels::P1);
-		
+
 		ClientTakeItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>(),
 		                          !InventoryData.Get<0>().IsValidIndex(0));
 
@@ -227,7 +227,7 @@ void UPlayerInventory::DropItemOnTheGround(FItemData* ItemData, EItemDestination
 	case EItemDestination::InventorySlot:
 		RemoveItemFromInventoryArray(ItemData);
 	case EItemDestination::EquipmentSlot:
-		if(UPlayerEquipment* PlayerEquipment = InventoryUtility::GetPlayerEquipment(OwningPlayer))
+		if (UPlayerEquipment* PlayerEquipment = InventoryUtility::GetPlayerEquipment(OwningPlayer))
 		{
 			PlayerEquipment->RemoveItemFromEquipmentArray(ItemData);
 			PlayerEquipment->DetachItemFromEquipment(ItemData);
@@ -235,23 +235,23 @@ void UPlayerInventory::DropItemOnTheGround(FItemData* ItemData, EItemDestination
 		break;
 	default: ;
 	}
-	
+
 	RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
 	ServerSpawnLootBag(ItemData, OwningPlayer);
 }
 
 void UPlayerInventory::SpawnLootBagNearThePlayer(FItemData* ItemData, AActor* OwningPlayer)
 {
-	if(AMainPlayerController* PlayerController = Cast<AMainPlayerController>(OwningPlayer))
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(OwningPlayer))
 	{
-		if(MainDroppedIndex == 0)
+		if (MainDroppedIndex == 0)
 		{
 			auto Pawn = PlayerController->GetPawn();
-			FVector StartPosition = (Pawn->GetActorLocation() + Pawn->GetActorForwardVector() * 50) - FVector(0,0,50);
-			FVector EndPosition = StartPosition - FVector(0,0,100);
+			FVector StartPosition = (Pawn->GetActorLocation() + Pawn->GetActorForwardVector() * 50) - FVector(0, 0, 50);
+			FVector EndPosition = StartPosition - FVector(0, 0, 100);
 
 			auto LootBag = IsCollidingWithLootBag(StartPosition, EndPosition);
-			if(IsValid(LootBag))
+			if (IsValid(LootBag))
 				CachedLootBag = LootBag;
 			else
 			{
@@ -259,16 +259,18 @@ void UPlayerInventory::SpawnLootBagNearThePlayer(FItemData* ItemData, AActor* Ow
 				Parameters.Owner = OwningPlayer;
 				Parameters.TransformScaleMethod = ESpawnActorScaleMethod::OverrideRootScale;
 				Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
-				CachedLootBag = GetWorld()->SpawnActor<ALootBag>(DefaultLootBag, StartPosition, FRotator::ZeroRotator, Parameters);				
+				CachedLootBag = GetWorld()->SpawnActor<ALootBag>(DefaultLootBag, StartPosition, FRotator::ZeroRotator,
+				                                                 Parameters);
 			}
 		}
-		
+
 		MainDroppedIndex++;
-		if(UInventoryCore* Inventory = Cast<UInventoryCore>(CachedLootBag->GetComponentByClass(UInventoryCore::StaticClass())))
+		if (UInventoryCore* Inventory = Cast<UInventoryCore>(
+			CachedLootBag->GetComponentByClass(UInventoryCore::StaticClass())))
 		{
 			auto InventoryData = Inventory->GetInventoryAndSize(InventoryUtility::GetInventoryPanelFromItem(ItemData));
 			auto PartialData = InventoryUtility::HasPartialStack(InventoryData.Get<0>(), ItemData);
-			if(PartialData.Get<0>())
+			if (PartialData.Get<0>())
 				Inventory->AddItemToInventoryArray(ItemData, PartialData.Get<1>());
 			else
 				Inventory->AddItemToInventoryArray(ItemData, -1);
@@ -283,13 +285,13 @@ void UPlayerInventory::SpawnItemMeshNearThePlayer()
 ALootBag* UPlayerInventory::IsCollidingWithLootBag(FVector StartPosition, FVector EndPosition) const
 {
 	FHitResult Result;
-	UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPosition, EndPosition, 
-											UEngineTypes::ConvertToTraceType(ECC_Visibility), false,
-											TArray<AActor*>(), EDrawDebugTrace::None, Result, true);
-	if(Result.bBlockingHit)
-		if(auto LootBag = Cast<ALootBag>(Result.GetActor()))
+	UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartPosition, EndPosition,
+	                                      UEngineTypes::ConvertToTraceType(ECC_Visibility), false,
+	                                      TArray<AActor*>(), EDrawDebugTrace::None, Result, true);
+	if (Result.bBlockingHit)
+		if (auto LootBag = Cast<ALootBag>(Result.GetActor()))
 			return LootBag;
-	
+
 	return nullptr;
 }
 
@@ -380,7 +382,7 @@ void UPlayerInventory::SplitItemsInInventory(UInventoryCore* Sender, FItemData* 
 				DropItemOnTheGround(ItemData, EItemDestination::InventorySlot, OwningPlayer);
 				break;
 			}
-			
+
 			if (InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
 				AddItemToInventoryArray(StackableLeft, StackableLeft->Index);
 		}
@@ -388,14 +390,14 @@ void UPlayerInventory::SplitItemsInInventory(UInventoryCore* Sender, FItemData* 
 	case EItemDestination::EquipmentSlot:
 		{
 			auto PlayerEquipment = InventoryUtility::GetPlayerEquipment(OwningPlayer);
-			if(IsValid(PlayerEquipment))
+			if (IsValid(PlayerEquipment))
 			{
 				switch (Destination)
 				{
 				case EItemDestination::InventorySlot:
 					{
 						PlayerEquipment->RemoveItemFromEquipmentArray(ItemData);
-						if(InventoryUtility::IsItemClassValid(ItemData))
+						if (InventoryUtility::IsItemClassValid(ItemData))
 							AddToStackInInventory(ItemData, InSlotData->Index);
 						else
 							AddItemToInventoryArray(ItemData, InSlotData->Index);
@@ -419,8 +421,8 @@ void UPlayerInventory::SplitItemsInInventory(UInventoryCore* Sender, FItemData* 
 	case EItemDestination::StorageSlot:
 		auto Data = TransferItemFromInventory(ItemData, InSlotData, Method, Sender, OwningPlayer);
 		ClientTransferItemReturnValue(Data.Get<0>(), Data.Get<1>());
-		if(Data.Get<0>())
-			if(InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
+		if (Data.Get<0>())
+			if (InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
 				Sender->AddItemToInventoryArray(StackableLeft, StackableLeft->Index);
 		break;
 	}
@@ -443,14 +445,14 @@ bool UPlayerInventory::AttemptUsingTransferredItem(FItemData* ItemData, UInvento
 			{
 				AddGoldToOwner(InventoryUtility::CalculateStackedItemValue(ItemData));
 				Sender->RemoveItemFromInventoryArray(ItemData);
-				if(OnItemUsed.IsBound())
+				if (OnItemUsed.IsBound())
 					OnItemUsed.Broadcast(*ItemData);
 			}
 			return true;
 		case EItemUseType::CraftingRecipe:
 			{
 				Sender->RemoveItemFromInventoryArray(ItemData);
-				if(OnItemUsed.IsBound())
+				if (OnItemUsed.IsBound())
 					OnItemUsed.Broadcast(*ItemData);
 			}
 			return true;
@@ -461,9 +463,62 @@ bool UPlayerInventory::AttemptUsingTransferredItem(FItemData* ItemData, UInvento
 	return false;
 }
 
-void UPlayerInventory::AddItemToInventoryArray(FItemData* ItemData, int32 Index)
+void UPlayerInventory::AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex)
 {
-	Super::AddItemToInventoryArray(ItemData, Index);
+	if (InventoryUtility::SwitchHasOwnerAuthority(this))
+	{
+		ModifyItemValue(ItemData);
+
+		auto InventoryPanel = InventoryUtility::GetInventoryPanelFromItem(ItemData);
+		auto InventoryData = GetInventoryAndSize(InventoryPanel);
+
+		TArray<FItemData*> CurrentInventoryArray = InventoryData.Get<0>();
+		if (bIsUseInventorySize || SlotIndex >= 0)
+		{
+			FItemData* NewItemData = InventoryUtility::CopyItemData(ItemData);
+			NewItemData->Index = SlotIndex;
+			NewItemData->bIsEquipped = false;
+			CurrentInventoryArray[SlotIndex] = NewItemData;
+
+			ApplyChangesToInventoryArray(InventoryPanel, CurrentInventoryArray);
+	
+
+			if (UKismetSystemLibrary::IsStandalone(GetWorld()))
+			{
+				SwitchActivePanel(InventoryPanel);
+				CallOnRefreshInventory(InventoryPanel);
+				CallOnHighlightSlot(NewItemData->Index);
+			}
+			else
+			{
+				ClientUpdateAddedItem(ItemData, this);
+			}
+		}
+		else
+		{
+			if (InventoryUtility::IsItemClassValid(ItemData))
+			{
+				auto CurrentIndex = CurrentInventoryArray.Add(ItemData);
+				auto NewItemData = CurrentInventoryArray[CurrentIndex];
+				NewItemData->Index = CurrentIndex;
+				NewItemData->bIsEquipped = false;
+				auto NewInventoryPanel = InventoryUtility::GetInventoryPanelFromItem(NewItemData);
+				ApplyChangesToInventoryArray(NewInventoryPanel, CurrentInventoryArray);
+
+				if (UKismetSystemLibrary::IsStandalone(GetWorld()))
+				{
+					SwitchActivePanel(InventoryPanel);
+					CallOnRefreshInventory(InventoryPanel);
+					CallOnAddedToInventorySlot(*ItemData);
+					CallOnHighlightSlot(ItemData->Index);
+				}
+				else
+				{
+					ClientUpdateAddedItem(ItemData, this);
+				}
+			}
+		}
+	}
 }
 
 void UPlayerInventory::SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem)
