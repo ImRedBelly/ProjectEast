@@ -99,6 +99,7 @@ enum class EItemUseType : uint8
 	Currency UMETA(DisplayName = "Currency"),
 	CraftingRecipe UMETA(DisplayName = "CraftingRecipe"),
 };
+
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
@@ -139,11 +140,40 @@ enum class EWidgetPopup : uint8
 	SplitStackPopup UMETA(DisplayName = "SplitStackPopup"),
 	ConfirmationPopup UMETA(DisplayName = "ConfirmationPopup"),
 	TextDocumentPopup UMETA(DisplayName = "TextDocumentPopup"),
-
 };
 
 UENUM(BlueprintType)
 enum class EStateCategoryType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Health UMETA(DisplayName = "Health"),
+	MaxHealth UMETA(DisplayName = "MaxHealth"),
+	Stamina UMETA(DisplayName = "Stamina"),
+	MaxStamina UMETA(DisplayName = "MaxStamina"),
+	Armor UMETA(DisplayName = "Armor"),
+	Damage UMETA(DisplayName = "Damage"),
+	AttackSpeed UMETA(DisplayName = "AttackSpeed"),
+};
+
+UENUM(BlueprintType)
+enum class EBuffEffectCategory : uint8
+{
+	None UMETA(DisplayName = "None"),
+	AddInstantly UMETA(DisplayName = "AddInstantly"),
+	AddOverDuration UMETA(DisplayName = "AddOverDuration"),
+	AddForDuration UMETA(DisplayName = "AddForDuration"),
+};
+
+UENUM(BlueprintType)
+enum class EAdditionalBuffEffect : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Drunk UMETA(DisplayName = "Drunk"),
+	NightVision UMETA(DisplayName = "NightVision"),
+};
+
+UENUM(BlueprintType)
+enum class EStatCategory : uint8
 {
 	None UMETA(DisplayName = "None"),
 	Health UMETA(DisplayName = "Health"),

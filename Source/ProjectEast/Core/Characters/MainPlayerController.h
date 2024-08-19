@@ -5,6 +5,7 @@
 #include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
+#include "ProjectEast/Core/Components/CharacterSystems/CharacterStatsComponent.h"
 #include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 #include "MainPlayerController.generated.h"
 
@@ -37,6 +38,7 @@ public:
 	UPlayerInventory* GetPlayerInventory() const;
 	UPlayerEquipment* GetPlayerEquipment() const;
 	UConsumableBuffs* GetConsumableBuffs() const;
+	UCharacterStatsComponent* GetStatsComponent() const;
 	UWidgetManager* GetWidgetManager() const;
 
 	FOnGamepadToggled OnGamepadToggled;
@@ -55,6 +57,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UConsumableBuffs* ConsumableBuffs;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UCharacterStatsComponent* CharacterStatsComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UWidgetManager* WidgetManager;

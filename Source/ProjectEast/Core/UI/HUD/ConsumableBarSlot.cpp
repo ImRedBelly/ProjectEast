@@ -71,7 +71,6 @@ void UConsumableBarSlot::BindOnItemChanged()
 
 void UConsumableBarSlot::OnItemUsed(EItemSlot UsedSLot, float Cooldown)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "UsePocket: ");
 	if (UsedSLot == SlotType)
 	{
 		OnPlayAnimationUse(Cooldown);

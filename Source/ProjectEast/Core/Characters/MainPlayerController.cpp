@@ -11,6 +11,7 @@ AMainPlayerController::AMainPlayerController()
 	PlayerInventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	PlayerEquipment = CreateDefaultSubobject<UPlayerEquipment>(TEXT("PlayerEquipment"));
 	ConsumableBuffs = CreateDefaultSubobject<UConsumableBuffs>(TEXT("ConsumableBuffs"));
+	CharacterStatsComponent = CreateDefaultSubobject<UCharacterStatsComponent>(TEXT("CharacterStatsComponent"));
 	WidgetManager = CreateDefaultSubobject<UWidgetManager>(TEXT("WidgetManager"));
 }
 
@@ -128,6 +129,11 @@ UPlayerEquipment* AMainPlayerController::GetPlayerEquipment() const
 UConsumableBuffs* AMainPlayerController::GetConsumableBuffs() const
 {
 	return ConsumableBuffs;
+}
+
+UCharacterStatsComponent* AMainPlayerController::GetStatsComponent() const
+{
+	return CharacterStatsComponent;
 }
 
 UWidgetManager* AMainPlayerController::GetWidgetManager() const

@@ -1,5 +1,6 @@
 ﻿#include "ConsumableBuffs.h"
 #include "Kismet/GameplayStatics.h"
+#include "ProjectEast/Core/Actors/Inventory/ItemConsumable.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 
@@ -25,6 +26,17 @@ void UConsumableBuffs::OnUsePocket(int8 IndexPocket)
 		;
 	}
 	TryToUseConsumable(Slot);
+}
+
+void UConsumableBuffs::InitializeCircularAnimation(EStatCategory StatCategory)
+{
+	if (OnInitializeCircularAnimation.IsBound())
+		OnInitializeCircularAnimation.Broadcast(StatCategory);
+}
+
+void UConsumableBuffs::AddStat(EStatCategory StatCategory, float NewValue)
+{
+	StatsDecimal.Add(StatCategory, NewValue);
 }
 
 void UConsumableBuffs::BeginPlay()
