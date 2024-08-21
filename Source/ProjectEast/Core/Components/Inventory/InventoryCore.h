@@ -4,7 +4,9 @@
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
+#include "ProjectEast/Core/Utils/Structurs/FSingleDTItem.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
+#include "ProjectEast/Core/Utils/Structurs/FRandomizedLootTable.h"
 #include "InventoryCore.generated.h"
 
 class UPlayerEquipment;
@@ -32,33 +34,6 @@ struct FItemData : public FTableRowBase
 	bool bIsAlreadyUsed;
 	UPROPERTY(EditDefaultsOnly)
 	float ValueModifier;
-};
-
-USTRUCT(BlueprintType)
-struct FSingleDTItem
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditDefaultsOnly)
-	FDataTableRowHandle TableAndRow;
-	
-	UPROPERTY(EditDefaultsOnly)
-	int32 Quantity;
-};
-
-USTRUCT()
-struct FRandomizedLootTable
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	UDataTable* DataTable;
-
-	UPROPERTY(EditAnywhere)
-	int32 MinLootItems;
-
-	UPROPERTY(EditAnywhere)
-	int32 MaxLootItems;
 };
 
 

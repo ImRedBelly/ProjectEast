@@ -184,3 +184,51 @@ enum class EStatCategory : uint8
 	Damage UMETA(DisplayName = "Damage"),
 	AttackSpeed UMETA(DisplayName = "AttackSpeed"),
 };
+
+UENUM(BlueprintType)
+enum class EInteractionInputType : uint8
+{
+	Single UMETA(DisplayName = "Single"),
+	Holding UMETA(DisplayName = "Holding"),
+	Multiple UMETA(DisplayName = "Multiple/Mashing"),
+};
+
+UENUM(BlueprintType)
+enum class EInteractionResponse : uint8
+{
+	Persistent UMETA(DisplayName = "Persistent"),
+	OnlyOnce UMETA(DisplayName = "OnlyOnce"),
+	Temporary UMETA(DisplayName = "Temporary"),
+};
+
+
+UENUM(BlueprintType)
+enum class ECraftingCategory : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Armor UMETA(DisplayName = "Armor"),
+	Weapons UMETA(DisplayName = "Weapons"),
+};
+
+UENUM(BlueprintType)
+enum class ECraftingSubategory : uint8
+{
+	None UMETA(DisplayName = "None"),
+	HeadArmor UMETA(DisplayName = "HeadArmor"),
+	Chestplates UMETA(DisplayName = "Chestplates"),
+	Gloves UMETA(DisplayName = "Gloves"),
+	Necklaces UMETA(DisplayName = "Necklaces"),
+	Legs UMETA(DisplayName = "Legs"),
+	Boots UMETA(DisplayName = "Boots"),
+	Swords UMETA(DisplayName = "Swords"),
+	Hammers UMETA(DisplayName = "Hammers"),
+	Axes UMETA(DisplayName = "Axes"),
+	Shields UMETA(DisplayName = "Shields"),
+};
+
+UENUM(BlueprintType)
+enum class ECraftingStation : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Forge UMETA(DisplayName = "Forge"),
+};

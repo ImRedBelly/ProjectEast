@@ -5,6 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Actors/Inventory/BaseEquippable.h"
 #include "ProjectEast/Core/Components/ActorLeveling.h"
+#include "ProjectEast/Core/Utils/Structurs/FSingleDTItem.h"
 #include "PlayerEquipment.generated.h"
 
 class UPlayerInventory;
@@ -31,8 +32,8 @@ public:
 	FOnRemovedFromEquipment OnRemovedFromEquipment;
 	FOnUpdateEquipmentMesh OnUpdateEquipmentMesh;
 
-	UPROPERTY(EditAnywhere)
-	TArray<FSingleDTItem> InitialEquipment;
+	 UPROPERTY(EditAnywhere)
+	 TArray<FSingleDTItem> InitialEquipment;
 
 	UPROPERTY(EditAnywhere)
 	bool bIsEnableOffHand;

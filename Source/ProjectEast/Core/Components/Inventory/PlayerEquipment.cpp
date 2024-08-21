@@ -51,15 +51,15 @@ void UPlayerEquipment::BuildInitialEquipment()
 	{
 		auto DataTable = InitialEquipment[i].TableAndRow.DataTable;
 		auto RowName = InitialEquipment[i].TableAndRow.RowName;
-
+	
 		auto CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
 		FItemData* CopyItem = InventoryUtility::CopyItemData(CurrentItemData);
 		CopyItem->Quantity = FMathf::Clamp(InitialEquipment[i].Quantity, 1, InitialEquipment[i].Quantity);
-
+	
 		auto AssignItem = AssignItemFromEquipmentSlot(CopyItem);
 		AddItemToEquipmentArray(CopyItem, AssignItem->EquipmentSlot);
 		AttachItemToEquipment(CopyItem);
-
+	
 		auto PlayerInventory = InventoryUtility::GetPlayerInventory(GetOwner());
 		if (IsValid(PlayerInventory))
 			PlayerInventory->AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(CopyItem));

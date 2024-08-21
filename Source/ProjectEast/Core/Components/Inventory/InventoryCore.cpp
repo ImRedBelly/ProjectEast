@@ -294,12 +294,12 @@ void UInventoryCore::BuildInitialInventory()
 	{
 		auto DataTable = SingleDTItem[i].TableAndRow.DataTable;
 		auto RowName = SingleDTItem[i].TableAndRow.RowName;
-
+	
 		CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
 		
 		FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);
 		CurrentItemDataBase->Quantity = FMathf::Clamp(SingleDTItem[i].Quantity, 1, SingleDTItem[i].Quantity);
-
+	
 		auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
 		if (DataEmptySlot.Get<0>())
 		{

@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/PlayerInput.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Actors/Interfaces/Interactable.h"
 #include "InteractableComponent.generated.h"
 
@@ -10,21 +11,6 @@ class UBoxComponent;
 class UWidgetComponent;
 class UInteractionWidget;
 
-UENUM(BlueprintType)
-enum class EInteractionInputType : uint8
-{
-	Single UMETA(DisplayName = "Single"),
-	Holding UMETA(DisplayName = "Holding"),
-	Multiple UMETA(DisplayName = "Multiple/Mashing"),
-};
-
-UENUM(BlueprintType)
-enum class EInteractionResponse : uint8
-{
-	Persistent UMETA(DisplayName = "Persistent"),
-	OnlyOnce UMETA(DisplayName = "OnlyOnce"),
-	Temporary UMETA(DisplayName = "Temporary"),
-};
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
