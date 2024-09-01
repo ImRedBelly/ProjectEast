@@ -4,7 +4,7 @@
 #include "InventoryCore.h"
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Actors/Inventory/BaseEquippable.h"
-#include "ProjectEast/Core/Components/ActorLeveling.h"
+#include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Utils/Structurs/FSingleDTItem.h"
 #include "PlayerEquipment.generated.h"
 
@@ -102,7 +102,7 @@ public:
 	TMap<EItemSlot, FItemData*> EquipmentData;
 
 private:
-	UActorLeveling* ActorLeveling;
+	UPlayerLeveling* ActorLeveling;
 
 
 	TTuple<bool, FItemData*> AAA;

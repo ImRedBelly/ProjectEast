@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
-#include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "ProjectEast/Core/Components/CharacterSystems/CharacterStatsComponent.h"
 #include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
@@ -12,13 +11,11 @@
 class UPlayerInventory;
 class UInteractionComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGamepadToggled);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedWidget, EWidgetType, WidgetType);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedTab, EWidgetType, WidgetType);
 
 UCLASS()
-class PROJECTEAST_API AMainPlayerController : public APlayerController, public IObjectInteraction,
-                                              public IGamepadControls
+class PROJECTEAST_API AMainPlayerController : public APlayerController, public IObjectInteraction
 {
 	GENERATED_BODY()
 
@@ -27,8 +24,6 @@ public:
 
 	void InitializeInteraction(UInteractableComponent* InteractableComponent);
 	void OnInteraction() const;
-
-	virtual bool IsUsingGamepad() override;
 
 	virtual void InitializeInteractionWithObject(UInteractableComponent* InteractableComponent) override;
 	virtual void StartInteractionWithObject(UInteractableComponent* InteractableComponent) override;
@@ -39,13 +34,13 @@ public:
 	UPlayerEquipment* GetPlayerEquipment() const;
 	UConsumableBuffs* GetConsumableBuffs() const;
 	UCharacterStatsComponent* GetStatsComponent() const;
+	UPlayerLeveling* GetPlayerLeveling() const;
 	UWidgetManager* GetWidgetManager() const;
 
-	FOnGamepadToggled OnGamepadToggled;
 	FOnSwitchedWidget OnSwitchedWidget;
 	FOnSwitchedTab OnSwitchedTab;
 
-protected:
+protected:	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInteractionComponent* InteractionComponent;
 
@@ -62,8 +57,11 @@ protected:
 	UCharacterStatsComponent* CharacterStatsComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UWidgetManager* WidgetManager;
+	UPlayerLeveling* PlayerLeveling;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UWidgetManager* WidgetManager;
+	
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;

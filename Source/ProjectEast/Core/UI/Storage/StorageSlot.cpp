@@ -6,6 +6,7 @@
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/TextBlock.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
 
@@ -13,7 +14,8 @@ void UStorageSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-
+	WidgetManager = CachedPlayerController->GetWidgetManager();
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 	ButtonItem->OnClicked.AddDynamic(this, &UStorageSlot::OnItemClick);
 	ButtonItem->OnHovered.AddDynamic(this, &UStorageSlot::OnItemHovered);
 	ButtonItem->OnUnhovered.AddDynamic(this, &UStorageSlot::OnItemUnhovered);
@@ -24,7 +26,7 @@ void UStorageSlot::NativeDestruct()
 	if (IsValid(CachedToolTip))
 		CachedToolTip->RemoveFromParent();
 
-	if(IsValid(ButtonItem))
+	if (IsValid(ButtonItem))
 	{
 		ButtonItem->OnClicked.RemoveDynamic(this, &UStorageSlot::OnItemClick);
 		ButtonItem->OnHovered.RemoveDynamic(this, &UStorageSlot::OnItemHovered);
@@ -53,8 +55,7 @@ void UStorageSlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
 		CachedParentWidget->AssignCurrentlyFocusedSlot(this);
 		CachedParentWidget->ScrollToSlot(this);
 
-		if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-			GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::Storage);
+		WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::Storage);
 
 		//TODO Delay 0.1f
 
@@ -103,10 +104,12 @@ void UStorageSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPoin
 		if (IsValid(PlayerInventory))
 			PlayerInventory->SwitchedActivePanel(CurrentItemData->Class.GetDefaultObject()->InventoryPanel);
 
-		UItemDataDragAndDropPanel* DragAndDropPanel = CreateWidget<UItemDataDragAndDropPanel>(this, ItemDataDragAndDropPanel);
+		UItemDataDragAndDropPanel* DragAndDropPanel = CreateWidget<UItemDataDragAndDropPanel>(
+			this, ItemDataDragAndDropPanel);
 		DragAndDropPanel->InitializePanel(CurrentItemData->Class.GetDefaultObject()->ImageItem, DraggedImageSize);
 
-		auto Operation = Cast<UItemDataDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(ItemDataDragDropOperation));
+		auto Operation = Cast<UItemDataDragDropOperation>(
+			UWidgetBlueprintLibrary::CreateDragDropOperation(ItemDataDragDropOperation));
 		Operation->DefaultDragVisual = DragAndDropPanel;
 		Operation->ItemData = CurrentItemData;
 		Operation->Inventory = ActorInventory;
@@ -233,7 +236,7 @@ void UStorageSlot::OnItemClick()
 	{
 		if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 		{
-			if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
+			if (WidgetManager)
 				WidgetManager->OpenSplitStackPopup(CurrentItemData, new FItemData(), ActorInventory, PlayerInventory,
 				                                   EInputMethodType::RightClick, EItemDestination::StorageSlot,
 				                                   EItemDestination::InventorySlot, this);
@@ -241,7 +244,8 @@ void UStorageSlot::OnItemClick()
 		else
 		{
 			PlayerInventory->ServerTransferItemFromInventory(PlayerInventory, CurrentItemData,
-			                                                 new FItemData(), EInputMethodType::RightClick, ActorInventory,
+			                                                 new FItemData(), EInputMethodType::RightClick,
+			                                                 ActorInventory,
 			                                                 GetOwningPlayer());
 		}
 	}
@@ -265,8 +269,7 @@ void UStorageSlot::OnItemHovered()
 
 void UStorageSlot::OnItemUnhovered()
 {
-	if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-		GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::None);
+	WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::None);
 
 	ButtonItem->SetToolTip(nullptr);
 	BorderObject->SetBrushColor(BorderUnHovered);
@@ -386,9 +389,7 @@ void UStorageSlot::RefreshGeometryCache()
 
 bool UStorageSlot::IsUsingGamepad() const
 {
-	if (IsValid(CachedPlayerController))
-		return CachedPlayerController->IsUsingGamepad();
-	return false;
+	return IconButtonGameModule->IsUsingGamepad();
 }
 
 void UStorageSlot::SetToolTipPositionAndAlignment() const
@@ -441,7 +442,7 @@ void UStorageSlot::SetToolTipPositionAndAlignment() const
 
 bool UStorageSlot::IsAnyPopupActive() const
 {
-	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
+	if (WidgetManager)
 		return WidgetManager->GetCurrentPopupType() != EWidgetType::None;
 
 	return false;
@@ -449,7 +450,8 @@ bool UStorageSlot::IsAnyPopupActive() const
 
 void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, FItemData* ItemData) const
 {
-	if (!InventoryUtility::IsItemClassValid(ItemData) || (InventoryUtility::AreItemsTheSame(Operation->ItemData, ItemData) &&
+	if (!InventoryUtility::IsItemClassValid(ItemData) || (InventoryUtility::AreItemsTheSame(
+			Operation->ItemData, ItemData) &&
 		InventoryUtility::AreItemsStackable(Operation->ItemData, ItemData)))
 	{
 		switch (PlayerInventory->GetItemRemoveType(Operation->ItemData))
@@ -458,7 +460,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 			{
 				if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 				{
-					if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
+					if (WidgetManager)
 						WidgetManager->OpenSplitStackPopup(Operation->ItemData, ItemData, PlayerInventory,
 						                                   ActorInventory,
 						                                   EInputMethodType::DragAndDrop, Operation->DraggerFrom,
@@ -475,7 +477,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 		case EItemRemoveType::OnConfirmation:
 			{
 				BorderObject->SetBrushColor(BorderUnHovered);
-				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
+				if (WidgetManager)
 					WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", Operation->ItemData,
 					                                     ItemData,
 					                                     PlayerInventory, ActorInventory, EInputMethodType::DragAndDrop,
@@ -485,7 +487,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 			break;
 		case EItemRemoveType::CannotBeRemoved:
 			{
-				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
+				if (WidgetManager)
 					WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
 			}
 			break;

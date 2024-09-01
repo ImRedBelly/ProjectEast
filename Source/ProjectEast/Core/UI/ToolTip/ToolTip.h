@@ -3,10 +3,10 @@
 #include "CoreMinimal.h"
 #include "ItemStatsSlot.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Image.h"
 #include "ProjectEast/Core/UI/Misc/ValueView.h"
 #include "ProjectEast/Core/UI/Misc/WeightView.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
-#include "ProjectEast/Core/UI/Misc/Interaction/InteractionWidget.h"
 #include "ToolTip.generated.h"
 
 class UUniformGridPanel;

@@ -1,5 +1,4 @@
 ﻿#include "SortWindow.h"
-#include "Components/Button.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 
 void USortWindow::NativeConstruct()
@@ -8,6 +7,7 @@ void USortWindow::NativeConstruct()
 
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
 	CachedPlayerInventory = CachedPlayerController->GetPlayerInventory();
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 
 	ButtonSortType->ClickedButton.AddDynamic(this, &USortWindow::OnSort);
 	ButtonSortRarity->ClickedButton.AddDynamic(this, &USortWindow::OnSort);
@@ -57,7 +57,5 @@ void USortWindow::ToggleSortingWindow() const
 
 bool USortWindow::IsUsingGamepad() const
 {
-	if (IsValid(CachedPlayerController))
-		return CachedPlayerController->IsUsingGamepad();
-	return false;
+	return IconButtonGameModule->IsUsingGamepad();
 }

@@ -7,7 +7,8 @@
 void UInteractionWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	SetIconInteraction();
+	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 	SetAppropriateFillingBackground();
 
 	ESlateVisibility ImageFillVisibility = ESlateVisibility::Hidden;
@@ -56,12 +57,6 @@ void UInteractionWidget::SetFillDecimalValue(float Value) const
 	ImageFillBorder->GetDynamicMaterial()->SetScalarParameterValue("Decimal", FMath::Clamp(Value, 0.05f, 1.0f));
 }
 
-void UInteractionWidget::SetIconInteraction() const
-{
-	// UTexture2D* Texture = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonBottom);
-	// ImageInteraction->SetBrushFromTexture(Texture);
-}
-
 void UInteractionWidget::SetAppropriateFillingBackground() const
 {
 	ImageFillBorder->SetBrushFromMaterial(IsUsingGamepad() ? CircularFill : SquareFill);
@@ -69,33 +64,21 @@ void UInteractionWidget::SetAppropriateFillingBackground() const
 
 void UInteractionWidget::BindEventDispatchers()
 {
-	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-
-	if (IsValid(PlayerController))
-		PlayerController->OnGamepadToggled.AddDynamic(this, &UInteractionWidget::OnGamepadToggled);
+	IconButtonGameModule->OnGamepadToggled.AddDynamic(this, &UInteractionWidget::OnGamepadToggled);
 }
 
 void UInteractionWidget::UnbindEventDispatchers()
 {
-	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-
-	if (IsValid(PlayerController))
-		PlayerController->OnGamepadToggled.RemoveDynamic(this, &UInteractionWidget::OnGamepadToggled);
+	IconButtonGameModule->OnGamepadToggled.RemoveDynamic(this, &UInteractionWidget::OnGamepadToggled);
 }
 
 void UInteractionWidget::OnGamepadToggled()
 {
-	SetIconInteraction();
 	SetAppropriateFillingBackground();
 	SetFillDecimalValue(0.05f);
 }
 
 bool UInteractionWidget::IsUsingGamepad() const
 {
-	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-
-	if (IsValid(PlayerController))
-		return PlayerController->IsUsingGamepad();
-	
-	return false;
+	return IconButtonGameModule->IsUsingGamepad();
 }

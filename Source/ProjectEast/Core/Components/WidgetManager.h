@@ -2,14 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ProjectEast/Core/UI/Menus/Pause.h"
-#include "ProjectEast/Core/Utils/GameTypes.h"
-#include "ProjectEast/Core/UI/HUD/MainWindow.h"
 #include "ProjectEast/Core/Actors/Other/PlayerCapture.h"
-#include "ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.h"
+#include "ProjectEast/Core/UI/Menus/Pause.h"
 #include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "WidgetManager.generated.h"
 
+class UMainWindow;
+class USplitStackPopup;
+class AMainPlayerController;
 class UStorageWindow;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -37,7 +38,10 @@ public:
 
 	void StartPlayerCapture();
 	void StopPlayerCapture();
-
+	
+	EWidgetType GetCurrentlyFocusedWidget();
+	void SetCurrentlyFocusedWidget(EWidgetType None);
+	
 	APlayerCapture* GetPlayerCapture() const;
 	UMainWindow* GetMainWindow() const;
 

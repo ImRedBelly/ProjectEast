@@ -1,13 +1,16 @@
 #include "ToolTip.h"
+
+#include "Components/Border.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/HorizontalBox.h"
+#include "Components/UniformGridPanel.h"
 #include "Kismet/KismetTextLibrary.h"
 #include "Components/UniformGridSlot.h"
 #include "Components/VerticalBoxSlot.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
-#include "ProjectEast/Core/Components/ActorLeveling.h"
+#include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 
 void UToolTip::InitializeToolTip(FItemData* ItemData, bool IsCompareItems)
@@ -192,8 +195,8 @@ void UToolTip::SetItemRequiredLevelColor() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		UActorLeveling* ActorLeveling = Cast<UActorLeveling>(
-			GetOwningPlayer()->GetComponentByClass(UActorLeveling::StaticClass()));
+		UPlayerLeveling* ActorLeveling = Cast<UPlayerLeveling>(
+			GetOwningPlayer()->GetComponentByClass(UPlayerLeveling::StaticClass()));
 
 		if (IsValid(ActorLeveling))
 		{

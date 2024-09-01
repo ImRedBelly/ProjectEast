@@ -7,6 +7,9 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/InputDeviceSubsystem.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetInputLibrary.h"
 #include "ProjectEast/Core/Components/Movement/WallRunComponent.h"
 #include "ProjectEast/Core/Components/Movement/PlayerMovementComponent.h"
 
@@ -103,44 +106,49 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered,this, &APlayerCharacter::Move);
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed,this, &APlayerCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &APlayerCharacter::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered,this, &APlayerCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started,this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed,this, &ACharacter::StopJumping);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Sprinting
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started,this, &APlayerCharacter::StartSprint);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed,this, &APlayerCharacter::StopSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &APlayerCharacter::StartSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprint);
 
 		// Crouch
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started,this, &APlayerCharacter::ChangeCrouchState);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::ChangeCrouchState);
 		//EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed,this, &APlayerCharacter::ChangeCrouchState);
 
 		// Aim
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started,this, &APlayerCharacter::OnStartAiming);
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed,this, &APlayerCharacter::OnEndAiming);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &APlayerCharacter::OnStartAiming);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &APlayerCharacter::OnEndAiming);
 		// SlidingAction
-		EnhancedInputComponent->BindAction(SlidingAction, ETriggerEvent::Started, this,&APlayerCharacter::OnStartSliding);
+		EnhancedInputComponent->BindAction(SlidingAction, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::OnStartSliding);
 		// EnhancedInputComponent->BindAction(SlidingAction, ETriggerEvent::Completed,
 		//                                    this, &APlayerCharacter::OnEndSliding);
 
 		//Interaction
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this,&APlayerCharacter::OnInteractive);
-		EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Started, this,&APlayerCharacter::OnOpenInventory);
-		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this,&APlayerCharacter::OnPause);
-		
-		EnhancedInputComponent->BindAction(UsePocket1Action, ETriggerEvent::Started, this,&APlayerCharacter::UsePocket1);
-		EnhancedInputComponent->BindAction(UsePocket2Action, ETriggerEvent::Started, this,&APlayerCharacter::UsePocket2);
-		EnhancedInputComponent->BindAction(UsePocket3Action, ETriggerEvent::Started, this,&APlayerCharacter::UsePocket3);
-		EnhancedInputComponent->BindAction(UsePocket4Action, ETriggerEvent::Started, this,&APlayerCharacter::UsePocket4);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::OnInteractive);
+		EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::OnOpenInventory);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &APlayerCharacter::OnPause);
 
-		
-		//
+		EnhancedInputComponent->BindAction(UsePocket1Action, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::UsePocket1);
+		EnhancedInputComponent->BindAction(UsePocket2Action, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::UsePocket2);
+		EnhancedInputComponent->BindAction(UsePocket3Action, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::UsePocket3);
+		EnhancedInputComponent->BindAction(UsePocket4Action, ETriggerEvent::Started, this,
+		                                   &APlayerCharacter::UsePocket4);
 	}
 }
 
@@ -396,16 +404,19 @@ void APlayerCharacter::UsePocket1()
 	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
 		PlayerController->GetConsumableBuffs()->OnUsePocket(0);
 }
+
 void APlayerCharacter::UsePocket2()
 {
 	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
 		PlayerController->GetConsumableBuffs()->OnUsePocket(1);
 }
+
 void APlayerCharacter::UsePocket3()
 {
 	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
 		PlayerController->GetConsumableBuffs()->OnUsePocket(2);
 }
+
 void APlayerCharacter::UsePocket4()
 {
 	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))

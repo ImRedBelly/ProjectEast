@@ -4,7 +4,6 @@
 #include "Components/Image.h"
 #include "Components/ScrollBox.h"
 #include "Components/VerticalBox.h"
-#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void ULootBar::SetCurrentlyFocusedSlot(ULootBarSlot* LootBarSlot)
@@ -21,7 +20,6 @@ void ULootBar::ScrollWidget(ULootBarSlot* LootBarSlot) const
 void ULootBar::NativeConstruct()
 {
 	Super::NativeConstruct();
-	UpdateButtonIcons();
 
 	ButtonTake->OnClicked.AddUniqueDynamic(this, &ULootBar::TakeItem);
 	ButtonTakeAll->OnClicked.AddUniqueDynamic(this, &ULootBar::TakeAllItems);
@@ -30,10 +28,6 @@ void ULootBar::NativeConstruct()
 
 void ULootBar::BindEventDispatchers()
 {
-	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-	if (IsValid(PlayerController))
-		PlayerController->OnGamepadToggled.AddDynamic(this, &ULootBar::UpdateButtonIcons);
-
 	PlayerInventory->OnTakeItem.AddDynamic(this, &ULootBar::TakeItem);
 	PlayerInventory->OnTakeAllItems.AddDynamic(this, &ULootBar::TakeAllItems);
 	OwnerInventory->OnRefreshInventory.AddDynamic(this, &ULootBar::RefreshLootBar);
@@ -41,10 +35,6 @@ void ULootBar::BindEventDispatchers()
 
 void ULootBar::UnbindEventDispatchers()
 {
-	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-
-	if (IsValid(PlayerController))
-		PlayerController->OnGamepadToggled.RemoveDynamic(this, &ULootBar::UpdateButtonIcons);
 	if (IsValid(PlayerInventory))
 	{
 		PlayerInventory->OnTakeItem.RemoveDynamic(this, &ULootBar::TakeItem);
@@ -121,18 +111,6 @@ bool ULootBar::IsValidateOwnerInventory() const
 {
 	auto DataInventory = OwnerInventory->GetInventoryAndSize(EInventoryPanels::P1);
 	return DataInventory.Get<0>().IsValidIndex(0);
-}
-
-void ULootBar::UpdateButtonIcons()
-{
-	// UTexture2D* TextureTake = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonBottom);
-	// ImageButtonTake->SetBrushFromTexture(TextureTake);
-	//
-	// UTexture2D* TextureTakeAll = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonLeft);
-	// ImageButtonTakeAll->SetBrushFromTexture(TextureTakeAll);
-	//
-	// UTexture2D* TextureClose = InventoryUtility::GetGamepadIcon(EGamepadButtonType::FaceButtonRight);
-	// ImageButtonClose->SetBrushFromTexture(TextureClose);
 }
 
 void ULootBar::TakeItem()

@@ -3,9 +3,11 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "InteractionWidget.generated.h"
 
 
+class AMainPlayerController;
 class UTextBlock;
 class UImage;
 
@@ -21,10 +23,7 @@ public:
 	void SetFillDecimalValue(float Value) const;
 
 
-protected:
-	UPROPERTY(meta=(BindWidget))
-	UImage* ImageInteraction;
-	
+protected:	
 	UPROPERTY(meta=(BindWidget))
 	UImage* ImageFillBorder;
 
@@ -44,9 +43,11 @@ protected:
 	virtual void NativeDestruct() override;
 
 private:
+	AMainPlayerController* CachedPlayerController;
+	FIconButtonGameModule* IconButtonGameModule;
+	
 	EInteractionInputType InputType;
 
-	void SetIconInteraction() const;
 	void SetAppropriateFillingBackground() const;
 	void BindEventDispatchers();
 	void UnbindEventDispatchers();

@@ -94,7 +94,7 @@ bool InventoryUtility::SwitchHasOwnerAuthority(UActorComponent* ActorComponent)
 
 bool InventoryUtility::IsItemClassValid(const FItemData* ItemData)
 {
-	return IsValid(ItemData->Class);
+	return ItemData->Class != nullptr || IsValid(ItemData->Class);
 }
 
 bool InventoryUtility::AreItemsTheSame(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)

@@ -1,11 +1,11 @@
 ﻿#pragma once
-
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CanvasPanel.h"
 #include "ProjectEast/Core/UI/LootBar/LootBar.h"
 #include "MainWindow.generated.h"
 
-class UCanvasPanel;
+class AMainPlayerController;
 
 UCLASS()
 class PROJECTEAST_API UMainWindow : public UUserWidget
@@ -19,8 +19,14 @@ public:
 
 	UPROPERTY(meta=(BindWidget))
 	UCanvasPanel* InitMousePosition;
-	
+
+	virtual void NativeConstruct() override;
 	void ShowLootBar() const;
 	void HideLootBar() const;
 	void SetMousePositionOnLootBar() const;
+
+private:
+	UPROPERTY()
+	AMainPlayerController* CachedPlayerController;
+	FIconButtonGameModule* IconButtonGameModule;
 };

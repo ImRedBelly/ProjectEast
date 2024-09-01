@@ -1,6 +1,6 @@
-#include "Components/Image.h"
-#include "ItemDataDragAndDropPanel.h"
 #include "ItemDataDragDropOperation.h"
+#include "ItemDataDragAndDropPanel.h"
+#include "Components/Image.h"
 
 void UItemDataDragDropOperation::ClearDraggableIcon() const
 {

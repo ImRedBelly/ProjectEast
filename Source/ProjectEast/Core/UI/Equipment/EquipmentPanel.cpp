@@ -1,5 +1,5 @@
-﻿#include "EquipmentSlot.h"
-#include "EquipmentPanel.h"
+﻿#include "EquipmentPanel.h"
+#include "EquipmentSlot.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 
@@ -94,10 +94,10 @@ void UEquipmentPanel::CreateEquipment()
 	for (int i = 0; i < Slots.Num(); ++i)
 	{
 		auto FindItemSlot = GetWidgetSlotByItemSlot(Slots[i]);
-		auto FindItem = CachedPlayerEquipment->GetEquipmentData().Find(Slots[i]);
-
+		auto FindItem = CachedPlayerEquipment->GetEquipmentData()[Slots[i]];
+			
 		if (IsValid(FindItemSlot))
-			FindItemSlot->OverwriteSlot(this, *FindItem);
+			FindItemSlot->OverwriteSlot(this, FindItem);
 	}
 }
 

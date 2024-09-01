@@ -2,8 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
+#include "Components/Border.h"
+#include "Components/Button.h"
+#include "Components/Image.h"
 #include "DropBar.generated.h"
+
+class UWidgetManager;
+class UPlayerInventory;
 
 UCLASS()
 class PROJECTEAST_API UDropBar : public UUserWidget
@@ -24,6 +29,7 @@ protected:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,UDragDropOperation* InOperation) override;
 
 private:
-	UPlayerInventory* PlayerInventory;
+	UWidgetManager* CachedWidgetManager;
+	UPlayerInventory* CachedPlayerInventory;
 	
 };

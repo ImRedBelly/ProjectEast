@@ -2,13 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "InventoryCore.h"
-#include "Components/ActorComponent.h"
-#include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
-#include "ProjectEast/Core/UI/PlayerInventory/PlayerInventoryWidget.h"
-#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "PlayerInventory.generated.h"
 
 
+class UInteractableComponent;
+class UInventoryWindow;
 class ALootBag;
 class UStorageWindow;
 class IInteractable;

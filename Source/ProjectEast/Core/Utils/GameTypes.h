@@ -3,6 +3,7 @@
 #define ECC_Interactable ECC_GameTraceChannel1
 
 
+const FName ProjectEast = FName("ProjectEast");
 const FName CollisionProfilePawn = FName("Pawn");
 const FName CollisionProfilePawnInteractionVolume = FName("PawnInteractionVolume");
 

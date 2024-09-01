@@ -44,15 +44,6 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonClose;
 
-	UPROPERTY(meta=(BindWidget))
-	UImage* ImageButtonTake;
-
-	UPROPERTY(meta=(BindWidget))
-	UImage* ImageButtonTakeAll;
-
-	UPROPERTY(meta=(BindWidget))
-	UImage* ImageButtonClose;
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ULootBarSlot> DefaultLootBarSlot;
 
@@ -79,9 +70,6 @@ protected:
 	void SetOwnerInventory();
 	void SetFocusToSlot(int32 Index);
 	bool IsValidateOwnerInventory() const;
-
-	UFUNCTION()
-	void UpdateButtonIcons();
 
 	UFUNCTION()
 	void RefreshLootBar(EInventoryPanels Panel);

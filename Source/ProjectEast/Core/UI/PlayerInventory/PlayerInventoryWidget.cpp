@@ -1,10 +1,15 @@
+#include "PlayerInventoryWidget.h"
+
+#include "InventoryPanelButton.h"
+#include "PlayerInventorySlot.h"
+#include "SortWindow.h"
 #include "Components/ScrollBox.h"
 #include "Components/TextBlock.h"
-#include "PlayerInventoryWidget.h"
+#include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
+#include "Components/WidgetSwitcher.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/PlayerCharacter.h"
-#include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 
 void UPlayerInventoryWidget::AssignCurrentlyFocusedSlot(UPlayerInventorySlot* PlayerInventorySlot)
@@ -21,8 +26,11 @@ void UPlayerInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	WidgetManager = CachedPlayerController->GetWidgetManager();
 	CachedPlayerInventory = CachedPlayerController->GetPlayerInventory();
 	CachedPlayerEquipment = CachedPlayerController->GetPlayerEquipment();
+
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 
 	PlayAnimation(AnimationConstruct, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f, false);
 
@@ -146,9 +154,8 @@ void UPlayerInventoryWidget::SetInitialInputDelayForSlot() const
 
 void UPlayerInventoryWidget::ResetSlotFocus()
 {
-	if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-		if (GamepadControls->GetCurrentlyFocusedWidget() == EWidgetType::Inventory)
-			SetFocusToSlot(FocusedSlot);
+	if (WidgetManager->GetCurrentlyFocusedWidget() == EWidgetType::Inventory)
+		SetFocusToSlot(FocusedSlot);
 }
 
 void UPlayerInventoryWidget::CreateInventoryP1()
@@ -207,8 +214,7 @@ void UPlayerInventoryWidget::BuildInventorySlots(TArray<FItemData*> ItemData, in
 
 
 		UPlayerInventorySlot* InventorySLot = CreateWidget<UPlayerInventorySlot>(GetOwningPlayer(), DefaultPlayerInventorySlot);
-		InventorySLot->InitializeSlot(CurrentItemData, CachedReceiverInventory, this, CachedPlayerEquipment,
-		                              CachedPlayerInventory, DraggedImageSize, i);
+		InventorySLot->InitializeSlot(CachedPlayerController, CurrentItemData, CachedReceiverInventory, this, DraggedImageSize, i);
 
 		UUniformGridSlot* CurrentSlot = GridPanel->AddChildToUniformGrid(InventorySLot, CurrentRow, CurrentColumn);
 		CurrentSlot->SetHorizontalAlignment(HAlign_Fill);
@@ -267,11 +273,11 @@ void UPlayerInventoryWidget::SwitchInventoryPanel(EInventoryPanels NewPanel)
 
 		SetPanelTitle(NewPanel);
 
-		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-			if (GamepadControls->GetCurrentlyFocusedWidget() == EWidgetType::Inventory)
-				SetFocusToSlot(0);
-			else
-				ScrollBox->ScrollToStart();
+		
+		if (WidgetManager->GetCurrentlyFocusedWidget() == EWidgetType::Inventory)
+			SetFocusToSlot(0);
+		else
+			ScrollBox->ScrollToStart();
 	}
 }
 
@@ -366,15 +372,10 @@ void UPlayerInventoryWidget::DisplaySampleSlots(int32 IndexSlot)
 
 bool UPlayerInventoryWidget::IsUsingGamepad() const
 {
-	if (IsValid(CachedPlayerController))
-		return CachedPlayerController->IsUsingGamepad();
-	return false;
+	return IconButtonGameModule->IsUsingGamepad();
 }
 
 bool UPlayerInventoryWidget::IsAnyPopupActive() const
 {
-	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-		return WidgetManager->GetCurrentPopupType() != EWidgetType::Vendor;
-
-	return false;
+	return WidgetManager->GetCurrentPopupType() != EWidgetType::Vendor;
 }

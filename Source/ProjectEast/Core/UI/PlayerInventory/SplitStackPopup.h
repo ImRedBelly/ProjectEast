@@ -8,6 +8,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "ProjectEast/Core/UI/Misc/ValueView.h"
 #include "ProjectEast/Core/UI/Misc/WeightView.h"
 #include "SplitStackPopup.generated.h"
@@ -73,6 +74,7 @@ protected:
 
 private:
 	AMainPlayerController* CachedController;
+	FIconButtonGameModule* IconButtonGameModule;
 
 	UInventoryCore* CachedSender;
 	UInventoryCore* CachedReceiver;

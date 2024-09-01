@@ -1,12 +1,15 @@
 ﻿#include "DropBar.h"
 #include "Components/Image.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UDropBar::NativeConstruct()
 {
 	Super::NativeConstruct();
-	PlayerInventory = InventoryUtility::GetPlayerInventory(GetOwningPlayer());
+	auto PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	CachedWidgetManager = PlayerController->GetWidgetManager();
+	CachedPlayerInventory = PlayerController->GetPlayerInventory();
 }
 
 void UDropBar::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -50,36 +53,29 @@ bool UDropBar::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& I
 	BorderObject->SetBrushColor(FLinearColor(0.346704f, 0.346704f, 0.346704f));
 	if (auto Operation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
-		switch (PlayerInventory->GetItemRemoveType(Operation->ItemData))
+		switch (CachedPlayerInventory->GetItemRemoveType(Operation->ItemData))
 		{
 		case EItemRemoveType::Default:
 			if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 			{
-				
-				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-					WidgetManager->OpenSplitStackPopup(Operation->ItemData, new FItemData(), nullptr,
-													   PlayerInventory,EInputMethodType::DragAndDrop, Operation->DraggerFrom,
-													   EItemDestination::DropBar, nullptr);
+				CachedWidgetManager->OpenSplitStackPopup(Operation->ItemData, new FItemData(), nullptr,
+				CachedPlayerInventory,EInputMethodType::DragAndDrop, Operation->DraggerFrom,
+				EItemDestination::DropBar, nullptr);
 			}
 			else
 			{
-				PlayerInventory->ServerDropItemOnTheGround(Operation->ItemData,Operation->DraggerFrom, GetOwningPlayer());
+				CachedPlayerInventory->ServerDropItemOnTheGround(Operation->ItemData,Operation->DraggerFrom, GetOwningPlayer());
 			}
 			break;
 		case EItemRemoveType::OnConfirmation:
 			{
-				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-					WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", Operation->ItemData,
-					                                     nullptr, nullptr, PlayerInventory,
-					                                     EInputMethodType::DragAndDrop,
-					                                     Operation->DraggerFrom, EItemDestination::DropBar, nullptr);
+				CachedWidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", Operation->ItemData,
+				nullptr, nullptr, CachedPlayerInventory,EInputMethodType::DragAndDrop,
+				Operation->DraggerFrom, EItemDestination::DropBar, nullptr);
 			}
 			break;
 		case EItemRemoveType::CannotBeRemoved:
-			{
-				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-					WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
-			}
+			CachedWidgetManager->DisplayMessageNotify("Item cannot be Removed.");
 			break;
 		}
 	}

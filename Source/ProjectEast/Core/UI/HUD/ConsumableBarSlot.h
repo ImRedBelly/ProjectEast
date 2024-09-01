@@ -8,8 +8,9 @@
 #include "Components/ProgressBar.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
-#include "ProjectEast/Core/GameMode/InputDeviceManager.h"
 #include "ConsumableBarSlot.generated.h"
+
+class UIconButton;
 
 UCLASS()
 class PROJECTEAST_API UConsumableBarSlot : public UUserWidget
@@ -21,9 +22,7 @@ protected:
 	EItemSlot SlotType;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FSlateBrush EmptySlotStyle;
-	
-	UPROPERTY(meta=(BindWidget))
-	UImage* ImageInput;
+
 	UPROPERTY(meta=(BindWidget))
 	UImage* ImageItem;
 
@@ -35,22 +34,24 @@ protected:
 	UTextBlock* TextX;
 	UPROPERTY(meta=(BindWidget), BlueprintReadOnly)
 	UProgressBar* ProgressBar;
-	UPROPERTY(EditAnywhere)
+
+
+	UPROPERTY(meta=(BindWidget))
+	UIconButton* IconButton;
+	UPROPERTY(EditAnywhere, Category="Input Settings")
 	UInputAction* InputAction;
 
 
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* AnimationUse;
 
-	
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayAnimationUse(float Cooldown);
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnAnimationUse(float Cooldown);
-	
+
 private:
-	UInputDeviceManager* InputDeviceManager;
-	
 	UPROPERTY()
 	UConsumableBuffs* CachedConsumableBuffs;
 	UPROPERTY()
@@ -62,7 +63,6 @@ private:
 	TArray<EItemSlot> HideIfEachEmpty;
 
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 	void EventRefreshValues(FItemData* ItemData);
 	void EventClearValues();
 	void BindOnUsed();
@@ -78,7 +78,4 @@ private:
 	void OnItemUsed(EItemSlot UsedSLot, float Cooldown);
 	UFUNCTION()
 	void RefreshSlot(FItemData& ItemData);
-	UFUNCTION()
-	void UpdateIconInput();
-
 };

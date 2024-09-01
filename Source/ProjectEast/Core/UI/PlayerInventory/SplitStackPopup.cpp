@@ -1,6 +1,7 @@
 ﻿#include "SplitStackPopup.h"
 #include "Components/TextBlock.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void USplitStackPopup::InitializePopup(FItemData* ItemData, FItemData* InSlotData, UInventoryCore* Sender,
@@ -24,6 +25,7 @@ void USplitStackPopup::NativeConstruct()
 	InventoryUtility::PlaySoundOnItemDropped();
 	
 	CachedController = Cast<AMainPlayerController>(GetOwningPlayer());
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 	if (IsValid(CachedController))
 		CachedController->OnSwitchedWidget.AddDynamic(this, &USplitStackPopup::OnWidgetSwitched);
 	PlayAnimation(AnimationConstruct, 0.0f, 1,EUMGSequencePlayMode::Forward,1.0f, false);
@@ -178,7 +180,5 @@ uint32 USplitStackPopup::GetCurrentQuantity() const
 
 bool USplitStackPopup::IsUsingGamepad() const
 {
-	if (IsValid(CachedController))
-		return CachedController->IsUsingGamepad();
-	return false;
+	return IconButtonGameModule->IsUsingGamepad();
 }

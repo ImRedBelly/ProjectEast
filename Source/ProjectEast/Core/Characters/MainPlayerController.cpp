@@ -12,6 +12,7 @@ AMainPlayerController::AMainPlayerController()
 	PlayerEquipment = CreateDefaultSubobject<UPlayerEquipment>(TEXT("PlayerEquipment"));
 	ConsumableBuffs = CreateDefaultSubobject<UConsumableBuffs>(TEXT("ConsumableBuffs"));
 	CharacterStatsComponent = CreateDefaultSubobject<UCharacterStatsComponent>(TEXT("CharacterStatsComponent"));
+	PlayerLeveling = CreateDefaultSubobject<UPlayerLeveling>(TEXT("PlayerLeveling"));
 	WidgetManager = CreateDefaultSubobject<UWidgetManager>(TEXT("WidgetManager"));
 }
 
@@ -26,13 +27,6 @@ void AMainPlayerController::OnInteraction() const
 	if (!WidgetManager->IsAnyMainWidgetOpen())
 		PlayerInventory->InputInteraction();
 }
-
-
-bool AMainPlayerController::IsUsingGamepad()
-{
-	return false;
-}
-
 
 void AMainPlayerController::BeginPlay()
 {
@@ -60,7 +54,6 @@ void AMainPlayerController::InputActionInventory()
 
 void AMainPlayerController::InitializeComponents()
 {
-	//InventoryUtility::Initialize(GamepadIcons);
 	InteractionComponent->InitializeInteraction(this);
 	PlayerInventory->InitializeInventory(this);
 	PlayerEquipment->InitializeEquipment();
@@ -136,11 +129,15 @@ UCharacterStatsComponent* AMainPlayerController::GetStatsComponent() const
 	return CharacterStatsComponent;
 }
 
+UPlayerLeveling* AMainPlayerController::GetPlayerLeveling() const
+{
+	return PlayerLeveling;
+}
+
 UWidgetManager* AMainPlayerController::GetWidgetManager() const
 {
 	return WidgetManager;
 }
-
 
 void AMainPlayerController::ClientInitializeInteractionWithObject(UInteractableComponent* InteractableComponent)
 {

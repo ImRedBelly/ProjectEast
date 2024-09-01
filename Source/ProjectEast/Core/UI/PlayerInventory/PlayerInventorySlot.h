@@ -5,6 +5,7 @@
 #include "ProjectEast/Core/UI/ToolTip/ToolTip.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "PlayerInventorySlot.generated.h"
 
@@ -18,8 +19,8 @@ class PROJECTEAST_API UPlayerInventorySlot : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void InitializeSlot(FItemData* ItemData,UInventoryCore* ReceiverInventory, UPlayerInventoryWidget* ParentWidget, UPlayerEquipment* PlayerEquipment,
-	                    UPlayerInventory* PlayerInventory, FVector2D DragImageSize, uint32 IndexSlot);
+	void InitializeSlot(AMainPlayerController* PlayerController, FItemData* ItemData, UInventoryCore* ReceiverInventory, UPlayerInventoryWidget* ParentWidget,
+	FVector2D DragImageSize, uint32 IndexSlot);
 	
 	void HighlightSlot();
 	void OnInitialInput();
@@ -55,10 +56,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UItemDataDragDropOperation> ItemDataDragDropOperation;
-
-
-	void InitializeInventorySlot(UPlayerEquipment* PlayerEquipment, UPlayerInventory* PlayerInventory,UInventoryCore* ReceiverInventory);
-
+	
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
@@ -116,13 +114,15 @@ private:
 	
 	bool IsAnyPopUpActive() const;
 	
+	AMainPlayerController* CachedPlayerController;
+	UWidgetManager* WidgetManager;
 	UPlayerEquipment* CachedPlayerEquipment;
 	UPlayerInventory* CachedPlayerInventory;
 	UInventoryCore* CachedReceiverInventory;
 
-	AMainPlayerController* CachedPlayerController;
 	UPlayerInventoryWidget* CachedPlayerInventoryWidget;
 	UToolTip* CachedToolTip;
+	FIconButtonGameModule* IconButtonGameModule;
 
 	FItemData* CurrentItemData;
 	FItemData* EmptySlotData;

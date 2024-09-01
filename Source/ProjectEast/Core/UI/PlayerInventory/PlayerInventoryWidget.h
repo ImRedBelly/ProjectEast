@@ -1,13 +1,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SortWindow.h"
-#include "PlayerInventorySlot.h"
-#include "InventoryPanelButton.h"
-#include "Components/WidgetSwitcher.h"
+#include "Components/Border.h"
+#include "Components/Image.h"
+#include "Components/ScrollBox.h"
+#include "Components/TextBlock.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/WidgetSwitcher.h"
+#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "PlayerInventoryWidget.generated.h"
 
+
+class UWidgetManager;
+class UPlayerEquipment;
+class UPlayerInventory;
+class UInventoryCore;
+class AMainPlayerController;
+class UPlayerInventorySlot;
+class UInventoryPanelButton;
+class USortWindow;
 
 UCLASS()
 class PROJECTEAST_API UPlayerInventoryWidget : public UUserWidget
@@ -119,11 +132,14 @@ protected:
 	bool IsAnyPopupActive() const;
 
 private:
+	AMainPlayerController* CachedPlayerController;
+	UWidgetManager* WidgetManager;
 	UInventoryCore* CachedReceiverInventory;
 	UPlayerInventory* CachedPlayerInventory;
 	UPlayerEquipment* CachedPlayerEquipment;
 
-	AMainPlayerController* CachedPlayerController;
+	FIconButtonGameModule* IconButtonGameModule;
+
 
 	uint32 ColumnPosition;
 	uint32 RowPosition;

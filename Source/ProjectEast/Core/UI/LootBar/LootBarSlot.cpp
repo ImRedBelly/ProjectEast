@@ -4,7 +4,6 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Kismet/KismetTextLibrary.h"
-#include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
@@ -25,7 +24,8 @@ void ULootBarSlot::InitializeSlot(ULootBar* LootBar, FItemData* ItemData)
 void ULootBarSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 	BackgroundButton->OnClicked.AddUniqueDynamic(this, &ULootBarSlot::OnRightClick);
 	BackgroundButton->OnHovered.AddUniqueDynamic(this, &ULootBarSlot::OnHovered);
 }
@@ -47,10 +47,6 @@ FReply ULootBarSlot::NativeOnMouseMove(const FGeometry& InGeometry, const FPoint
 	{
 		CachedLootBar->IsKeyboardFocus = false;
 		OnMouseMoved();
-
-		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-			GamepadControls->SetGamepadControls(false);
-
 		return FReply::Handled();
 	}
 
@@ -148,11 +144,7 @@ void ULootBarSlot::OnHovered()
 
 bool ULootBarSlot::IsUsingGamepad() const
 {
-	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-
-	if (IsValid(PlayerController))
-		PlayerController->IsUsingGamepad();
-	return false;
+	return IconButtonGameModule->IsUsingGamepad();
 }
 
 void ULootBarSlot::SetActivateState()

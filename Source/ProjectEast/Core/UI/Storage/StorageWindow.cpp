@@ -1,11 +1,18 @@
 ﻿#include "StorageWindow.h"
+#include "Components/WidgetSwitcher.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/UI/PlayerInventory/PlayerInventoryWidget.h"
+#include "ProjectEast/Core/UI/PlayerInventory/SortWindow.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UStorageWindow::NativeConstruct()
 {
 	Super::NativeConstruct();
 	ForceLayoutPrepass();
-	CachedPlayerInventory = InventoryUtility::GetPlayerInventory(GetOwningPlayer());
+	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	CachedPlayerInventory = CachedPlayerController->GetPlayerInventory();
+	WidgetManager = CachedPlayerController->GetWidgetManager();
+
 	BindEventDispatchers();
 	PlayAnimation(AnimationConstruct, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f, false);
 }
@@ -26,24 +33,20 @@ FReply UStorageWindow::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEv
 {
 	if (InKeyEvent.GetKey() == EKeys::Gamepad_RightShoulder)
 	{
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-			WidgetManager->SwitchTabTo(EWidgetType::Equipment);
+		WidgetManager->SwitchTabTo(EWidgetType::Equipment);
 
-		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-			if (GamepadControls->GetCurrentlyFocusedWidget() != EWidgetType::Inventory)
-				PlayerInventoryPanel->SetFocusToSlot(0);
+		if (WidgetManager->GetCurrentlyFocusedWidget() != EWidgetType::Inventory)
+			PlayerInventoryPanel->SetFocusToSlot(0);
 
 		return FReply::Handled();
 	}
 
 	if (InKeyEvent.GetKey() == EKeys::Gamepad_LeftShoulder)
 	{
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-			WidgetManager->SwitchTabTo(EWidgetType::Equipment);
+		WidgetManager->SwitchTabTo(EWidgetType::Equipment);
 
-		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-			if (GamepadControls->GetCurrentlyFocusedWidget() != EWidgetType::Storage)
-				PlayerInventoryPanel->SetFocusToSlot(0);
+		if (WidgetManager->GetCurrentlyFocusedWidget() != EWidgetType::Storage)
+			PlayerInventoryPanel->SetFocusToSlot(0);
 
 		return FReply::Handled();
 	}
@@ -79,11 +82,7 @@ FReply UStorageWindow::NativeOnMouseMove(const FGeometry& InGeometry, const FPoi
 {
 	auto CursorDelta = InMouseEvent.GetCursorDelta();
 	if (CursorDelta.X != 0.0f || CursorDelta.Y != 0.0f)
-		if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-		{
-			GamepadControls->SetGamepadControls(false);
-			return FReply::Handled();
-		}
+		return FReply::Handled();
 	return FReply::Unhandled();
 }
 

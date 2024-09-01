@@ -10,6 +10,9 @@
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "StorageWindow.generated.h"
 
+class UWidgetManager;
+class UPlayerInventoryWidget;
+
 UCLASS()
 class PROJECTEAST_API UStorageWindow : public UUserWidget
 {
@@ -53,6 +56,8 @@ protected:
 	void SwitchTab(EWidgetType WidgetType);
 
 private:
+	AMainPlayerController* CachedPlayerController;
 	UPlayerInventory* CachedPlayerInventory;
+	UWidgetManager* WidgetManager;
 	
 };

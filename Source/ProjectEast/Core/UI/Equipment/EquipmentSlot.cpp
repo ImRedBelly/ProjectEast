@@ -6,15 +6,24 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
+#include "ProjectEast/Core/UI/ToolTip/ToolTip.h"
+
+class FIconButtonGameModule;
 
 void UEquipmentSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-	CachedPlayerInventory = Cast<AMainPlayerController>(GetOwningPlayer())->GetPlayerInventory();
-	CachedPlayerEquipment = Cast<AMainPlayerController>(GetOwningPlayer())->GetPlayerEquipment();
+
+	PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
+	WidgetManager = PlayerController->GetWidgetManager();
+	
+	CachedPlayerInventory = PlayerController->GetPlayerInventory();
+	CachedPlayerEquipment = PlayerController->GetPlayerEquipment();
 
 	ButtonItem->OnClicked.AddDynamic(this, &UEquipmentSlot::OnRightClick);
 	ButtonItem->OnHovered.AddDynamic(this, &UEquipmentSlot::OnHovered);
@@ -48,9 +57,7 @@ void UEquipmentSlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
 		BorderImage->SetBrushTintColor(BorderHovered);
 
 		CachedEquipmentPanel->AssignCurrentlyFocusedSlot(CurrentItemData->EquipmentSlot);
-
-		if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-			GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::Equipment);
+		WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::Equipment);
 		if (IsValid(CachedToolTip))
 			CachedToolTip->RemoveFromParent();
 
@@ -250,7 +257,7 @@ void UEquipmentSlot::DropOnTheGround()
 		{
 			if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 			{
-				if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
+				
 					WidgetManager->OpenSplitStackPopup(CurrentItemData, new FItemData(), nullptr, CachedPlayerInventory,
 					                                   EInputMethodType::RightClick,
 					                                   EItemDestination::EquipmentSlot, EItemDestination::DropBar,
@@ -261,14 +268,12 @@ void UEquipmentSlot::DropOnTheGround()
 				                                                 GetOwningPlayer());
 		}
 	case EItemRemoveType::OnConfirmation:
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, new FItemData(),
 			                                     nullptr, CachedPlayerInventory, EInputMethodType::RightClick,
 			                                     EItemDestination::EquipmentSlot,
 			                                     EItemDestination::DropBar, this);
 		break;
 	case EItemRemoveType::CannotBeRemoved:
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
 			WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
 		break;
 	}
@@ -344,7 +349,7 @@ void UEquipmentSlot::OverwriteSlot(UEquipmentPanel* EquipmentPanel, FItemData* I
 	CachedEquipmentPanel = EquipmentPanel;
 
 	if (InventoryUtility::IsItemClassValid(ItemData))
-		CurrentItemData = InventoryUtility::CopyItemData(ItemData);
+	 	CurrentItemData = InventoryUtility::CopyItemData(ItemData);
 	else
 	{
 		CurrentItemData = InventoryUtility::CopyItemData(EmptyItemData);
@@ -367,16 +372,12 @@ FText UEquipmentSlot::GetLabelCharacter()
 
 EWidgetType UEquipmentSlot::GetActiveWidgetType() const
 {
-	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-		return WidgetManager->GetActiveWidget();
-	return EWidgetType::None;
+	return WidgetManager->GetActiveWidget();
 }
 
 bool UEquipmentSlot::IsUsingGamepad() const
 {
-	if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-		return GamepadControls->IsUsingGamepad();
-	return false;
+	return IconButtonGameModule->IsUsingGamepad();
 }
 
 void UEquipmentSlot::OnHovered()
@@ -396,8 +397,7 @@ void UEquipmentSlot::OnHovered()
 
 void UEquipmentSlot::OnUnhovered()
 {
-	if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-		GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::None);
+	WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::None);
 
 	ButtonItem->SetToolTip(nullptr);
 	BorderImage->SetColorAndOpacity(BorderUnHovered);

@@ -1,5 +1,5 @@
-#include "Components/Image.h"
 #include "ItemDataDragAndDropPanel.h"
+#include "Components/Image.h"
 
 void UItemDataDragAndDropPanel::InitializePanel(UTexture2D* Texture, FVector2D Size)
 {

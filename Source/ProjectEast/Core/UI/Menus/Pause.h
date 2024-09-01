@@ -13,7 +13,7 @@ class PROJECTEAST_API UPause : public UUserWidget
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonResume;
-
+	
 
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;

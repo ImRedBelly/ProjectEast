@@ -2,9 +2,19 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
+#include "Components/Border.h"
+#include "Components/Image.h"
+#include "Components/ScrollBox.h"
+#include "Components/UniformGridPanel.h"
+#include "Components/WidgetSwitcher.h"
+#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "StorageInventory.generated.h"
 
+class UWidgetManager;
+class UPlayerInventory;
+class UInventoryCore;
+class UInputDeviceViewComponent;
 class UStorageSlot;
 
 UCLASS()
@@ -69,6 +79,7 @@ protected:
 private:
 	UInventoryCore* CachedOwnerInventory;
 	UPlayerInventory* CachedPlayerInventory;
+	UWidgetManager* WidgetManager;
 
 	uint32 ColumnPosition;
 	uint32 RowPosition;

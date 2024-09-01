@@ -5,12 +5,15 @@
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
+#include "ProjectEast/Core/UI/HUD/MainWindow.h"
 #include "ProjectEast/Core/UI/Storage/StorageWindow.h"
 
 
 void UPlayerInventory::BeginPlay()
 {
+	//TODO Overrides Child Event. Do not remove	
 }
+
 
 void UPlayerInventory::ClientTransferItemReturnValue(bool Success, FText FailureMessage)
 {
@@ -19,8 +22,8 @@ void UPlayerInventory::ClientTransferItemReturnValue(bool Success, FText Failure
 
 void UPlayerInventory::InitializeInventory(APlayerController* PlayerController)
 {
-	ClientInitializeInventory(PlayerController);
 	Super::InitializeInventory(PlayerController);
+	ClientInitializeInventory(PlayerController);
 }
 
 void UPlayerInventory::ClientInitializeInventory(APlayerController* PlayerController)

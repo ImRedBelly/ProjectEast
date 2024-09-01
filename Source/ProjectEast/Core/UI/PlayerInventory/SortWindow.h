@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "SortWindow.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndSorting);
@@ -31,7 +32,6 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	USortSlot* ButtonSortWeight;
 
-
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
@@ -44,4 +44,5 @@ private:
 
 	AMainPlayerController* CachedPlayerController;
 	UPlayerInventory* CachedPlayerInventory;
+	FIconButtonGameModule* IconButtonGameModule;
 };

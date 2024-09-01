@@ -1,28 +1,17 @@
 ﻿#include "ConsumableBarSlot.h"
+
+#include "ProjectEast/Core/InputDetection/Public/IconButton.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
-#include "ProjectEast/Core/GameMode/ProjectEastGameMode.h"
 
 void UConsumableBarSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
+	IconButton->Initialize(InputAction);
 	CachedConsumableBuffs = InventoryUtility::GetConsumableBuffs(GetOwningPlayer());
 	CachePlayerEquipment = InventoryUtility::GetPlayerEquipment(GetOwningPlayer());
 	BindOnItemChanged();
 	BindOnRefreshed();
 	BindOnUsed();
-
-	AProjectEastGameMode* GameMode= Cast<AProjectEastGameMode>(GetWorld()->GetAuthGameMode());
-	InputDeviceManager = GameMode->GetInputDeviceManager();
-	
-	InputDeviceManager->OnUpdateInputDevice.AddDynamic(this, &UConsumableBarSlot::UpdateIconInput);
-	UpdateIconInput();
-}
-
-void UConsumableBarSlot::NativeDestruct()
-{
-	Super::NativeDestruct();
-	if (IsValid(InputDeviceManager))
-		InputDeviceManager->OnUpdateInputDevice.RemoveDynamic(this, &UConsumableBarSlot::UpdateIconInput);
 }
 
 void UConsumableBarSlot::EventRefreshValues(FItemData* ItemData)
@@ -106,13 +95,6 @@ bool UConsumableBarSlot::IsAnySlotValid(TArray<EItemSlot> Array) const
 			return true;
 	}
 	return false;
-}
-
-void UConsumableBarSlot::UpdateIconInput()
-{
-	auto IconInput = InputDeviceManager->GetIconKeyByActionType(InputAction);
-	if (IsValid(IconInput))
-		ImageInput->SetBrushFromTexture(IconInput);
 }
 
 void UConsumableBarSlot::RefreshSlot(FItemData& ItemData)

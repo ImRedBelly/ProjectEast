@@ -1,8 +1,17 @@
 ﻿#include "MainWindow.h"
-#include "Blueprint/SlateBlueprintLibrary.h"
 #include "Components/CanvasPanel.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+
+
+void UMainWindow::NativeConstruct()
+{
+	Super::NativeConstruct();
+	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
+	
+}
 
 void UMainWindow::ShowLootBar() const
 {
@@ -19,9 +28,7 @@ void UMainWindow::HideLootBar() const
 
 void UMainWindow::SetMousePositionOnLootBar() const
 {
-	AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-
-	if (IsValid(PlayerController) || !PlayerController->IsUsingGamepad())
+	if (IsValid(CachedPlayerController) || !IconButtonGameModule->IsUsingGamepad())
 	{
 		FVector2D pixelPosition;
 		FVector2D viewportPosition;

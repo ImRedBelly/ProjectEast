@@ -1,8 +1,11 @@
 ﻿#include "WidgetManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
+#include "ProjectEast/Core/UI/HUD/MainWindow.h"
+#include "ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.h"
 #include "ProjectEast/Core/UI/Storage/StorageWindow.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
@@ -193,6 +196,15 @@ void UWidgetManager::StartPlayerCapture()
 void UWidgetManager::StopPlayerCapture()
 {
 	CachedPlayerCapture->EndCapture();
+}
+
+EWidgetType UWidgetManager::GetCurrentlyFocusedWidget()
+{
+	return EWidgetType::None;
+}
+
+void UWidgetManager::SetCurrentlyFocusedWidget(EWidgetType None)
+{
 }
 
 APlayerCapture* UWidgetManager::GetPlayerCapture() const

@@ -3,9 +3,12 @@
 #include "CoreMinimal.h"
 #include "StorageInventory.h"
 #include "Blueprint/UserWidget.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "ProjectEast/Core/UI/ToolTip/ToolTip.h"
 #include "StorageSlot.generated.h"
 
+class UWidgetManager;
+class AMainPlayerController;
 class UButton;
 
 UCLASS()
@@ -78,11 +81,14 @@ private:
 	UInventoryCore* PlayerInventory;
 
 	AMainPlayerController* CachedPlayerController;
+	UWidgetManager* WidgetManager;
 	UStorageInventory* CachedParentWidget;
 	UToolTip* CachedToolTip;
 
 	FItemData* CurrentItemData;
 	uint32 SlotIndex;
+	
+	FIconButtonGameModule* IconButtonGameModule;
 
 	FText GetQuantity() const;
 	void SetButtonStyle(FItemData* ItemData) const;

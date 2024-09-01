@@ -9,27 +9,6 @@
 #include "RemappingItem.generated.h"
 
 
-USTRUCT(Blueprintable)
-struct FKeyIconData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	FKey Key;
-
-	UPROPERTY(EditAnywhere)
-	UTexture2D* IconKey;
-};
-
-USTRUCT(Blueprintable)
-struct FKeyIconsData : public FTableRowBase
-{
-	GENERATED_BODY()
-	UPROPERTY(EditAnywhere)
-	TMap<FKey, UTexture2D*> IconInfo;
-};
-
-
 UCLASS()
 class PROJECTEAST_API URemappingItem : public UUserWidget
 {
@@ -38,8 +17,7 @@ class PROJECTEAST_API URemappingItem : public UUserWidget
 protected:
 	UPROPERTY(EditAnywhere)
 	UInputMappingContext* MappingContext;
-	UPROPERTY(EditAnywhere)
-	UDataTable* DataTableKeys;
+
 	UPROPERTY(EditAnywhere)
 	UInputAction* InputAction;
 

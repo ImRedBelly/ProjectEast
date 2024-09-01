@@ -3,8 +3,10 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "LootBarSlot.generated.h"
 
+class AMainPlayerController;
 class ULootBar;
 class UButton;
 class UImage;
@@ -58,9 +60,12 @@ protected:
 	void SetImageItem() const;
 
 private:
+	AMainPlayerController* CachedPlayerController;
 	ULootBar* CachedLootBar;
 	FItemData* CachedItemData;
 
+	FIconButtonGameModule* IconButtonGameModule;
+	
 	UFUNCTION()
 	void OnRightClick();
 

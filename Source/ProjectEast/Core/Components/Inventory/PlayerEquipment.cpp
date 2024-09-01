@@ -1,6 +1,8 @@
 ﻿#include "PlayerEquipment.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "ProjectEast/Core/Components/ActorLeveling.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/PlayerLeveling.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 
@@ -18,7 +20,7 @@ void UPlayerEquipment::ClientInitializeEquipment()
 {
 	if (!UKismetSystemLibrary::IsStandalone(GetWorld()))
 	{
-		ActorLeveling = Cast<UActorLeveling>(GetOwner());
+		ActorLeveling = Cast<UPlayerLeveling>(GetOwner());
 		BuildEquipment();
 	}
 }
@@ -28,6 +30,9 @@ void UPlayerEquipment::BuildEquipment()
 	for (auto i = 0; i <= static_cast<int32>(EItemSlot::Pocket4); ++i)
 	{
 		EItemSlot EnumValue = static_cast<EItemSlot>(i);
+		if(EnumValue == EItemSlot::None)
+			continue;
+		
 		if (EquipmentData.Find(EnumValue))
 		{
 			FItemData* NewItemData = EquipmentData[EnumValue];

@@ -82,7 +82,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* UsePocket4Action;
 
-private:
 	UInputMappingContext* CurrentMappingContext;
 	
 #pragma endregion InputActions
@@ -249,4 +248,5 @@ private:
 	float CalculateIKPelvisOffset() const;
 	float CalculateIKParametersForSocketName(const FName& SocketName) const;
 #pragma endregion IKSetting
+
 };

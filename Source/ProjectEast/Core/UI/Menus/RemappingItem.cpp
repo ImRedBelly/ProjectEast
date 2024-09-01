@@ -55,23 +55,13 @@ void URemappingItem::OnChangeIcon()
 {
 	// for (FName RowName : DataTableKeys->GetRowNames())
 	// {
-	// 	auto DataTableRowInfo = DataTableKeys->FindRow<FKeyIconData>(RowName, TEXT(""));
-	// 	if (DataTableRowInfo->Key == CurrentKey)
+	// 	auto DataTableRowInfo = DataTableKeys->FindRow<FKeyIconsData>(RowName, TEXT(""));
+	// 	if (DataTableRowInfo->IconInfo.Contains(CurrentKey))
 	// 	{
-	// 		SetIconKey(DataTableRowInfo->IconKey);
+	// 		SetIconKey(DataTableRowInfo->IconInfo[CurrentKey]);
 	// 		break;
 	// 	}
 	// }
-
-	for (FName RowName : DataTableKeys->GetRowNames())
-	{
-		auto DataTableRowInfo = DataTableKeys->FindRow<FKeyIconsData>(RowName, TEXT(""));
-		if (DataTableRowInfo->IconInfo.Contains(CurrentKey))
-		{
-			SetIconKey(DataTableRowInfo->IconInfo[CurrentKey]);
-			break;
-		}
-	}
 }
 
 

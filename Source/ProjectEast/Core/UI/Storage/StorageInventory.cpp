@@ -1,7 +1,10 @@
-﻿#include "StorageSlot.h"
-#include "StorageInventory.h"
+﻿#include "StorageInventory.h"
+#include "StorageSlot.h"
 #include "Components/ScrollBox.h"
+#include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
+#include "Components/WidgetSwitcher.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UStorageInventory::NativeConstruct()
@@ -9,7 +12,10 @@ void UStorageInventory::NativeConstruct()
 	Super::NativeConstruct();
 	PlayAnimation(AnimationConstruct, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f, false);
 
-	CachedPlayerInventory = InventoryUtility::GetPlayerInventory(GetOwningPlayer());
+	auto PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
+	CachedPlayerInventory = PlayerController->GetPlayerInventory();
+	WidgetManager = PlayerController->GetWidgetManager();
+
 	SetOwnerInventory();
 	if (IsValid(CachedOwnerInventory))
 	{
@@ -22,8 +28,9 @@ void UStorageInventory::NativeDestruct()
 {
 	Super::NativeDestruct();
 	UnbindEventDispatchers();
-	if(CachedOwnerInventory->IsRefreshOnClosingWidget())
-		CachedPlayerInventory->ServerSortInventory(CachedOwnerInventory, ESortMethod::Quicksort, EInventoryPanels::P1, false);
+	if (CachedOwnerInventory->IsRefreshOnClosingWidget())
+		CachedPlayerInventory->ServerSortInventory(CachedOwnerInventory, ESortMethod::Quicksort, EInventoryPanels::P1,
+		                                           false);
 }
 
 void UStorageInventory::NativePreConstruct()
@@ -40,8 +47,7 @@ FReply UStorageInventory::NativeOnFocusReceived(const FGeometry& InGeometry, con
 
 void UStorageInventory::ResetSlotFocus()
 {
-	if (IGamepadControls* GamepadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-		if (GamepadControls->GetCurrentlyFocusedWidget() == EWidgetType::Storage)
+	if (WidgetManager->GetCurrentlyFocusedWidget() == EWidgetType::Storage)
 			SetFocusToSlot(FocusedSlot);
 }
 
@@ -53,8 +59,7 @@ void UStorageInventory::CreateInventoryP1()
 
 void UStorageInventory::SetOwnerInventory()
 {
-	CachedOwnerInventory = InventoryUtility::GetInventoryFromInteractable(
-		InventoryUtility::GetCurrentInteractableObject(GetOwningPlayer())).Get<1>();
+	CachedOwnerInventory = InventoryUtility::GetInventoryFromInteractable(InventoryUtility::GetCurrentInteractableObject(GetOwningPlayer())).Get<1>();
 }
 
 void UStorageInventory::BindEventDispatchers()

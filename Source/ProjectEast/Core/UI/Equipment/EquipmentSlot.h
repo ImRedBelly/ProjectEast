@@ -4,8 +4,14 @@
 #include "EquipmentPanel.h"
 #include "Components/Overlay.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "EquipmentSlot.generated.h"
+
+class UWidgetManager;
+class UToolTip;
 
 UCLASS()
 class PROJECTEAST_API UEquipmentSlot : public UUserWidget
@@ -37,20 +43,20 @@ protected:
 	FText LabelCharacterText;
 	UPROPERTY(EditAnywhere)
 	FSlateBrush EmptySlotStyle;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FLinearColor BorderHovered;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FLinearColor BorderUnHovered;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FLinearColor GoodColor;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FLinearColor BadColor;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UToolTip> DefaultToolTip;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UItemDataDragAndDropPanel> ItemDataDragAndDropPanel;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UItemDataDragDropOperation> ItemDataDragDropOperation;
 	
 	virtual void NativeConstruct() override;
@@ -90,10 +96,14 @@ private:
 	bool TryWeaponsSwapped(UItemDataDragDropOperation* Operation);
 	bool ReturnWrongSlot(UItemDataDragDropOperation* Operation);
 	
+	AMainPlayerController* PlayerController;
+	UWidgetManager* WidgetManager;
 	UPlayerEquipment* CachedPlayerEquipment;
 	UPlayerInventory* CachedPlayerInventory;
 	UEquipmentPanel* CachedEquipmentPanel;
 	UToolTip* CachedToolTip;
+	
+	FIconButtonGameModule* IconButtonGameModule;
 
 	UPROPERTY(EditDefaultsOnly)
 	FItemData EmptyItemData;

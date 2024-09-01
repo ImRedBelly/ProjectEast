@@ -1,6 +1,6 @@
-﻿#include "Components/Button.h"
+﻿#include "PlayerInventorySlot.h"
+#include "Components/Button.h"
 #include "Components/Image.h"
-#include "PlayerInventorySlot.h"
 #include "Components/TextBlock.h"
 #include "PlayerInventoryWidget.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -10,27 +10,30 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
-#include "ProjectEast/Core/Actors/Interfaces/GamepadControls.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 
-void UPlayerInventorySlot::InitializeSlot(FItemData* ItemData, UInventoryCore* ReceiverInventory, UPlayerInventoryWidget* ParentWidget,
-	UPlayerEquipment* PlayerEquipment, UPlayerInventory* PlayerInventory, FVector2D DragImageSize, uint32 IndexSlot)
+void UPlayerInventorySlot::InitializeSlot(AMainPlayerController* PlayerController, FItemData* ItemData,
+                                          UInventoryCore* ReceiverInventory, UPlayerInventoryWidget* ParentWidget,
+                                          FVector2D DragImageSize, uint32 IndexSlot)
 {
+	CachedPlayerController = PlayerController;
 	CachedReceiverInventory = ReceiverInventory;
 	CachedPlayerInventoryWidget = ParentWidget;
-	CachedPlayerEquipment = PlayerEquipment;
-	CachedPlayerInventory = PlayerInventory;
+	CachedPlayerEquipment = PlayerController->GetPlayerEquipment();
+	CachedPlayerInventory = PlayerController->GetPlayerInventory();
+	WidgetManager = CachedPlayerController->GetWidgetManager();
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 	ImageSize = DragImageSize;
 	SlotIndex = IndexSlot;
-	
+
 	OverwriteSlot(ItemData);
 }
 
 void UPlayerInventorySlot::HighlightSlot()
 {
-	if(!HasUserFocusedDescendants(GetOwningPlayer()) && !IsHovered())
+	if (!HasUserFocusedDescendants(GetOwningPlayer()) && !IsHovered())
 		PlayAnimation(AnimationHighlight, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f, false);
 }
 
@@ -46,19 +49,10 @@ void UPlayerInventorySlot::OffInitialInput()
 	bIsInitialInputDelay = false;
 }
 
-void UPlayerInventorySlot::InitializeInventorySlot(UPlayerEquipment* PlayerEquipment, UPlayerInventory* PlayerInventory,
-                                                   UInventoryCore* ReceiverInventory)
-{
-	CachedPlayerEquipment = PlayerEquipment;
-	CachedPlayerInventory = PlayerInventory;
-	CachedReceiverInventory = ReceiverInventory;
-}
-
 void UPlayerInventorySlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-	
+
 	ButtonItem->OnClicked.AddDynamic(this, &UPlayerInventorySlot::OnRightClick);
 	ButtonItem->OnHovered.AddDynamic(this, &UPlayerInventorySlot::OnHovered);
 	ButtonItem->OnUnhovered.AddDynamic(this, &UPlayerInventorySlot::OnUnhovered);
@@ -90,12 +84,11 @@ void UPlayerInventorySlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEv
 	{
 		StopAnimation(AnimationHighlight);
 		BorderObject->SetBrushColor(BorderHovered);
-		
+
 		CachedPlayerInventoryWidget->AssignCurrentlyFocusedSlot(this);
 		CachedPlayerInventoryWidget->ScrollToSlot(this);
 
-		if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-			GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::Inventory);
+		WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::Inventory);
 
 		//TODO Delay 0.1f
 
@@ -106,9 +99,8 @@ void UPlayerInventorySlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEv
 void UPlayerInventorySlot::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnRemovedFromFocusPath(InFocusEvent);
-	
-	if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-		GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::None);
+
+	WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::None);
 
 	ButtonItem->SetToolTip(nullptr);
 	BorderObject->SetBrushColor(BorderUnHovered);
@@ -117,7 +109,8 @@ void UPlayerInventorySlot::NativeOnRemovedFromFocusPath(const FFocusEvent& InFoc
 		CachedToolTip->RemoveFromParent();
 }
 
-void UPlayerInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,UDragDropOperation*& OutOperation)
+void UPlayerInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+                                                UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
@@ -125,10 +118,12 @@ void UPlayerInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, con
 		if (IsValid(CachedReceiverInventory))
 			CachedReceiverInventory->SwitchedActivePanel(CurrentItemData->Class.GetDefaultObject()->InventoryPanel);
 
-		UItemDataDragAndDropPanel* DragAndDropPanel = CreateWidget<UItemDataDragAndDropPanel>(this, ItemDataDragAndDropPanel);
+		UItemDataDragAndDropPanel* DragAndDropPanel = CreateWidget<UItemDataDragAndDropPanel>(
+			this, ItemDataDragAndDropPanel);
 		DragAndDropPanel->InitializePanel(CurrentItemData->Class.GetDefaultObject()->ImageItem, ImageSize);
 
-		auto Operation = Cast<UItemDataDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(ItemDataDragDropOperation));
+		auto Operation = Cast<UItemDataDragDropOperation>(
+			UWidgetBlueprintLibrary::CreateDragDropOperation(ItemDataDragDropOperation));
 		Operation->DefaultDragVisual = DragAndDropPanel;
 		Operation->ItemData = CurrentItemData;
 		Operation->Inventory = CachedPlayerInventory;
@@ -175,7 +170,7 @@ bool UPlayerInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 		DraggedFromEquipment(DragOperation, ItemData);
 		break;
 	case EItemDestination::VendorSlot:
-	case EItemDestination::StorageSlot:	
+	case EItemDestination::StorageSlot:
 		DraggedFromOtherInventory(DragOperation);
 		break;
 	default: ;
@@ -189,10 +184,10 @@ bool UPlayerInventorySlot::NativeOnDragOver(const FGeometry& InGeometry, const F
 {
 	if (auto Operation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
-		 FItemData* DraggedData = Operation->ItemData;
-		
-		 if (InventoryUtility::IsItemClassValid(CurrentItemData))
-		 {
+		FItemData* DraggedData = Operation->ItemData;
+
+		if (InventoryUtility::IsItemClassValid(CurrentItemData))
+		{
 			switch (Operation->DraggerFrom)
 			{
 			case EItemDestination::InventorySlot:
@@ -214,7 +209,7 @@ bool UPlayerInventorySlot::NativeOnDragOver(const FGeometry& InGeometry, const F
 								if (CachedPlayerEquipment->CanItemBeEquipped(CurrentItemData).Get<0>())
 									return ShowSwapSlotAndGreenBorderColor(Operation);
 							}
-		
+
 							return ShowWrongSlotAndRedBorderColor(Operation);
 						}
 						return ShowWrongSlotAndRedBorderColor(Operation);
@@ -230,29 +225,30 @@ bool UPlayerInventorySlot::NativeOnDragOver(const FGeometry& InGeometry, const F
 				}
 			default: ;
 			}
-		 }
-		 else
-		 {
-		 	return ShowDropSlotAndGreenBorderColor(Operation);
-		 }
+		}
+		else
+		{
+			return ShowDropSlotAndGreenBorderColor(Operation);
+		}
 	}
 
 	return true;
 }
 
-FReply UPlayerInventorySlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry,const FPointerEvent& InMouseEvent)
+FReply UPlayerInventorySlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry,
+                                                            const FPointerEvent& InMouseEvent)
 {
-	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent,this, EKeys::LeftMouseButton).NativeReply;
+	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 }
 
 FReply UPlayerInventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	if(InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
 		OnRightClick();
 		return FReply::Handled();
 	}
-	
+
 	return FReply::Unhandled();
 }
 
@@ -300,8 +296,8 @@ void UPlayerInventorySlot::DraggedFromInventory(UItemDataDragDropOperation* Oper
 	if (Operation->ItemData->Index != CurrentItemData->Index)
 	{
 		CachedPlayerInventory->ServerMoveItemToSlot(CachedPlayerInventory,
-													InventoryUtility::GetInventoryPanelFromItem(Operation->ItemData),
-													Operation->ItemData->Index, CurrentItemData->Index);
+		                                            InventoryUtility::GetInventoryPanelFromItem(Operation->ItemData),
+		                                            Operation->ItemData->Index, CurrentItemData->Index);
 	}
 }
 
@@ -311,16 +307,19 @@ void UPlayerInventorySlot::DraggedFromEquipment(UItemDataDragDropOperation* Oper
 	{
 		if (InventoryUtility::AreItemSlotsEqual(Operation->ItemData, CurrentItemData))
 		{
-			CachedPlayerEquipment->ServerTransferItemFromInventory(CurrentItemData, Operation->ItemData,CachedPlayerInventory,EInputMethodType::DragAndDrop);
+			CachedPlayerEquipment->ServerTransferItemFromInventory(CurrentItemData, Operation->ItemData,
+			                                                       CachedPlayerInventory,
+			                                                       EInputMethodType::DragAndDrop);
 			InventoryUtility::PlaySoundOnItemDropped();
 		}
 		else
-		{	
+		{
 			if (CachedPlayerEquipment->bIsEnableOffHand)
 			{
 				if (InventoryUtility::CanWeaponsBeSwapped(CurrentItemData, Operation->ItemData))
 				{
-					CachedPlayerEquipment->ServerTransferItemFromInventory(CurrentItemData, Operation->ItemData, CachedPlayerInventory, EInputMethodType::DragAndDrop);
+					CachedPlayerEquipment->ServerTransferItemFromInventory(
+						CurrentItemData, Operation->ItemData, CachedPlayerInventory, EInputMethodType::DragAndDrop);
 					InventoryUtility::PlaySoundOnItemDropped();
 				}
 			}
@@ -356,11 +355,10 @@ void UPlayerInventorySlot::OnEndDraggedFromOtherInventory(UItemDataDragDropOpera
 	//TODO Метод создан чтобы не дублировать код!
 	if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 	{
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-			WidgetManager->OpenSplitStackPopup(Operation->ItemData, CurrentItemData, Operation->Inventory,
-			                                   CachedPlayerInventory,
-			                                   EInputMethodType::DragAndDrop, Operation->DraggerFrom,
-			                                   EItemDestination::InventorySlot, nullptr);
+		WidgetManager->OpenSplitStackPopup(Operation->ItemData, CurrentItemData, Operation->Inventory,
+		                                   CachedPlayerInventory,
+		                                   EInputMethodType::DragAndDrop, Operation->DraggerFrom,
+		                                   EItemDestination::InventorySlot, nullptr);
 
 		BorderObject->SetBrushColor(BorderUnHovered);
 	}
@@ -397,7 +395,7 @@ bool UPlayerInventorySlot::ShowSwapSlotAndGreenBorderColor(UItemDataDragDropOper
 
 void UPlayerInventorySlot::OnClickedButtonItem()
 {
-	if(!bIsInitialInputDelay)
+	if (!bIsInitialInputDelay)
 		OnRightClick();
 }
 
@@ -415,7 +413,7 @@ void UPlayerInventorySlot::OnHovered()
 		StopAnimation(AnimationHighlight);
 		if (IsValid(CachedToolTip))
 			CachedToolTip->RemoveFromParent();
-		
+
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
 
@@ -426,8 +424,7 @@ void UPlayerInventorySlot::OnHovered()
 
 void UPlayerInventorySlot::OnUnhovered()
 {
-	if (IGamepadControls* GamePadControls = Cast<IGamepadControls>(GetOwningPlayer()))
-		GamePadControls->SetCurrentlyFocusedWidget(EWidgetType::None);
+	WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::None);
 
 	ButtonItem->SetToolTip(nullptr);
 	BorderObject->SetBrushColor(BorderUnHovered);
@@ -440,8 +437,8 @@ void UPlayerInventorySlot::ShowItemComparison() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 		if (CurrentItemData->Class.GetDefaultObject()->Rarity != EItemRarity::Consumable)
-			 if (IsValid(CachedToolTip))
-			 	CachedToolTip->ShowComparisonToolTip();
+			if (IsValid(CachedToolTip))
+				CachedToolTip->ShowComparisonToolTip();
 }
 
 void UPlayerInventorySlot::HideItemComparison() const
@@ -456,42 +453,46 @@ void UPlayerInventorySlot::SetToolTipPositionAndAlignment() const
 	FVector2D HorizontalFirstViewportPosition;
 	FVector2D HorizontalSecondPixelPosition;
 	FVector2D HorizontalSecondViewportPosition;
-	
-	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(),GetCachedGeometry().GetLocalSize(),
-		HorizontalFirstPixelPosition,HorizontalFirstViewportPosition);
-	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(),FVector2D(0, GetCachedGeometry().GetLocalSize().Y),
-	HorizontalSecondPixelPosition, HorizontalSecondViewportPosition);
 
-	 float HorizontalMaxValue = UWidgetLayoutLibrary::GetViewportSize(GetWorld()).X -
-	 	(CachedToolTip->GetDesiredSize().X * UWidgetLayoutLibrary::GetViewportScale(GetWorld()));
+	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(), GetCachedGeometry().GetLocalSize(),
+	                                        HorizontalFirstPixelPosition, HorizontalFirstViewportPosition);
+	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(),
+	                                        FVector2D(0, GetCachedGeometry().GetLocalSize().Y),
+	                                        HorizontalSecondPixelPosition, HorizontalSecondViewportPosition);
 
-	bool HorizontalValue = UKismetMathLibrary::InRange_FloatFloat(HorizontalSecondPixelPosition.X, 0.0f, HorizontalMaxValue, true, true);
+	float HorizontalMaxValue = UWidgetLayoutLibrary::GetViewportSize(GetWorld()).X -
+		(CachedToolTip->GetDesiredSize().X * UWidgetLayoutLibrary::GetViewportScale(GetWorld()));
+
+	bool HorizontalValue = UKismetMathLibrary::InRange_FloatFloat(HorizontalSecondPixelPosition.X, 0.0f,
+	                                                              HorizontalMaxValue, true, true);
 
 	float HorizontalPosition = HorizontalValue ? HorizontalSecondViewportPosition.X : HorizontalFirstViewportPosition.X;
 	float HorizontalAlignment = HorizontalValue ? 0.0f : 1.0f;
-	
+
 
 	FVector2D VerticalFirstPixelPosition;
 	FVector2D VerticalFirstViewportPosition;
 	FVector2D VerticalSecondPixelPosition;
 	FVector2D VerticalSecondViewportPosition;
-	
-	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(),FVector2D(GetCachedGeometry().GetLocalSize().X,0),
-	VerticalFirstPixelPosition,VerticalFirstViewportPosition);
-	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(),GetCachedGeometry().GetLocalSize(),
-	VerticalSecondPixelPosition, VerticalSecondViewportPosition);
+
+	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(),
+	                                        FVector2D(GetCachedGeometry().GetLocalSize().X, 0),
+	                                        VerticalFirstPixelPosition, VerticalFirstViewportPosition);
+	USlateBlueprintLibrary::LocalToViewport(GetWorld(), GetCachedGeometry(), GetCachedGeometry().GetLocalSize(),
+	                                        VerticalSecondPixelPosition, VerticalSecondViewportPosition);
 
 	float VerticalMaxValue = UWidgetLayoutLibrary::GetViewportSize(GetWorld()).Y -
 		(CachedToolTip->GetDesiredSize().Y * UWidgetLayoutLibrary::GetViewportScale(GetWorld()));
 
-	bool VerticalValue = UKismetMathLibrary::InRange_FloatFloat(VerticalSecondPixelPosition.Y, 0.0f, VerticalMaxValue, true, true);
+	bool VerticalValue = UKismetMathLibrary::InRange_FloatFloat(VerticalSecondPixelPosition.Y, 0.0f, VerticalMaxValue,
+	                                                            true, true);
 
 	float VerticalPosition = VerticalValue ? VerticalSecondViewportPosition.Y : VerticalFirstViewportPosition.Y;
 	float VerticalAlignment = VerticalValue ? 0.0f : 1.0f;
 
-	 CachedToolTip->SetPositionInViewport(FVector2D(HorizontalPosition, VerticalPosition), false);
-	 CachedToolTip->SetAlignmentInViewport(FVector2D(HorizontalAlignment, VerticalAlignment));
-	 CachedToolTip->SetDesiredSizeInViewport(CachedToolTip->GetDesiredSize());
+	CachedToolTip->SetPositionInViewport(FVector2D(HorizontalPosition, VerticalPosition), false);
+	CachedToolTip->SetAlignmentInViewport(FVector2D(HorizontalAlignment, VerticalAlignment));
+	CachedToolTip->SetDesiredSizeInViewport(CachedToolTip->GetDesiredSize());
 }
 
 void UPlayerInventorySlot::RefreshTooltipGamepad()
@@ -516,7 +517,7 @@ void UPlayerInventorySlot::RefreshToolTip()
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
 				CachedToolTip->RemoveFromParent();
-			
+
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
 			CachedToolTip->AddToViewport(1);
@@ -531,7 +532,7 @@ void UPlayerInventorySlot::RefreshToolTip()
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
 				CachedToolTip->RemoveFromParent();
-			
+
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
 			ButtonItem->SetToolTip(CachedToolTip);
@@ -541,50 +542,44 @@ void UPlayerInventorySlot::RefreshToolTip()
 
 void UPlayerInventorySlot::DropOnTheGround() const
 {
-	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
+	if (CachedPlayerInventory->GetItemRemoveType(CurrentItemData) == EItemRemoveType::OnConfirmation)
+		WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
+
+	WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, nullptr, nullptr,
+	                                     CachedPlayerInventory, EInputMethodType::RightClick,
+	                                     EItemDestination::InventorySlot, EItemDestination::DropBar,
+	                                     CachedPlayerInventoryWidget);
+
+	if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 	{
-		if (CachedPlayerInventory->GetItemRemoveType(CurrentItemData) == EItemRemoveType::OnConfirmation)
-			WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
-
-		WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, nullptr, nullptr,
-		                                     CachedPlayerInventory, EInputMethodType::RightClick,
-		                                     EItemDestination::InventorySlot, EItemDestination::DropBar,
-		                                     CachedPlayerInventoryWidget);
-
-		if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
-		{
-			WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, nullptr, CachedPlayerInventory,
-			                                   EInputMethodType::RightClick, EItemDestination::InventorySlot,
-			                                   EItemDestination::DropBar, CachedPlayerInventoryWidget);
-		}
-		else
-			CachedPlayerInventory->ServerDropItemOnTheGround(CurrentItemData, EItemDestination::InventorySlot,
-			                                                 GetOwningPlayer());
+		WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, nullptr, CachedPlayerInventory,
+		                                   EInputMethodType::RightClick, EItemDestination::InventorySlot,
+		                                   EItemDestination::DropBar, CachedPlayerInventoryWidget);
 	}
+	else
+		CachedPlayerInventory->ServerDropItemOnTheGround(CurrentItemData, EItemDestination::InventorySlot,
+		                                                 GetOwningPlayer());
 }
 
 void UPlayerInventorySlot::OnRightClick()
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
+		switch (WidgetManager->GetActiveWidget())
 		{
-			switch (WidgetManager->GetActiveWidget())
-			{
-			case EWidgetType::Inventory:
-			case EWidgetType::Equipment:
+		case EWidgetType::Inventory:
+		case EWidgetType::Equipment:
+			OpenInventoryWindow();
+			break;
+		case EWidgetType::Vendor:
+		case EWidgetType::Storage:
+
+			if (WidgetManager->GetActiveTab() == EWidgetType::Equipment)
 				OpenInventoryWindow();
-				break;
-			case EWidgetType::Vendor:
-			case EWidgetType::Storage:
-				
-				if (WidgetManager->GetActiveTab() == EWidgetType::Equipment)
-					OpenInventoryWindow();
-				else
-					OpenVendorStorageWindow();
-				break;
-			default: ;
-			}
+			else
+				OpenVendorStorageWindow();
+			break;
+		default: ;
 		}
 	}
 }
@@ -616,7 +611,7 @@ void UPlayerInventorySlot::SetItemQuantity() const
 
 
 void UPlayerInventorySlot::OverwriteSlot(FItemData* ItemData)
-{	
+{
 	CurrentItemData = ItemData;
 	SetButtonStyle(CurrentItemData);
 	SetItemQuantity();
@@ -643,9 +638,7 @@ void UPlayerInventorySlot::SetButtonStyle(FItemData* ItemData) const
 
 EWidgetType UPlayerInventorySlot::GetActiveWidgetType() const
 {
-	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-		return WidgetManager->GetCurrentPopupType();
-	return EWidgetType::None;
+	return WidgetManager->GetCurrentPopupType();
 }
 
 
@@ -664,15 +657,12 @@ bool UPlayerInventorySlot::AttemptSplitting(UItemDataDragDropOperation* Operatio
 			{
 				if (InventoryUtility::IsStackableAndHaveStacks(Operation->ItemData, 1))
 				{
-					if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-					{
-						WidgetManager->OpenSplitStackPopup(Operation->ItemData, CurrentItemData,
-						                                   nullptr, CachedPlayerInventory,
-						                                   EInputMethodType::DragAndDrop,
-						                                   Operation->DraggerFrom, EItemDestination::InventorySlot,
-						                                   nullptr);
-						return true;
-					}
+					WidgetManager->OpenSplitStackPopup(Operation->ItemData, CurrentItemData,
+					                                   nullptr, CachedPlayerInventory,
+					                                   EInputMethodType::DragAndDrop,
+					                                   Operation->DraggerFrom, EItemDestination::InventorySlot,
+					                                   nullptr);
+					return true;
 				}
 			}
 		}
@@ -683,23 +673,19 @@ bool UPlayerInventorySlot::AttemptSplitting(UItemDataDragDropOperation* Operatio
 
 bool UPlayerInventorySlot::IsUsingGamepad() const
 {
-	if (IsValid(CachedPlayerController))
-		return CachedPlayerController->IsUsingGamepad();
-	return false;
+	return IconButtonGameModule->IsUsingGamepad();
 }
 
 bool UPlayerInventorySlot::IsAnyPopUpActive() const
 {
-	if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-		return WidgetManager->GetCurrentPopupType() != EWidgetType::None;
-
-	return false;
+	return WidgetManager->GetCurrentPopupType() != EWidgetType::None;
 }
 
 void UPlayerInventorySlot::OpenInventoryWindow() const
 {
-	if(CurrentItemData->EquipmentSlot != EItemSlot::None)
-		CachedPlayerEquipment->ServerTransferItemFromInventory(CurrentItemData, new FItemData(), CachedPlayerInventory, EInputMethodType::RightClick);
+	if (CurrentItemData->EquipmentSlot != EItemSlot::None)
+		CachedPlayerEquipment->ServerTransferItemFromInventory(CurrentItemData, new FItemData(), CachedPlayerInventory,
+		                                                       EInputMethodType::RightClick);
 	else
 		TryToUseAnItem();
 }
@@ -711,14 +697,11 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 	case EItemRemoveType::Default:
 		if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 		{
-			if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-			{
-				WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, CachedPlayerInventory,
-				                                   CachedReceiverInventory,
-				                                   EInputMethodType::RightClick, EItemDestination::InventorySlot,
-				                                   EItemDestination::VendorSlot,
-				                                   CachedPlayerInventoryWidget);
-			}
+			WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, CachedPlayerInventory,
+			                                   CachedReceiverInventory,
+			                                   EInputMethodType::RightClick, EItemDestination::InventorySlot,
+			                                   EItemDestination::VendorSlot,
+			                                   CachedPlayerInventoryWidget);
 		}
 		else
 		{
@@ -728,18 +711,17 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 		}
 		break;
 	case EItemRemoveType::OnConfirmation:
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-		{
-			WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, nullptr,
-			                                     CachedPlayerInventory,
-			                                     CachedReceiverInventory, EInputMethodType::RightClick,
-			                                     EItemDestination::InventorySlot,
-			                                     EItemDestination::VendorSlot, CachedPlayerInventoryWidget);
-		}	
+
+		WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, nullptr,
+		                                     CachedPlayerInventory,
+		                                     CachedReceiverInventory, EInputMethodType::RightClick,
+		                                     EItemDestination::InventorySlot,
+		                                     EItemDestination::VendorSlot, CachedPlayerInventoryWidget);
+
 		break;
 	case EItemRemoveType::CannotBeRemoved:
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-			WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
+
+		WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
 		break;
 	}
 }
@@ -747,11 +729,11 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 void UPlayerInventorySlot::TryToUseAnItem() const
 {
 	FItemData* ItemData = CurrentItemData;
-	if(ItemData->Class.GetDefaultObject()->UseType ==  EItemUseType::TextDocument)
+	if (ItemData->Class.GetDefaultObject()->UseType == EItemUseType::TextDocument)
 	{
 		ItemData->bIsAlreadyUsed = true;
 		CachedPlayerInventory->ServerAddItemToInventory(CachedPlayerInventory, ItemData, ItemData->Index);
-		if (auto WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager())
-			WidgetManager->OpenTextDocumentPopup(ItemData, CachedPlayerInventoryWidget);
+
+		WidgetManager->OpenTextDocumentPopup(ItemData, CachedPlayerInventoryWidget);
 	}
 }
