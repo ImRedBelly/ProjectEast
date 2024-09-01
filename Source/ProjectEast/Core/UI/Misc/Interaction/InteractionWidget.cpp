@@ -9,6 +9,8 @@ void UInteractionWidget::NativeConstruct()
 	Super::NativeConstruct();
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
 	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
+	
+	IconButtonGameModule->InputDeviceChanged.AddDynamic(this, &UInteractionWidget::OnGamepadToggled);
 	SetAppropriateFillingBackground();
 
 	ESlateVisibility ImageFillVisibility = ESlateVisibility::Hidden;
@@ -24,15 +26,14 @@ void UInteractionWidget::NativeConstruct()
 
 	ImageFillBorder->SetVisibility(ImageFillVisibility);
 	SetFillDecimalValue(0.05f);
-	
+
 	PlayAnimation(FillAnimOpacity, 0.0f, 0, EUMGSequencePlayMode::PingPong, 1.0f, false);
-	BindEventDispatchers();
 }
 
 void UInteractionWidget::NativeDestruct()
 {
+	IconButtonGameModule->InputDeviceChanged.RemoveDynamic(this, &UInteractionWidget::OnGamepadToggled);
 	Super::NativeDestruct();
-	UnbindEventDispatchers();
 }
 
 void UInteractionWidget::SetText(FString Interact) const
@@ -57,19 +58,9 @@ void UInteractionWidget::SetFillDecimalValue(float Value) const
 	ImageFillBorder->GetDynamicMaterial()->SetScalarParameterValue("Decimal", FMath::Clamp(Value, 0.05f, 1.0f));
 }
 
-void UInteractionWidget::SetAppropriateFillingBackground() const
+void UInteractionWidget::SetAppropriateFillingBackground()
 {
 	ImageFillBorder->SetBrushFromMaterial(IsUsingGamepad() ? CircularFill : SquareFill);
-}
-
-void UInteractionWidget::BindEventDispatchers()
-{
-	IconButtonGameModule->OnGamepadToggled.AddDynamic(this, &UInteractionWidget::OnGamepadToggled);
-}
-
-void UInteractionWidget::UnbindEventDispatchers()
-{
-	IconButtonGameModule->OnGamepadToggled.RemoveDynamic(this, &UInteractionWidget::OnGamepadToggled);
 }
 
 void UInteractionWidget::OnGamepadToggled()

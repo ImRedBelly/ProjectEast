@@ -22,8 +22,7 @@ public:
 	void OnBorderFill(float Value);
 	void SetFillDecimalValue(float Value) const;
 
-
-protected:	
+protected:
 	UPROPERTY(meta=(BindWidget))
 	UImage* ImageFillBorder;
 
@@ -38,19 +37,18 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Materials Fill")
 	UMaterial* CircularFill;
-	
+
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
 private:
 	AMainPlayerController* CachedPlayerController;
 	FIconButtonGameModule* IconButtonGameModule;
-	
+
 	EInteractionInputType InputType;
 
-	void SetAppropriateFillingBackground() const;
-	void BindEventDispatchers();
-	void UnbindEventDispatchers();
+	UFUNCTION()
+	void SetAppropriateFillingBackground();
 
 	UFUNCTION()
 	void OnGamepadToggled();
@@ -58,7 +56,7 @@ private:
 	bool IsUsingGamepad() const;
 
 	//FString GetInteractionText();
-	//
+	
 	// private:
 	// 	FString NameInteract;
 };

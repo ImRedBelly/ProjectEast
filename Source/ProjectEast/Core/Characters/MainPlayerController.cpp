@@ -19,7 +19,7 @@ AMainPlayerController::AMainPlayerController()
 void AMainPlayerController::InitializeInteraction(UInteractableComponent* InteractableComponent)
 {
 	if (IsValid(InteractableComponent))
-		InteractableComponent->OnPreInteraction(this);
+		InteractableComponent->OnPreInteraction(this, InteractionComponent->GetInteractionKeys());
 }
 
 void AMainPlayerController::OnInteraction() const

@@ -9,7 +9,7 @@
 #include "FIconButtonGameModule.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FChangeButtonLabelsDelegate);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGamepadToggled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDeviceChanged);
 
 USTRUCT()
 struct FKeyToTexture : public FTableRowBase
@@ -34,7 +34,7 @@ protected:
 
 public:
 	FChangeButtonLabelsDelegate InputDeviceChangedDelegate;
-	FOnGamepadToggled OnGamepadToggled;
+	FInputDeviceChanged InputDeviceChanged;
 
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;

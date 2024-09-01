@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "InputMappingContext.h"
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "InteractionComponent.generated.h"
@@ -17,6 +18,7 @@ public:
 	void InitializeInteraction(APlayerController* PlayerController);
 	
 	UInteractableComponent* GetInteractableComponent() const;
+	TArray<FEnhancedActionKeyMapping> GetInteractionKeys() const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Trace Settings")
@@ -31,12 +33,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Debug")
 	bool bIsShowDrawTrace = false;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings|Advanced")
+	UInputMappingContext* MappingContext;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings|Advanced")
+	UInputAction* InputInteraction;
+
 private:
 	UInteractableComponent* CurrentInteractableComponent;
 	APlayerController* CachedPlayerController;
 	APawn* CachedPawn;
 
 	FTimerHandle InteractionTimer;
+	TArray<FEnhancedActionKeyMapping> InteractionKeys;
 
 	void UpdateInteraction();
 	void UpdateCurrentInteractable();

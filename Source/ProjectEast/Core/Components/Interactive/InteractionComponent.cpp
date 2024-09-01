@@ -16,11 +16,21 @@ void UInteractionComponent::InitializeInteraction_Implementation(APlayerControll
 	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
 	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::UpdateInteraction,
 										   InteractionTimerRate, true, 1.0f);
+
+	TArray<FEnhancedActionKeyMapping> FoundMappings = MappingContext->GetMappings();
+	for (const auto& FoundMapping : FoundMappings)
+		if (FoundMapping.Action == InputInteraction)
+			InteractionKeys.Add(FoundMapping);
 }
 
 UInteractableComponent* UInteractionComponent::GetInteractableComponent() const
 {
 	return CurrentInteractableComponent;
+}
+
+TArray<FEnhancedActionKeyMapping> UInteractionComponent::GetInteractionKeys() const
+{
+	return InteractionKeys;
 }
 
 void UInteractionComponent::UpdateInteraction()

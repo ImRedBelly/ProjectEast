@@ -35,6 +35,7 @@ void FIconButtonGameModule::OnInputDeviceChanged(EHardwareDevicePrimaryType NewI
 {
 	CurrentInputDevice = NewInputDevice;
 	InputDeviceChangedDelegate.Broadcast();
+	InputDeviceChanged.Broadcast();
 }
 
 
@@ -49,11 +50,21 @@ TSoftObjectPtr<UTexture2D> FIconButtonGameModule::GetTextureForKey(UInputMapping
 
 		for (const auto& FoundMapping : FoundMappings)
 		{
-			if (FoundMapping.Action != InputAction)continue;
-			if (CurrentInputDevice == EHardwareDevicePrimaryType::Gamepad && !FoundMapping.Key.IsGamepadKey()) continue;
+			if (FoundMapping.Action != InputAction) continue;
 
 			FString Context;
 			FKeyToTexture* Data = KeyMap->FindRow<FKeyToTexture>(FoundMapping.Key.GetFName(), Context, true);
+
+			if ((IsUsingGamepad() && !FoundMapping.Key.IsGamepadKey())
+				|| (!IsUsingGamepad() && FoundMapping.Key.IsGamepadKey()))
+					continue;
+
+			UE_LOG(LogTemp, Warning, TEXT("FoundMapping.Key.IsGamepadKey: %s"),
+			       ( FoundMapping.Key.IsGamepadKey() ? TEXT("true") : TEXT("false") ));
+			UE_LOG(LogTemp, Warning, TEXT("IsUsingGamepad: %s"), ( IsUsingGamepad() ? TEXT("true") : TEXT("false") ));
+
+			if (!Data || (Data->Key != FoundMapping.Key))continue;
+
 			if (Data && Context.IsEmpty())
 				return Data->Texture;
 		}

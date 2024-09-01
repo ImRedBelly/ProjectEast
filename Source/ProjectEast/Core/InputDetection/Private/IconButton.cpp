@@ -54,7 +54,7 @@ void UIconButton::OnInputTypeChanged()
 		auto& GameModule = FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 		auto Texture = GameModule.GetTextureForKey(CurrentMappingContext, CurrentInputAction);
 		if (!Texture.IsNull())
-			SetBrushFromSoftTexture(GameModule.GetTextureForKey(CurrentMappingContext, CurrentInputAction));
+			SetBrushFromSoftTexture(Texture);
 	}
 }
 
@@ -143,10 +143,7 @@ void UIconButton::SynchronizeProperties()
 	if (!InputChangedDelegate.IsValid())
 	{
 		auto& GameModule = FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
-		InputChangedDelegate = GameModule.InputDeviceChangedDelegate.AddUObject(
-			this,
-			&UIconButton::OnInputTypeChanged
-		);
+		InputChangedDelegate = GameModule.InputDeviceChangedDelegate.AddUObject(this,&UIconButton::OnInputTypeChanged);
 	}
 
 	TAttribute<FName> InputBindingBinding = PROPERTY_BINDING(FName, InputBinding);

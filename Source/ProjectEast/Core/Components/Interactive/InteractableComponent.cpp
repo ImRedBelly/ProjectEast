@@ -55,7 +55,8 @@ void UInteractableComponent::OnToggleHighlight(bool bIsHighlight, AActor* Intera
 void UInteractableComponent::SetWidgetLocalOwner(APlayerController* OwningPlayer)
 {
 	CachedInteractionWidget = CreateWidget<UInteractionWidget>(OwningPlayer, BaseInteractionWidget);
-
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
+	
 	if (IsValid(CachedInteractionWidget))
 	{
 		CachedInteractionWidget->SetText(DefaultInteractionText);
@@ -69,9 +70,10 @@ void UInteractableComponent::SetWidgetLocalOwner(APlayerController* OwningPlayer
 	}
 }
 
-void UInteractableComponent::OnPreInteraction(AActor* Interactor)
+void UInteractableComponent::OnPreInteraction(AActor* Interactor, TArray<FEnhancedActionKeyMapping> InteractionKeys)
 {
 	CachedInteractor = Interactor;
+	FindPressedKeyByActionName(InteractionKeys);
 
 	if (IInteractable* ObjectInteractable = Cast<IInteractable>(GetOwner()))
 		ObjectInteractable->ClientPreInteraction(Interactor);
@@ -96,8 +98,6 @@ void UInteractableComponent::OnDurationPress()
 	GetWorld()->GetTimerManager().ClearTimer(KeyDownTimer);
 	GetWorld()->GetTimerManager().SetTimer(KeyDownTimer, this, &UInteractableComponent::IsKeyDown,
 	                                       InteractionTimerRate, true);
-
-	FindPressedKeyByActionName();
 }
 
 void UInteractableComponent::OnMultiplePress()
@@ -488,30 +488,25 @@ void UInteractableComponent::IsKeyDown()
 		GetWorld()->GetTimerManager().ClearTimer(KeyDownTimer);
 }
 
-void UInteractableComponent::FindPressedKeyByActionName()
+void UInteractableComponent::FindPressedKeyByActionName(TArray<FEnhancedActionKeyMapping> InteractionKeys)
 {
 	bool bIsFindKey = false;
 
-	UInputSettings* InputSettings = UInputSettings::GetInputSettings();
-
-	TArray<FInputActionKeyMapping> OutMappings;
-	InputSettings->GetActionMappingByName(InteractionName, OutMappings);
-
-	APlayerController* PlayerController = Cast<APlayerController>(CachedInteractor);
-
-	for (int i = 0; i < OutMappings.Num(); ++i)
+	for (const auto& InteractionKey : InteractionKeys)
 	{
-		if (PlayerController->WasInputKeyJustPressed(OutMappings[i].Key))
+		if ((InteractionKey.Key.IsGamepadKey() && IconButtonGameModule->IsUsingGamepad()) ||
+			(!InteractionKey.Key.IsGamepadKey() && !IconButtonGameModule->IsUsingGamepad()))
 		{
-			PressedInteractionKey = OutMappings[i];
+			PressedInteractionKey = InteractionKey;
 			bIsFindKey = true;
 			break;
 		}
 	}
-	if (!bIsFindKey)
+	
+	if (!bIsFindKey && InteractionKeys.Num() > 0)
 	{
-		PressedInteractionKey = FInputActionKeyMapping();
-		PressedInteractionKey.Key = EKeys::E;
+		PressedInteractionKey = FEnhancedActionKeyMapping();
+		PressedInteractionKey.Key = InteractionKeys[0].Key;
 	}
 }
 

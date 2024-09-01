@@ -1,10 +1,13 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/PlayerInput.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Actors/Interfaces/Interactable.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "InteractableComponent.generated.h"
 
 class UBoxComponent;
@@ -68,9 +71,6 @@ protected:
 	bool bIsShowLootBar = true;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings|Advanced")
-	FName InteractionName = "Interaction";
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings|Advanced")
 	FName InteractableTag = "Interactable";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings|Advanced")
@@ -82,7 +82,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings|Advanced")
 	float InteractionTimerRate = 0.05f;
 
-
+	
 	virtual void BeginPlay() override;
 	
 private:
@@ -92,13 +92,14 @@ private:
 
 	UBoxComponent* InteractableArea;
 	UWidgetComponent* InteractionWidgetComponent;
+	FIconButtonGameModule* IconButtonGameModule;
 
 	TArray<UPrimitiveComponent*> ObjectsHighlight;
 
 	TMap<AActor*, int32> AssociatedInteractableActors;
 
 	FTimerHandle KeyDownTimer;
-	FInputActionKeyMapping PressedInteractionKey;
+	FEnhancedActionKeyMapping PressedInteractionKey;
 
 
 	void SetWidgetLocalOwner(APlayerController* OwningPlayer);
@@ -121,11 +122,11 @@ public:
 	                                 const TArray<UPrimitiveComponent*>& HighlightableObjects);
 
 	void OnToggleHighlight(bool bIsHighlight, AActor* Interactor);
-	void OnPreInteraction(AActor* Interactor);
+	void OnPreInteraction(AActor* Interactor, TArray<FEnhancedActionKeyMapping> InteractionKeys);
 	void OnDurationPress();
 
 	void IsKeyDown();
-	void FindPressedKeyByActionName();
+	void FindPressedKeyByActionName(TArray<FEnhancedActionKeyMapping> InteractionKeys);
 	void FillInteractionWidgetBorder(float Value) const;
 	TTuple<bool, bool> HoldingInput() const;
 	void StartInteraction();
