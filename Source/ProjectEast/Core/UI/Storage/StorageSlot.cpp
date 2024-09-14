@@ -15,7 +15,6 @@ void UStorageSlot::NativeConstruct()
 	Super::NativeConstruct();
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
 	WidgetManager = CachedPlayerController->GetWidgetManager();
-	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 	ButtonItem->OnClicked.AddDynamic(this, &UStorageSlot::OnItemClick);
 	ButtonItem->OnHovered.AddDynamic(this, &UStorageSlot::OnItemHovered);
 	ButtonItem->OnUnhovered.AddDynamic(this, &UStorageSlot::OnItemUnhovered);
@@ -326,11 +325,12 @@ void UStorageSlot::OverwriteSlot(FItemData* ItemData)
 
 
 void UStorageSlot::InitializeSlot(FItemData* ItemData, UStorageInventory* ParentWidget, UInventoryCore* OwnerInv,
-                                  UPlayerInventory* PlayerInv, int IndexSlot)
+                                  UPlayerInventory* PlayerInv, FIconButtonGameModule* GameModule, int IndexSlot)
 {
 	CachedParentWidget = ParentWidget;
 	ActorInventory = OwnerInv;
 	PlayerInventory = PlayerInv;
+	IconButtonGameModule = GameModule;
 	SlotIndex = IndexSlot;
 
 	OverwriteSlot(ItemData);

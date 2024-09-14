@@ -105,7 +105,7 @@ void UStorageWindow::SwitchTab(EWidgetType WidgetType)
 	{
 	case EWidgetType::None:
 	case EWidgetType::Inventory:
-	case EWidgetType::Crafting:
+	case EWidgetType::StationCrafting:
 	case EWidgetType::Vendor:
 	case EWidgetType::LoadGame:
 	case EWidgetType::Abilities:

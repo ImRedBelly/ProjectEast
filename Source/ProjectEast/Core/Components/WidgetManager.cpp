@@ -4,6 +4,8 @@
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
+#include "ProjectEast/Core/UI/Crafting/ForgeStationWindow.h"
+#include "ProjectEast/Core/UI/Crafting/PlayerCraftingWindow.h"
 #include "ProjectEast/Core/UI/HUD/MainWindow.h"
 #include "ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.h"
 #include "ProjectEast/Core/UI/Storage/StorageWindow.h"
@@ -29,6 +31,8 @@ void UWidgetManager::InitializeWidgetManager(AMainPlayerController* PlayerContro
 void UWidgetManager::SetActiveWidget(EWidgetType WidgetType)
 {
 	ActiveWidget = WidgetType;
+	if (OnSwitchWidget.IsBound())
+		OnSwitchWidget.Broadcast(ActiveWidget);
 }
 
 EWidgetType UWidgetManager::GetActiveWidget()
@@ -38,11 +42,14 @@ EWidgetType UWidgetManager::GetActiveWidget()
 
 void UWidgetManager::SetActiveTab(EWidgetType WidgetType)
 {
+	ActiveTab = WidgetType;
+	if (OnSwitchTab.IsBound())
+		OnSwitchTab.Broadcast(ActiveTab);
 }
 
 EWidgetType UWidgetManager::GetActiveTab()
 {
-	return EWidgetType::Inventory;
+	return ActiveTab;
 }
 
 void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
@@ -55,7 +62,6 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 	{
 	case EWidgetType::Pause:
 		{
-			SetActiveWidget(EWidgetType::Pause);
 			CashedPause = CreateWidget<UPause>(CachedPlayerController, DefaultPauseWindow);
 			if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 				CashedPause->AddToViewport(1);
@@ -67,7 +73,6 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 		break;
 	case EWidgetType::Inventory:
 		{
-			SetActiveWidget(EWidgetType::Inventory);
 			SetActiveTab(EWidgetType::Inventory);
 			StartPlayerCapture();
 
@@ -83,7 +88,6 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 	case EWidgetType::Storage:
 		{
 			InventoryUtility::PlaySoundOnOpeningWidget();
-			SetActiveWidget(EWidgetType::Storage);
 			SetActiveTab(EWidgetType::Storage);
 			StartPlayerCapture();
 
@@ -97,8 +101,45 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 		}
 		CachedPlayerInventory->OpenStorageWidget();
 		break;
+	case EWidgetType::PlayerCrafting:
+		{
+			InventoryUtility::PlaySoundOnOpeningWidget();
+			SetActiveTab(EWidgetType::PlayerCrafting);
+			StartPlayerCapture();
+
+			CachedPlayerCraftingWindow = CreateWidget<
+				UCraftingWindowCore>(CachedPlayerController, PlayerCraftingWindow);
+
+			if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
+				CachedPlayerCraftingWindow->AddToViewport(1);
+			else
+				CachedPlayerCraftingWindow->AddToPlayerScreen(1);
+
+			CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting());
+			InputMode.SetWidgetToFocus(CachedPlayerCraftingWindow->TakeWidget());
+		}
+		break;
+	case EWidgetType::StationCrafting:
+		{
+			InventoryUtility::PlaySoundOnOpeningWidget();
+			SetActiveTab(EWidgetType::StationCrafting);
+			StartPlayerCapture();
+
+
+			CachedStationCraftingWindow = CreateWidget<UCraftingWindowCore>(
+				CachedPlayerController, StationCraftingWindow);
+
+			if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
+				CachedStationCraftingWindow->AddToViewport(1);
+			else
+				CachedStationCraftingWindow->AddToPlayerScreen(1);
+			InputMode.SetWidgetToFocus(CachedStationCraftingWindow->TakeWidget());
+		}
+		break;
 	default: ;
 	}
+
+	SetActiveWidget(WidgetType);
 
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 	InputMode.SetHideCursorDuringCapture(true);
@@ -114,12 +155,12 @@ void UWidgetManager::SwitchWidgetTo(EWidgetType WidgetType)
 	{
 		CloseActiveWidget();
 		OpenNewWidget(WidgetType);
-		ActiveWidget = WidgetType;
 	}
 }
 
 void UWidgetManager::SwitchTabTo(EWidgetType WidgetType)
 {
+	SetActiveTab(WidgetType);
 }
 
 void UWidgetManager::CloseActiveWidget()
@@ -130,7 +171,6 @@ void UWidgetManager::CloseActiveWidget()
 		{
 			SetActiveWidget(EWidgetType::None);
 			SetActiveTab(EWidgetType::None);
-
 
 			if (IsValid(CashedPause))
 				CashedPause->RemoveFromParent();
@@ -155,6 +195,26 @@ void UWidgetManager::CloseActiveWidget()
 
 			if (IsValid(CashedStorageWindow))
 				CashedStorageWindow->RemoveFromParent();
+		}
+		break;
+	case EWidgetType::PlayerCrafting:
+		{
+			SetActiveWidget(EWidgetType::None);
+			SetActiveTab(EWidgetType::None);
+			StopPlayerCapture();
+
+			if (IsValid(CachedPlayerCraftingWindow))
+				CachedPlayerCraftingWindow->RemoveFromParent();
+		}
+		break;
+	case EWidgetType::StationCrafting:
+		{
+			SetActiveWidget(EWidgetType::None);
+			SetActiveTab(EWidgetType::None);
+			StopPlayerCapture();
+
+			if (IsValid(CachedStationCraftingWindow))
+				CachedStationCraftingWindow->RemoveFromParent();
 		}
 		break;
 	default: ;
@@ -249,6 +309,19 @@ void UWidgetManager::OpenTextDocumentPopup(FItemData* ItemData, UUserWidget* Par
 
 void UWidgetManager::DisplayMessageNotify(const FString Str)
 {
+}
+
+void UWidgetManager::InitializeCraftingWidgets(UCraftingCore* CraftingCore)
+{
+	if (IsValid(CachedPlayerCraftingWindow))
+	{
+		if (!IsValid(CraftingCore))
+			CraftingCore = CachedPlayerController->GetPlayerCrafting();
+		
+		CachedPlayerCraftingWindow->InitializeWindow(CraftingCore);
+	}
+	if (IsValid(CachedStationCraftingWindow))
+		CachedStationCraftingWindow->InitializeWindow(CraftingCore);
 }
 
 bool UWidgetManager::IsAnyMainWidgetOpen() const

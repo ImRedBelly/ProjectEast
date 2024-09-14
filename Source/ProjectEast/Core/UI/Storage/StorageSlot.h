@@ -18,7 +18,7 @@ class PROJECTEAST_API UStorageSlot : public UUserWidget
 
 public:
 	void InitializeSlot(FItemData* ItemData, UStorageInventory* ParentWidget, UInventoryCore* OwnerInv,
-		UPlayerInventory* PlayerInv, int IndexSlot);
+		UPlayerInventory* PlayerInv,FIconButtonGameModule* GameModule, int IndexSlot);
 	
 	void HighlightSlot();
 

@@ -34,6 +34,10 @@ void UCraftingCore::FilterByRarity(TArray<FCraftingData*> Data)
 {
 }
 
+void UCraftingCore::CreateCraftingList()
+{
+}
+
 bool UCraftingCore::TryToStartCraftingProcess()
 {
 	return false;

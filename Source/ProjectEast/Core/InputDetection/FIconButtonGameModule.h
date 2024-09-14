@@ -44,8 +44,7 @@ public:
 		return true;
 	}
 
-	bool IsUsingGamepad() const { return CurrentInputDevice == EHardwareDevicePrimaryType::Gamepad; }
-
+	bool IsUsingGamepad() const;
 	void OnInputDeviceChanged(EHardwareDevicePrimaryType NewInputDevice);
 	TSoftObjectPtr<UTexture2D> GetTextureForKey(UInputMappingContext* MappingContext, UInputAction* InputAction);
 };

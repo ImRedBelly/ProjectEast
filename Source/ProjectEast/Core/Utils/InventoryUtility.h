@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
+#include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
@@ -14,6 +15,7 @@ public:
 	//static UTexture2D* GetGamepadIcon(EGamepadButtonType GamepadInputs);
 	static UPlayerInventory* GetPlayerInventory(AActor* OwningPlayer);
 	static UPlayerEquipment* GetPlayerEquipment(AActor* OwningPlayer);
+	static UPlayerCrafting* GetPlayerCrafting(AActor* OwningPlayer);
 	static UConsumableBuffs* GetConsumableBuffs(AActor* OwningPlayer);
 	static TTuple<bool, UInventoryCore*> GetInventoryFromInteractable(UInteractableComponent* InteractableComponent);
 	static bool SwitchHasOwnerAuthority(UActorComponent* ActorComponent);

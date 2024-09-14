@@ -8,6 +8,10 @@
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "WidgetManager.generated.h"
 
+class UCraftingCore;
+class UForgeStationWindow;
+class UPlayerCraftingWindow;
+class UCraftingWindowCore;
 class UMainWindow;
 class USplitStackPopup;
 class AMainPlayerController;
@@ -18,7 +22,13 @@ class PROJECTEAST_API UWidgetManager : public UActorComponent
 {
 	GENERATED_BODY()
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchWidget, EWidgetType, WidgetType);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchTab, EWidgetType, WidgetType);
+	
 public:
+	FOnSwitchWidget OnSwitchWidget;
+	FOnSwitchTab OnSwitchTab;
+	
 	void InitializeWidgetManager(AMainPlayerController* PlayerController, UPlayerInventory* PlayerInventory);
 	void SetActiveWidget(EWidgetType WidgetType);
 	EWidgetType GetActiveWidget();
@@ -38,10 +48,10 @@ public:
 
 	void StartPlayerCapture();
 	void StopPlayerCapture();
-	
+
 	EWidgetType GetCurrentlyFocusedWidget();
 	void SetCurrentlyFocusedWidget(EWidgetType None);
-	
+
 	APlayerCapture* GetPlayerCapture() const;
 	UMainWindow* GetMainWindow() const;
 
@@ -60,6 +70,7 @@ public:
 	void OpenTextDocumentPopup(FItemData* ItemData, UUserWidget* ParentWidget);
 
 	void DisplayMessageNotify(const FString Str);
+	void InitializeCraftingWidgets(UCraftingCore* CraftingCore);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
@@ -72,6 +83,10 @@ protected:
 	TSubclassOf<UPause> DefaultPauseWindow;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<USplitStackPopup> DefaultSplitStackPopup;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
+	TSubclassOf<UPlayerCraftingWindow> PlayerCraftingWindow;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
+	TSubclassOf<UForgeStationWindow> StationCraftingWindow;
 
 private:
 	UPROPERTY()
@@ -90,8 +105,12 @@ private:
 	UPlayerInventory* CachedPlayerInventory;
 	UPROPERTY()
 	AMainPlayerController* CachedPlayerController;
-
+	UPROPERTY()
+	UCraftingWindowCore* CachedPlayerCraftingWindow;
+	UPROPERTY()
+	UCraftingWindowCore* CachedStationCraftingWindow;
 
 	EWidgetType ActiveWidget;
+	EWidgetType ActiveTab;
 	EWidgetPopup ActivePopup;
 };

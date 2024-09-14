@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ProjectEast/Core/Utils/Structurs/FCraftingData.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "CraftingCore.generated.h"
 
 
@@ -21,6 +21,7 @@ protected:
 
 	void InitializeCraftingProcess(FCraftingData* CraftingData, uint8 AmountToCraft);
 	void FilterByRarity(TArray<FCraftingData*> Data);
+	void CreateCraftingList();
 	
 	bool TryToStartCraftingProcess();
 	bool CanStartCraftingProcess(FCraftingData* CraftingData);

@@ -8,6 +8,7 @@
 #include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 #include "MainPlayerController.generated.h"
 
+class UPlayerCrafting;
 class UPlayerInventory;
 class UInteractionComponent;
 
@@ -36,6 +37,7 @@ public:
 	UCharacterStatsComponent* GetStatsComponent() const;
 	UPlayerLeveling* GetPlayerLeveling() const;
 	UWidgetManager* GetWidgetManager() const;
+	UPlayerCrafting* GetPlayerCrafting() const;
 
 	FOnSwitchedWidget OnSwitchedWidget;
 	FOnSwitchedTab OnSwitchedTab;
@@ -58,6 +60,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPlayerLeveling* PlayerLeveling;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPlayerCrafting* PlayerCrafting;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UWidgetManager* WidgetManager;

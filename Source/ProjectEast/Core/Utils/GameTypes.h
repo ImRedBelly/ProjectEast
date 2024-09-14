@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "GameTypes.generated.h"
 
 #define ECC_Interactable ECC_GameTraceChannel1
 
@@ -127,11 +128,14 @@ enum class EWidgetType : uint8
 	Pause UMETA(DisplayName = "Pause"),
 	Inventory UMETA(DisplayName = "Inventory"),
 	Equipment UMETA(DisplayName = "Equipment"),
-	Crafting UMETA(DisplayName = "Crafting"),
+	PlayerCrafting UMETA(DisplayName = "PlayerCrafting"),
+	StationCrafting UMETA(DisplayName = "StationCrafting"),
 	Vendor UMETA(DisplayName = "Vendor"),
 	Storage UMETA(DisplayName = "Storage"),
 	LoadGame UMETA(DisplayName = "LoadGame"),
 	Abilities UMETA(DisplayName = "Abilities"),
+	Map UMETA(DisplayName = "Map"),
+	Quests UMETA(DisplayName = "Quests"),
 };
 
 UENUM(BlueprintType)
@@ -233,3 +237,61 @@ enum class ECraftingStation : uint8
 	None UMETA(DisplayName = "None"),
 	Forge UMETA(DisplayName = "Forge"),
 };
+
+USTRUCT(BlueprintType)
+struct FSingleDTItem
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditDefaultsOnly)
+	FDataTableRowHandle TableAndRow;
+	
+	UPROPERTY(EditDefaultsOnly)
+	int32 Quantity;
+};
+
+USTRUCT(BlueprintType)
+struct FCraftingData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FString CraftingID;
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FSingleDTItem> OutputItems;
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FSingleDTItem> InputItems;
+	UPROPERTY(EditDefaultsOnly)
+	bool StartLocked;
+	UPROPERTY(EditDefaultsOnly)
+	float CraftingTime;
+	UPROPERTY(EditDefaultsOnly)
+	float CraftingCost;
+	UPROPERTY(EditDefaultsOnly)
+	ECraftingCategory Category;
+	UPROPERTY(EditDefaultsOnly)
+	ECraftingSubategory Subcategory;
+	UPROPERTY(EditDefaultsOnly)
+	TArray<ECraftingStation> RequiredStations;
+	UPROPERTY(EditDefaultsOnly)
+	uint8 CraftingCounter;
+	UPROPERTY(EditDefaultsOnly)
+	uint8 MaxCount;
+};
+
+
+USTRUCT()
+struct FRandomizedLootTable
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* DataTable;
+
+	UPROPERTY(EditAnywhere)
+	int32 MinLootItems;
+
+	UPROPERTY(EditAnywhere)
+	int32 MaxLootItems;
+};
+

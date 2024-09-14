@@ -60,6 +60,18 @@ UPlayerEquipment* InventoryUtility::GetPlayerEquipment(AActor* OwningPlayer)
 	return nullptr;
 }
 
+UPlayerCrafting* InventoryUtility::GetPlayerCrafting(AActor* OwningPlayer)
+{
+	if (IsValid(OwningPlayer))
+	{
+		UPlayerCrafting* Crafting = Cast<UPlayerCrafting>(
+			OwningPlayer->GetComponentByClass(UPlayerCrafting::StaticClass()));
+		if (IsValid(Crafting))
+			return Crafting;
+	}
+	return nullptr;
+}
+
 UConsumableBuffs* InventoryUtility::GetConsumableBuffs(AActor* OwningPlayer)
 {
 	if (IsValid(OwningPlayer))

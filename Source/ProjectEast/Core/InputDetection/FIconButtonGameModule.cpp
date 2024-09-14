@@ -31,6 +31,11 @@ void FIconButtonGameModule::ShutdownModule()
 	}
 }
 
+bool FIconButtonGameModule::IsUsingGamepad() const
+{
+	return CurrentInputDevice == EHardwareDevicePrimaryType::Gamepad;
+}
+
 void FIconButtonGameModule::OnInputDeviceChanged(EHardwareDevicePrimaryType NewInputDevice)
 {
 	CurrentInputDevice = NewInputDevice;

@@ -15,6 +15,7 @@ void UStorageInventory::NativeConstruct()
 	auto PlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
 	CachedPlayerInventory = PlayerController->GetPlayerInventory();
 	WidgetManager = PlayerController->GetWidgetManager();
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 
 	SetOwnerInventory();
 	if (IsValid(CachedOwnerInventory))
@@ -48,7 +49,7 @@ FReply UStorageInventory::NativeOnFocusReceived(const FGeometry& InGeometry, con
 void UStorageInventory::ResetSlotFocus()
 {
 	if (WidgetManager->GetCurrentlyFocusedWidget() == EWidgetType::Storage)
-			SetFocusToSlot(FocusedSlot);
+		SetFocusToSlot(FocusedSlot);
 }
 
 void UStorageInventory::CreateInventoryP1()
@@ -59,7 +60,8 @@ void UStorageInventory::CreateInventoryP1()
 
 void UStorageInventory::SetOwnerInventory()
 {
-	CachedOwnerInventory = InventoryUtility::GetInventoryFromInteractable(InventoryUtility::GetCurrentInteractableObject(GetOwningPlayer())).Get<1>();
+	CachedOwnerInventory = InventoryUtility::GetInventoryFromInteractable(
+		InventoryUtility::GetCurrentInteractableObject(GetOwningPlayer())).Get<1>();
 }
 
 void UStorageInventory::BindEventDispatchers()
@@ -149,9 +151,8 @@ void UStorageInventory::BuildInventorySlots(TArray<FItemData*> ItemData, int32 S
 		else
 			CurrentItemData->Index = i;
 
-
 		UStorageSlot* StorageSlot = CreateWidget<UStorageSlot>(GetOwningPlayer(), DefaultStorageSlot);
-		StorageSlot->InitializeSlot(CurrentItemData, this, CachedOwnerInventory, CachedPlayerInventory, i);
+		StorageSlot->InitializeSlot(CurrentItemData, this, CachedOwnerInventory, CachedPlayerInventory, IconButtonGameModule, i);
 
 		UUniformGridSlot* CurrentSlot = GridPanel->AddChildToUniformGrid(StorageSlot, CurrentRow, CurrentColumn);
 		CurrentSlot->SetHorizontalAlignment(HAlign_Fill);

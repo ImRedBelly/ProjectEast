@@ -1,4 +1,6 @@
 ﻿#include "MainPlayerController.h"
+
+#include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
@@ -13,6 +15,7 @@ AMainPlayerController::AMainPlayerController()
 	ConsumableBuffs = CreateDefaultSubobject<UConsumableBuffs>(TEXT("ConsumableBuffs"));
 	CharacterStatsComponent = CreateDefaultSubobject<UCharacterStatsComponent>(TEXT("CharacterStatsComponent"));
 	PlayerLeveling = CreateDefaultSubobject<UPlayerLeveling>(TEXT("PlayerLeveling"));
+	PlayerCrafting = CreateDefaultSubobject<UPlayerCrafting>(TEXT("PlayerCrafting"));
 	WidgetManager = CreateDefaultSubobject<UWidgetManager>(TEXT("WidgetManager"));
 }
 
@@ -57,6 +60,7 @@ void AMainPlayerController::InitializeComponents()
 	InteractionComponent->InitializeInteraction(this);
 	PlayerInventory->InitializeInventory(this);
 	PlayerEquipment->InitializeEquipment();
+	PlayerCrafting->InitializeCrafting(this);
 }
 
 void AMainPlayerController::InitializeInteractionWithObject(UInteractableComponent* InteractableComponent)
@@ -137,6 +141,11 @@ UPlayerLeveling* AMainPlayerController::GetPlayerLeveling() const
 UWidgetManager* AMainPlayerController::GetWidgetManager() const
 {
 	return WidgetManager;
+}
+
+UPlayerCrafting* AMainPlayerController::GetPlayerCrafting() const
+{
+	return PlayerCrafting;
 }
 
 void AMainPlayerController::ClientInitializeInteractionWithObject(UInteractableComponent* InteractableComponent)
