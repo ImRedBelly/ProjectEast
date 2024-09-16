@@ -7,7 +7,6 @@
 #include "Components/ScrollBox.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/WidgetSwitcher.h"
-#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "StorageInventory.generated.h"

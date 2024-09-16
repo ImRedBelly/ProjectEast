@@ -5,6 +5,7 @@
 #include "Components/UniformGridSlot.h"
 #include "Components/WidgetSwitcher.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UStorageInventory::NativeConstruct()

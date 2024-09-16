@@ -3,7 +3,7 @@
 
 #define ECC_Interactable ECC_GameTraceChannel1
 
-
+class UMainItemData;
 const FName ProjectEast = FName("ProjectEast");
 const FName CollisionProfilePawn = FName("Pawn");
 const FName CollisionProfilePawnInteractionVolume = FName("PawnInteractionVolume");
@@ -91,6 +91,16 @@ enum class EItemRemoveType : uint8
 	Default UMETA(DisplayName = "Default"),
 	OnConfirmation UMETA(DisplayName = "OnConfirmation"),
 	CannotBeRemoved UMETA(DisplayName = "CannotBeRemoved"),
+};
+
+UENUM(BlueprintType)
+enum class EItemDestination : uint8
+{
+	InventorySlot UMETA(DisplayName = "InventorySlot"),
+	EquipmentSlot UMETA(DisplayName = "EquipmentSlot"),
+	VendorSlot UMETA(DisplayName = "VendorSlot"),
+	StorageSlot UMETA(DisplayName = "StorageSlot"),
+	DropBar UMETA(DisplayName = "DropBar"),
 };
 
 UENUM(BlueprintType)
@@ -249,6 +259,33 @@ struct FSingleDTItem
 	UPROPERTY(EditDefaultsOnly)
 	int32 Quantity;
 };
+
+
+USTRUCT(BlueprintType)
+struct FItemData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FString ID;
+	UPROPERTY(EditDefaultsOnly)
+	EItemSlot EquipmentSlot;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMainItemData> Class;
+	UPROPERTY(EditDefaultsOnly)
+	int32 Quantity;
+	UPROPERTY(EditDefaultsOnly)
+	int32 Durability;
+	UPROPERTY(EditDefaultsOnly)
+	int32 Index;
+	UPROPERTY(EditDefaultsOnly)
+	bool bIsEquipped;
+	UPROPERTY(EditDefaultsOnly)
+	bool bIsAlreadyUsed;
+	UPROPERTY(EditDefaultsOnly)
+	float ValueModifier;
+};
+
 
 USTRUCT(BlueprintType)
 struct FCraftingData : public FTableRowBase

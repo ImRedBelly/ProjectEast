@@ -2,13 +2,20 @@
 #include "CoreMinimal.h"
 #include "Components/Border.h"
 #include "Blueprint/UserWidget.h"
-#include "ProjectEast/Core/UI/ToolTip/ToolTip.h"
-#include "ProjectEast/Core/Characters/MainPlayerController.h"
-#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
-#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "PlayerInventorySlot.generated.h"
 
+class UInventoryCore;
+class UPlayerInventory;
+class UWidgetManager;
+class UPlayerEquipment;
+class AMainPlayerController;
+class UItemDataDragDropOperation;
+class UItemDataDragAndDropPanel;
+class UToolTip;
 class UPlayerInventoryWidget;
 class UButton;
 

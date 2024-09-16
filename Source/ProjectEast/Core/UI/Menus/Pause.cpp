@@ -1,6 +1,7 @@
 ﻿#include "Pause.h"
 
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
 
 void UPause::NativeConstruct()
 {

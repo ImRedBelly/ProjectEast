@@ -3,7 +3,7 @@
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
-#include "ProjectEast/Core/Data/FGamepadButtonData.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 
 TArray<FItemData*> InventoryUtility::CommonSortingItems;
 TArray<FItemData*> InventoryUtility::SuperiorSortingItems;

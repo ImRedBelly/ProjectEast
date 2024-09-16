@@ -2,11 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ConsumableBuffs.generated.h"
 
 
+class UPlayerEquipment;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTEAST_API UConsumableBuffs : public UActorComponent

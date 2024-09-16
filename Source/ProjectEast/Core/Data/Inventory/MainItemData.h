@@ -3,9 +3,9 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
-#include "ProjectEast/Core/Actors/Inventory/BaseEquippable.h"
 #include "MainItemData.generated.h"
 
+class ABaseEquippable;
 class AItemConsumable;
 class ABaseItemPickUp;
 

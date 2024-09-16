@@ -1,6 +1,7 @@
 ﻿#include "StorageWindow.h"
 #include "Components/WidgetSwitcher.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/UI/PlayerInventory/PlayerInventoryWidget.h"
 #include "ProjectEast/Core/UI/PlayerInventory/SortWindow.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"

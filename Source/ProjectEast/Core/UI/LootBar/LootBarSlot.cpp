@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Kismet/KismetTextLibrary.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void ULootBarSlot::InitializeSlot(ULootBar* LootBar, FItemData* ItemData)

@@ -2,12 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ProjectEast/Core/Actors/Other/PlayerCapture.h"
-#include "ProjectEast/Core/UI/Menus/Pause.h"
-#include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "WidgetManager.generated.h"
 
+class UInventoryCore;
+class UPlayerInventory;
+class APlayerCapture;
+class UPause;
+class UInventoryWindow;
 class UCraftingCore;
 class UForgeStationWindow;
 class UPlayerCraftingWindow;

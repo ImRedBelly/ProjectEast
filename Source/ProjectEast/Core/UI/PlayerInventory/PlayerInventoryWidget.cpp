@@ -10,6 +10,7 @@
 #include "Components/WidgetSwitcher.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/PlayerCharacter.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 
 void UPlayerInventoryWidget::AssignCurrentlyFocusedSlot(UPlayerInventorySlot* PlayerInventorySlot)

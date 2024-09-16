@@ -9,10 +9,11 @@
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
 #include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
-#include "ProjectEast/Core/UI/Misc/ValueView.h"
-#include "ProjectEast/Core/UI/Misc/WeightView.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "SplitStackPopup.generated.h"
 
+class UValueView;
+class UWeightView;
 class UPlayerInventory;
 class UInventoryCore;
 class AMainPlayerController;

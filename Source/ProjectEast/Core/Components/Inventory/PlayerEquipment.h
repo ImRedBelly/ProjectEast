@@ -3,10 +3,10 @@
 #include "CoreMinimal.h"
 #include "InventoryCore.h"
 #include "Components/ActorComponent.h"
-#include "ProjectEast/Core/Actors/Inventory/BaseEquippable.h"
-#include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "PlayerEquipment.generated.h"
 
+class UPlayerLeveling;
+class ABaseEquippable;
 class UPlayerInventory;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))

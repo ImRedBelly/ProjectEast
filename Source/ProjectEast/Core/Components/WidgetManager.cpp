@@ -7,6 +7,8 @@
 #include "ProjectEast/Core/UI/Crafting/ForgeStationWindow.h"
 #include "ProjectEast/Core/UI/Crafting/PlayerCraftingWindow.h"
 #include "ProjectEast/Core/UI/HUD/MainWindow.h"
+#include "ProjectEast/Core/UI/Menus/Pause.h"
+#include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
 #include "ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.h"
 #include "ProjectEast/Core/UI/Storage/StorageWindow.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"

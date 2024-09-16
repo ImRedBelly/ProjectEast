@@ -2,12 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
-#include "ProjectEast/Core/Components/CharacterSystems/CharacterStatsComponent.h"
-#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 #include "MainPlayerController.generated.h"
 
+class UWidgetManager;
+class UPlayerLeveling;
+class UCharacterStatsComponent;
+class UConsumableBuffs;
+class UPlayerEquipment;
 class UPlayerCrafting;
 class UPlayerInventory;
 class UInteractionComponent;

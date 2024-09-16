@@ -7,8 +7,12 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/TextBlock.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
+#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
+#include "ProjectEast/Core/UI/ToolTip/ToolTip.h"
 
 void UStorageSlot::NativeConstruct()
 {

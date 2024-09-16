@@ -1,15 +1,21 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "EquipmentPanel.h"
 #include "Components/Overlay.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "EquipmentSlot.generated.h"
 
+class UPlayerInventory;
+class UPlayerEquipment;
+class AMainPlayerController;
+class UItemDataDragDropOperation;
+class UItemDataDragAndDropPanel;
+class UEquipmentPanel;
 class UWidgetManager;
 class UToolTip;
 

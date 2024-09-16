@@ -4,10 +4,11 @@
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
 #include "Components/PostProcessComponent.h"
-#include "ProjectEast/Core/Components/CharacterSystems/CharacterStatsComponent.h"
-#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ItemConsumable.generated.h"
+
+class UCharacterStatsComponent;
+class UConsumableBuffs;
 
 UCLASS()
 class PROJECTEAST_API AItemConsumable : public AActor

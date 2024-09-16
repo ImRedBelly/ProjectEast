@@ -1,6 +1,8 @@
 ﻿#include "ItemConsumable.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/CharacterSystems/CharacterStatsComponent.h"
+#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 
 void AItemConsumable::OnUse()
 {

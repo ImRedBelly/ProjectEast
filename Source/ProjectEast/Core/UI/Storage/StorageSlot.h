@@ -3,10 +3,13 @@
 #include "CoreMinimal.h"
 #include "StorageInventory.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 #include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
-#include "ProjectEast/Core/UI/ToolTip/ToolTip.h"
 #include "StorageSlot.generated.h"
 
+class UItemDataDragAndDropPanel;
+class UItemDataDragDropOperation;
+class UToolTip;
 class UWidgetManager;
 class AMainPlayerController;
 class UButton;

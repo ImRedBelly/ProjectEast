@@ -4,11 +4,12 @@
 #include "ItemStatsSlot.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
-#include "ProjectEast/Core/UI/Misc/ValueView.h"
-#include "ProjectEast/Core/UI/Misc/WeightView.h"
-#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ToolTip.generated.h"
 
+class UPlayerEquipment;
+class UValueView;
+class UWeightView;
 class UUniformGridPanel;
 class UHorizontalBox;
 class UVerticalBox;

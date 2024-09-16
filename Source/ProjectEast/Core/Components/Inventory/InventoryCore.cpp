@@ -3,6 +3,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UInventoryCore::InitializeInventory(APlayerController* PlayerController)

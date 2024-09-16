@@ -3,36 +3,9 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
-#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
-#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "InventoryCore.generated.h"
 
 class UPlayerEquipment;
-
-USTRUCT(BlueprintType)
-struct FItemData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	FString ID;
-	UPROPERTY(EditDefaultsOnly)
-	EItemSlot EquipmentSlot;
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UMainItemData> Class;
-	UPROPERTY(EditDefaultsOnly)
-	int32 Quantity;
-	UPROPERTY(EditDefaultsOnly)
-	int32 Durability;
-	UPROPERTY(EditDefaultsOnly)
-	int32 Index;
-	UPROPERTY(EditDefaultsOnly)
-	bool bIsEquipped;
-	UPROPERTY(EditDefaultsOnly)
-	bool bIsAlreadyUsed;
-	UPROPERTY(EditDefaultsOnly)
-	float ValueModifier;
-};
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRefreshInventory, EInventoryPanels, Panel);

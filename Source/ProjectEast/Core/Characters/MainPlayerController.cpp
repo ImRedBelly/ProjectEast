@@ -1,5 +1,9 @@
 ﻿#include "MainPlayerController.h"
 
+#include "ProjectEast/Core/Components/PlayerLeveling.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/CharacterSystems/CharacterStatsComponent.h"
+#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 #include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"

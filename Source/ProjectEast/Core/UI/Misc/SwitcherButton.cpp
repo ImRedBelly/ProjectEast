@@ -1,6 +1,7 @@
 ﻿#include "SwitcherButton.h"
 #include "Components/Button.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 
 void USwitcherButton::InitializeButton(UWidgetManager* WidgetManager)

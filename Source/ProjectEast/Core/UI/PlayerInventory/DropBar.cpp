@@ -2,6 +2,8 @@
 #include "Components/Image.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UDropBar::NativeConstruct()

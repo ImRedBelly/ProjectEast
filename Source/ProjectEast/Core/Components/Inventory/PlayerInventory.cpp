@@ -5,6 +5,8 @@
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/UI/HUD/MainWindow.h"
 #include "ProjectEast/Core/UI/Storage/StorageWindow.h"
 

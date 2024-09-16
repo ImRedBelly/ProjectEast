@@ -4,8 +4,6 @@
 #include "RotatePlayerBox.h"
 #include "Blueprint/UserWidget.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
-#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "EquipmentPanel.generated.h"
 
 class UEquipmentSlot;

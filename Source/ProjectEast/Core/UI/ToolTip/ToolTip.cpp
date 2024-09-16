@@ -12,6 +12,9 @@
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
+#include "ProjectEast/Core/UI/Misc/ValueView.h"
+#include "ProjectEast/Core/UI/Misc/WeightView.h"
 
 void UToolTip::InitializeToolTip(FItemData* ItemData, bool IsCompareItems)
 {

@@ -1,8 +1,10 @@
 ﻿#include "PlayerEquipment.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ProjectEast/Core/Actors/Inventory/BaseEquippable.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 
