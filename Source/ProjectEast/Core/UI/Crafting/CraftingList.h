@@ -77,6 +77,6 @@ private:
 
 	ECraftingCategory GetFirstValidListCategory();
 	bool CanDisplayCraftable(FCraftingData* InCraftingData) const;
-	FString GetListBoxTitleBySubcategory(ECraftingSubcategory Subcategory) const;
+	FText GetListBoxTitleBySubcategory(ECraftingSubcategory Subcategory) const;
 	UCraftingListBox* GetFirstListBoxFromCategory(ECraftingCategory Category);
 };

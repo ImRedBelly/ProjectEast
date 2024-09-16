@@ -17,7 +17,7 @@ class PROJECTEAST_API UCraftingListBox : public UUserWidget
 
 public:
 	void InitializeBox(UCraftingList* Craftings, UPlayerCrafting* PlayerCrafting, ECraftingCategory Category,
-	                   ECraftingSubcategory Subcategory, const FString& NameTitle);
+	                   ECraftingSubcategory Subcategory, const FText& NameTitle);
 
 
 	void AddNewSlot(FCraftingData* CraftingData);

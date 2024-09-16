@@ -233,9 +233,9 @@ bool UCraftingList::CanDisplayCraftable(FCraftingData* InCraftingData) const
 	return false;
 }
 
-FString UCraftingList::GetListBoxTitleBySubcategory(ECraftingSubcategory Subcategory) const
+FText UCraftingList::GetListBoxTitleBySubcategory(ECraftingSubcategory Subcategory) const
 {
-	return UEnum::GetValueAsString(Subcategory);
+	return UEnum::GetDisplayValueAsText(Subcategory);
 }
 
 UCraftingListBox* UCraftingList::GetFirstListBoxFromCategory(ECraftingCategory Category)

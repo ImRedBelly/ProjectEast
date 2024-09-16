@@ -4,7 +4,7 @@
 
 void UCraftingListBox::InitializeBox(UCraftingList* CraftingList, UPlayerCrafting* PlayerCrafting,
                                      ECraftingCategory Category, ECraftingSubcategory Subcategory,
-                                     const FString& NameTitle)
+                                     const FText& NameTitle)
 {
 	CachedCraftingList = CraftingList;
 	CachedPlayerCrafting = PlayerCrafting;

@@ -15,7 +15,7 @@ class PROJECTEAST_API UCraftingListSpacer : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void SetListTitle(const FString& TitleName) const;
+	void SetListTitle(const FText& TitleName) const;
 
 protected:
 	UPROPERTY(meta=(BindWidget))
@@ -29,14 +29,11 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UVerticalBox* AssociatedBox;
-	UPROPERTY(EditAnywhere)
-	FString TitleText;
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor ColorActive;
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor ColorInactive;
 
-	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	virtual void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;

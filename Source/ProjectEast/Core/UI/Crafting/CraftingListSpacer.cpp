@@ -1,17 +1,10 @@
 ﻿#include "CraftingListSpacer.h"
-
 #include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 
-void UCraftingListSpacer::SetListTitle(const FString& TitleName) const
+void UCraftingListSpacer::SetListTitle(const FText& TitleName) const
 {
-	TextTitle->SetText(FText::FromString(TitleName));
-}
-
-void UCraftingListSpacer::NativePreConstruct()
-{
-	Super::NativePreConstruct();
-	SetListTitle("TitleName");
+	TextTitle->SetText(TitleName);
 }
 
 void UCraftingListSpacer::NativeConstruct()
