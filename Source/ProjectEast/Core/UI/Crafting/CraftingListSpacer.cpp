@@ -1,19 +1,35 @@
 ﻿#include "CraftingListSpacer.h"
 
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
+
+void UCraftingListSpacer::SetListTitle(const FString& TitleName) const
+{
+	TextTitle->SetText(FText::FromString(TitleName));
+}
+
 void UCraftingListSpacer::NativePreConstruct()
 {
 	Super::NativePreConstruct();
-	SetListTitle(TitleName);
+	SetListTitle("TitleName");
 }
 
 void UCraftingListSpacer::NativeConstruct()
 {
 	Super::NativeConstruct();
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
+
+	ButtonList->OnClicked.AddDynamic(this, &UCraftingListSpacer::OnClickButton);
+	ButtonList->OnClicked.AddDynamic(this, &UCraftingListSpacer::OnHoveredButton);
+	ButtonList->OnClicked.AddDynamic(this, &UCraftingListSpacer::OnUnhoveredButton);
 }
 
 void UCraftingListSpacer::NativeDestruct()
 {
 	Super::NativeDestruct();
+	ButtonList->OnClicked.RemoveDynamic(this, &UCraftingListSpacer::OnClickButton);
+	ButtonList->OnClicked.RemoveDynamic(this, &UCraftingListSpacer::OnHoveredButton);
+	ButtonList->OnClicked.RemoveDynamic(this, &UCraftingListSpacer::OnUnhoveredButton);
 }
 
 void UCraftingListSpacer::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
@@ -30,21 +46,35 @@ void UCraftingListSpacer::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocu
 
 FReply UCraftingListSpacer::NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
-	return Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
+	if (InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Left ||
+		InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Bottom)
+	{
+		return FReply::Handled();
+	}
+	return FReply::Unhandled();
 }
 
 FReply UCraftingListSpacer::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
-	return Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
+	return FReply::Handled();
 }
 
 FReply UCraftingListSpacer::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
-	return Super::NativeOnKeyUp(InGeometry, InKeyEvent);
+	if (InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Left)
+	{
+		ToggleBoxVisibility();
+		return FReply::Handled();
+	}
+	if (InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Bottom)
+		return FReply::Handled();
+	return FReply::Unhandled();
 }
 
 void UCraftingListSpacer::OnClickButton()
 {
+	if (!IconButtonGameModule->IsUsingGamepad())
+		ToggleBoxVisibility();
 }
 
 void UCraftingListSpacer::OnHoveredButton()
@@ -59,15 +89,8 @@ void UCraftingListSpacer::OnUnhoveredButton()
 
 void UCraftingListSpacer::ToggleBoxVisibility()
 {
-}
-
-void UCraftingListSpacer::SetListTitle(FText Title)
-{
-	TitleName = Title;
-	TextTitle->SetText(TitleName);
-}
-
-bool UCraftingListSpacer::IsUsingGamepad()
-{
-	return false;
+	bIsToggleVisibility = !bIsToggleVisibility;
+	ImageTriangle->SetRenderTransformAngle(bIsToggleVisibility ? 0.0f : 180.0f);
+	if (IsValid(AssociatedBox))
+		AssociatedBox->SetVisibility(bIsToggleVisibility ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 }

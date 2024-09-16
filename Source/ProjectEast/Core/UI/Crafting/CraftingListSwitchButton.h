@@ -19,6 +19,7 @@ public:
 	FOnClickedButton OnClickedButton;
 
 	void RefreshListButton(ECraftingCategory NewCategory);
+	ECraftingCategory GetCraftingCategory() const;
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -28,6 +29,8 @@ protected:
 	FButtonStyle ButtonStyleOn;
 	UPROPERTY(EditAnywhere)
 	FButtonStyle ButtonStyleOff;
+	UPROPERTY(EditAnywhere)
+	bool bIsActive;
 
 	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonSwitch;
@@ -43,6 +46,5 @@ protected:
 
 	UFUNCTION()
 	void OnClicked();
-private:
-	bool bIsActive;
+
 };

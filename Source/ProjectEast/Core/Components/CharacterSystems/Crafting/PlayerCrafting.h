@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "CraftingCore.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/UI/Crafting/CraftingListSlot.h"
 #include "PlayerCrafting.generated.h"
 
 
@@ -16,6 +17,10 @@ public:
 	void CloseCraftingWidget();
 	void InitializeCrafting(AMainPlayerController* PlayerController);
 	void ClientInitializeCrafting(AMainPlayerController* PlayerController);
+	bool IsCraftingRecipeLocked(FCraftingData* CraftingData);
+	void FocusSelectedItem(FCraftingData* CraftingData);
+
+	TTuple<FItemData*, FSingleDTItem> GetCurrentCraftableData();
 
 protected:
 	virtual void BeginPlay() override;
@@ -29,5 +34,9 @@ private:
 	UPROPERTY()
 	UWidgetManager* WidgetManager;
 
+	
+
+	TArray<FString> UnlockedRecipes;
+	
 	bool bIsCraftingWidgetOpen;
 };

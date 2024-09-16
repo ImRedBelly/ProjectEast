@@ -109,6 +109,13 @@ bool InventoryUtility::IsItemClassValid(const FItemData* ItemData)
 	return ItemData->Class != nullptr || IsValid(ItemData->Class);
 }
 
+bool InventoryUtility::IsCraftingDataValid(const FCraftingData* CraftingData)
+{
+	if(CraftingData->InputItems.IsValidIndex(0) && CraftingData->OutputItems.IsValidIndex(0))
+		return true;
+	return false;
+}
+
 bool InventoryUtility::AreItemsTheSame(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond)
 {
 	return ItemDataFirst->ID == ItemDataSecond->ID;
@@ -274,6 +281,21 @@ uint32 InventoryUtility::FindAmountOfEmptySlots(TArray<FItemData*> ItemData)
 			Amount++;
 	}
 	return Amount;
+}
+
+TTuple<TArray<FItemData*>, TArray<FSingleDTItem>> InventoryUtility::GetCraftableData(FCraftingData* CraftingData)
+{
+	TArray<FItemData*> CraftableItems;
+	TArray<FSingleDTItem> Materials;
+	for (auto OutputItem : CraftingData->OutputItems)
+	{
+		if(IsValid(OutputItem.TableAndRow.DataTable))
+		{
+			auto ItemData = OutputItem.TableAndRow.DataTable->FindRow<FItemData>(OutputItem.TableAndRow.RowName, TEXT(""));
+			CraftableItems.Add(CopyItemData(ItemData));
+		}
+	}
+	return MakeTuple(CraftableItems, CraftingData->InputItems);
 }
 
 FItemData* InventoryUtility::CopyItemData(FItemData* ItemData)
@@ -530,4 +552,9 @@ void InventoryUtility::PlaySoundOnTabSwitched()
 
 void InventoryUtility::PlaySoundOnItemPickedUp()
 {
+}
+
+FCraftingData* InventoryUtility::GetCraftingDataFromTableRow(const FDataTableRowHandle& TableRow)
+{
+	return  TableRow.GetRow<FCraftingData>("");
 }

@@ -1,5 +1,7 @@
 ﻿#include "CraftingWindowCore.h"
 
-void UCraftingWindowCore::InitializeWindow(UCraftingCore* CraftingCore)
+void UCraftingWindowCore::InitializeWindow(UPlayerCrafting* InPlayerCraftingCore, UCraftingCore* InCraftingCore)
 {
+	PlayerCraftingCore = InPlayerCraftingCore;
+	CraftingCore = InCraftingCore;
 }

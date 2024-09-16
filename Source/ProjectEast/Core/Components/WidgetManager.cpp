@@ -115,7 +115,8 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 			else
 				CachedPlayerCraftingWindow->AddToPlayerScreen(1);
 
-			CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting());
+			CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(),
+			                                             CachedPlayerController->GetPlayerCrafting());
 			InputMode.SetWidgetToFocus(CachedPlayerCraftingWindow->TakeWidget());
 		}
 		break;
@@ -317,11 +318,11 @@ void UWidgetManager::InitializeCraftingWidgets(UCraftingCore* CraftingCore)
 	{
 		if (!IsValid(CraftingCore))
 			CraftingCore = CachedPlayerController->GetPlayerCrafting();
-		
-		CachedPlayerCraftingWindow->InitializeWindow(CraftingCore);
+
+		CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(), CraftingCore);
 	}
 	if (IsValid(CachedStationCraftingWindow))
-		CachedStationCraftingWindow->InitializeWindow(CraftingCore);
+		CachedStationCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(), CraftingCore);
 }
 
 bool UWidgetManager::IsAnyMainWidgetOpen() const

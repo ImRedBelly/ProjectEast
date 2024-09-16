@@ -33,6 +33,22 @@ void UPlayerCrafting::ClientInitializeCrafting(AMainPlayerController* InPlayerCo
 	CreateCraftingList();
 }
 
+bool UPlayerCrafting::IsCraftingRecipeLocked(FCraftingData* CraftingData)
+{
+	if (CraftingData->StartLocked)
+		return !UnlockedRecipes.Contains(CraftingData->CraftingID);
+	return false;
+}
+
+void UPlayerCrafting::FocusSelectedItem(FCraftingData* CraftingData)
+{
+}
+
+TTuple<FItemData*, FSingleDTItem> UPlayerCrafting::GetCurrentCraftableData()
+{
+	return MakeTuple(new FItemData(), FSingleDTItem());
+}
+
 void UPlayerCrafting::BeginPlay()
 {
 	//TODO Do Not Remove this Event

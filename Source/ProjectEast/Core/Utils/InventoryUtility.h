@@ -12,7 +12,6 @@ class InventoryUtility
 {
 public:
 	static UInteractableComponent* GetCurrentInteractableObject(AActor* OwningPlayer);
-	//static UTexture2D* GetGamepadIcon(EGamepadButtonType GamepadInputs);
 	static UPlayerInventory* GetPlayerInventory(AActor* OwningPlayer);
 	static UPlayerEquipment* GetPlayerEquipment(AActor* OwningPlayer);
 	static UPlayerCrafting* GetPlayerCrafting(AActor* OwningPlayer);
@@ -20,6 +19,7 @@ public:
 	static TTuple<bool, UInventoryCore*> GetInventoryFromInteractable(UInteractableComponent* InteractableComponent);
 	static bool SwitchHasOwnerAuthority(UActorComponent* ActorComponent);
 	static bool IsItemClassValid(const FItemData* ItemData);
+	static bool IsCraftingDataValid(const FCraftingData* CraftingData);
 	static bool AreItemsTheSame(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool AreItemsStackable(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool AreItemSlotsEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
@@ -38,6 +38,7 @@ public:
 	static bool CanItemBeRemoved(FItemData* ItemData);
 	static TArray<FItemData*> GetAllItemsOfType(TArray<FItemData*> ItemData, EItemsType ItemsType);
 	static uint32 FindAmountOfEmptySlots(TArray<FItemData*> ItemData);
+	static TTuple<TArray<FItemData*>, TArray<FSingleDTItem>> GetCraftableData(FCraftingData* CraftingData);
 
 	static FItemData* CopyItemData(FItemData* ItemData);
 	static FItemData* CopyItemData(FItemData ItemData);
@@ -52,6 +53,7 @@ public:
 	static void PlaySoundOnItemDropped();
 	static void PlaySoundOnTabSwitched();
 	static void PlaySoundOnItemPickedUp();
+	static FCraftingData* GetCraftingDataFromTableRow(const FDataTableRowHandle& TableRow);
 
 	static TArray<FItemData*> CommonSortingItems;
 	static TArray<FItemData*> SuperiorSortingItems;

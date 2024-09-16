@@ -10,9 +10,10 @@ UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTEAST_API UCraftingCore : public UActorComponent
 {
 	GENERATED_BODY()
-protected:
+
+public:
 	UCraftingCore();
-	
+
 	virtual void BeginPlay() override;
 	void ItemCrafted(AActor* OwningPlayer);
 	void TryToCraftCurrentItem();
@@ -20,33 +21,60 @@ protected:
 	void FailedToInitializeCraftingProcess(FCraftingData* CraftingData, uint8 AmountToCraft);
 
 	void InitializeCraftingProcess(FCraftingData* CraftingData, uint8 AmountToCraft);
-	void FilterByRarity(TArray<FCraftingData*> Data);
+	TArray<FCraftingData*>  FilterByRarity(TArray<FCraftingData*> Data);
 	void CreateCraftingList();
-	
+
 	bool TryToStartCraftingProcess();
 	bool CanStartCraftingProcess(FCraftingData* CraftingData);
 	bool StartCraftingProcess(FCraftingData* CraftingData);
 	void StopCraftingProcess(FCraftingData* CraftingData, AActor* OwningPlayer);
 	void FinishCraftingProcess();
-	
+
 	TTuple<float, float> GetCraftingProcessTime();
 	void AddToCraftingQueue(TArray<FCraftingData*> AddData);
 	void RemoveFromCraftingQueue(FCraftingData* RemoveData);
 	void ClearCraftingQueue(AActor* OwningPlayer);
-	
+
 	FCraftingData* GetItemFromQueueByID();
 	FCraftingData* GetFirstItemFromQueue();
 	FCraftingData* ModifyCraftingCounter(FString CraftingID, uint8 CraftingCounter, uint8 MaxCount);
 	TArray<FCraftingData*> GetCraftingListArray();
 	void StartCraftingTimer(float StartTimer);
-	
+
 	bool IsCurrentlyCrafted(FCraftingData* CraftingData);
 	void DecreaseCraftingCounter(FCraftingData* CraftingData);
 	bool HasPlayerEnoughGold(FCraftingData* CraftingData, uint8 AmountToCraft, AActor* OwningPlayer);
 	bool IsCraftableItemInQueue(FCraftingData* CraftingData);
 	uint8 GetItemQueueIndex(FString CraftingID);
 	bool CanBeAddedToQueue();
+
+	TTuple<bool, FText> CanInitializeCraftingProcess(FCraftingData* CraftingData, uint8 AmountToCraft,
+	                                                 AActor* OwningPlayer);
+	bool GetIsShowLockedItems() const { return bIsShowLockedItems; }
+
+protected:
+	UPROPERTY(EditAnywhere)
+	TArray<UDataTable*> CraftingDataTables;
+	UPROPERTY(EditAnywhere)
+	TArray<FDataTableRowHandle> SingleDTItems;
+
+	UPROPERTY(EditAnywhere)
+	bool bIsShowLockedItems;
+
+private:
+	TArray<FCraftingData*> CraftingList;
+	TArray<FCraftingData*> CraftingQueue;
 	
-	TTuple<bool, FText>  CanInitializeCraftingProcess(FCraftingData* CraftingData, uint8 AmountToCraft, AActor* OwningPlayer);
-	
+	ECraftingStation CraftingStation;
+
+	FTimerHandle CraftingTimer;
+
+	int32 MaxQueuedItems;
+	float CraftingCostMultiplier;
+	float CraftingDurationRate;
+
+	bool CraftOnlyWhenWindowIsOpen;
+	bool bCanCraftItems;
+	bool bSpawnCraftedItem;
+	bool bIsCrafting;
 };

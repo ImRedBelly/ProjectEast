@@ -216,7 +216,7 @@ enum class ECraftingCategory : uint8
 };
 
 UENUM(BlueprintType)
-enum class ECraftingSubategory : uint8
+enum class ECraftingSubcategory : uint8
 {
 	None UMETA(DisplayName = "None"),
 	HeadArmor UMETA(DisplayName = "HeadArmor"),
@@ -270,7 +270,7 @@ struct FCraftingData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly)
 	ECraftingCategory Category;
 	UPROPERTY(EditDefaultsOnly)
-	ECraftingSubategory Subcategory;
+	ECraftingSubcategory Subcategory;
 	UPROPERTY(EditDefaultsOnly)
 	TArray<ECraftingStation> RequiredStations;
 	UPROPERTY(EditDefaultsOnly)

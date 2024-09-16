@@ -11,6 +11,11 @@ void UCraftingListSwitchButton::RefreshListButton(ECraftingCategory NewCategory)
 	}
 }
 
+ECraftingCategory UCraftingListSwitchButton::GetCraftingCategory() const
+{
+	return Category;
+}
+
 void UCraftingListSwitchButton::NativePreConstruct()
 {
 	Super::NativePreConstruct();

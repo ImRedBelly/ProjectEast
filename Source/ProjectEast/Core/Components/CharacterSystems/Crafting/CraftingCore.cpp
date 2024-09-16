@@ -1,13 +1,15 @@
 ﻿#include "CraftingCore.h"
 
+#include "ProjectEast/Core/Utils/InventoryUtility.h"
+
 UCraftingCore::UCraftingCore()
 {
-
 }
 
 void UCraftingCore::BeginPlay()
 {
 	Super::BeginPlay();
+	CreateCraftingList();
 }
 
 void UCraftingCore::ItemCrafted(AActor* OwningPlayer)
@@ -30,12 +32,32 @@ void UCraftingCore::InitializeCraftingProcess(FCraftingData* CraftingData, uint8
 {
 }
 
-void UCraftingCore::FilterByRarity(TArray<FCraftingData*> Data)
+TArray<FCraftingData*> UCraftingCore::FilterByRarity(TArray<FCraftingData*> Data)
 {
+	return Data;
 }
 
 void UCraftingCore::CreateCraftingList()
 {
+	CraftingList.Empty();
+
+	for (UDataTable* CraftingDataTable : CraftingDataTables)
+	{
+		for (auto RowName : CraftingDataTable->GetRowNames())
+		{
+			FCraftingData* CraftingData = CraftingDataTable->FindRow<FCraftingData>(RowName, "");
+			if (InventoryUtility::IsCraftingDataValid(CraftingData))
+				CraftingList.Add(CraftingData);
+		}
+	}
+	for (auto TableRow : SingleDTItems)
+	{
+		FCraftingData* CraftingData = InventoryUtility::GetCraftingDataFromTableRow(TableRow);
+		if (InventoryUtility::IsCraftingDataValid(CraftingData))
+			CraftingList.Add(CraftingData);
+	}
+
+	CraftingList = FilterByRarity(CraftingList);
 }
 
 bool UCraftingCore::TryToStartCraftingProcess()
@@ -63,7 +85,7 @@ void UCraftingCore::FinishCraftingProcess()
 
 TTuple<float, float> UCraftingCore::GetCraftingProcessTime()
 {
-	return MakeTuple(0,0);
+	return MakeTuple(0, 0);
 }
 
 void UCraftingCore::AddToCraftingQueue(TArray<FCraftingData*> AddData)
@@ -80,25 +102,25 @@ void UCraftingCore::ClearCraftingQueue(AActor* OwningPlayer)
 
 FCraftingData* UCraftingCore::GetItemFromQueueByID()
 {
-	FCraftingData* CraftingData = new FCraftingData(); 
+	FCraftingData* CraftingData = new FCraftingData();
 	return CraftingData;
 }
 
 FCraftingData* UCraftingCore::GetFirstItemFromQueue()
 {
-	FCraftingData* CraftingData = new FCraftingData(); 
+	FCraftingData* CraftingData = new FCraftingData();
 	return CraftingData;
 }
 
 FCraftingData* UCraftingCore::ModifyCraftingCounter(FString CraftingID, uint8 CraftingCounter, uint8 MaxCount)
 {
-	FCraftingData* CraftingData = new FCraftingData(); 
+	FCraftingData* CraftingData = new FCraftingData();
 	return CraftingData;
 }
 
 TArray<FCraftingData*> UCraftingCore::GetCraftingListArray()
 {
-	return TArray<FCraftingData*>();
+	return CraftingList;
 }
 
 void UCraftingCore::StartCraftingTimer(float StartTimer)
@@ -135,9 +157,7 @@ bool UCraftingCore::CanBeAddedToQueue()
 }
 
 TTuple<bool, FText> UCraftingCore::CanInitializeCraftingProcess(FCraftingData* CraftingData, uint8 AmountToCraft,
-	AActor* OwningPlayer)
+                                                                AActor* OwningPlayer)
 {
 	return MakeTuple(false, FText());
 }
-
-

@@ -8,28 +8,34 @@
 #include "Components/VerticalBox.h"
 #include "CraftingListSpacer.generated.h"
 
+class FIconButtonGameModule;
 
 UCLASS()
 class PROJECTEAST_API UCraftingListSpacer : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+	void SetListTitle(const FString& TitleName) const;
 
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UImage* ImageBackground;
 	UPROPERTY(meta=(BindWidget))
+	UImage* ImageTriangle;
+	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonList;
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* TextTitle;
-	// UPROPERTY(meta=(BindWidget))
-	// UVerticalBox* AssociatedBox;
+
+	UPROPERTY(EditAnywhere)
+	UVerticalBox* AssociatedBox;
+	UPROPERTY(EditAnywhere)
+	FString TitleText;
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor ColorActive;
 	UPROPERTY(EditDefaultsOnly)
 	FLinearColor ColorInactive;
-	UPROPERTY(EditDefaultsOnly)
-	FText TitleName;
-	
+
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -47,7 +53,9 @@ protected:
 	void OnUnhoveredButton();
 
 	void ToggleBoxVisibility();
-	void SetListTitle(FText Title);
-	bool IsUsingGamepad();
 
+private:
+	FIconButtonGameModule* IconButtonGameModule;
+
+	bool bIsToggleVisibility;
 };

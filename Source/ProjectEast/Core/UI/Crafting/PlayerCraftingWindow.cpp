@@ -1,4 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿#include "PlayerCraftingWindow.h"
+#include "CraftingList.h"
 
 
-#include "PlayerCraftingWindow.h"
+void UPlayerCraftingWindow::InitializeWindow(UPlayerCrafting* InPlayerCraftingCore, UCraftingCore* InCraftingCore)
+{
+	Super::InitializeWindow(InPlayerCraftingCore, InCraftingCore);
+	CraftingList->InitializeList(PlayerCraftingCore, CraftingCore);
+}
