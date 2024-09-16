@@ -57,7 +57,10 @@ void UCraftingListSlot::NativeDestruct()
 {
 	Super::NativeDestruct();
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 
 	ButtonItem->OnClicked.RemoveDynamic(this, &UCraftingListSlot::OnClicked);
 	ButtonItem->OnHovered.RemoveDynamic(this, &UCraftingListSlot::OnHovered);
@@ -85,7 +88,10 @@ void UCraftingListSlot::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusE
 		ButtonItem->SetToolTip(nullptr);
 		ImageSlotBackground->SetColorAndOpacity(FLinearColor(1, 1, 1));
 		if (IsValid(CachedToolTip))
+		{
 			CachedToolTip->RemoveFromParent();
+			CachedToolTip = nullptr;
+		}
 	}
 }
 
@@ -211,7 +217,10 @@ void UCraftingListSlot::RefreshGeometryCache()
 	if (ButtonItem->HasKeyboardFocus())
 	{
 		if (IsValid(CachedToolTip))
+		{
 			CachedToolTip->RemoveFromParent();
+			CachedToolTip = nullptr;
+		}
 
 		CachedToolTip = CreateWidget<UToolTip>(this, ToolTipClass);
 		CachedToolTip->InitializeToolTip(ItemData, false);
@@ -283,7 +292,10 @@ void UCraftingListSlot::OnHovered()
 	if (!IconButtonGameModule->IsUsingGamepad())
 	{
 		if (IsValid(CachedToolTip))
+		{
 			CachedToolTip->RemoveFromParent();
+			CachedToolTip = nullptr;
+		}
 
 		SetKeyboardFocus();
 		ImageSlotBackground->SetColorAndOpacity(FLinearColor(1, 1, 1));
@@ -300,5 +312,8 @@ void UCraftingListSlot::OnUnhovered()
 	ButtonItem->SetToolTip(nullptr);
 	ImageSlotBackground->SetColorAndOpacity(FLinearColor(1, 1, 1, 0));
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 }

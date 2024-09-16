@@ -49,6 +49,7 @@ void UCraftingList::SwitchList(ECraftingCategory Category)
 
 		ButtonArmor->RefreshListButton(CurrentListCategory);
 		ButtonWeapon->RefreshListButton(CurrentListCategory);
+		SetListTitleText();
 		SetFocusToFirstSlot(false);
 	}
 }
@@ -248,4 +249,9 @@ UCraftingListBox* UCraftingList::GetFirstListBoxFromCategory(ECraftingCategory C
 
 void UCraftingList::ClearLists()
 {
+}
+
+void UCraftingList::SetListTitleText() const
+{
+	TextListCategory->SetText(UEnum::GetDisplayValueAsText(CurrentListCategory));
 }

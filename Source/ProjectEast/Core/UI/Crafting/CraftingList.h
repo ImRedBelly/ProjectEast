@@ -4,6 +4,7 @@
 #include "PlayerCraftingWindow.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ScrollBox.h"
+#include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
@@ -36,6 +37,8 @@ protected:
 	UCraftingListSwitchButton* ButtonWeapon;
 	UPROPERTY(meta=(BindWidget))
 	UWidgetSwitcher* WidgetSwitcher;
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TextListCategory;
 
 	UPROPERTY(meta=(BindWidget))
 	UVerticalBox* MainVBoxArmor;
@@ -64,6 +67,7 @@ private:
 	virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 
 	void ClearLists();
+	void SetListTitleText() const;
 	void CreateCraftingList();
 	void SelectFirstItemOnList();
 	void SortCraftingListsBySubcategory();
