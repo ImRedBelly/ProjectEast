@@ -105,7 +105,6 @@ void UCraftingList::SortCraftingListsBySubcategory()
 
 	for (auto KV : CraftingLists)
 	{
-		UCraftingListBox* CurrentBox = CraftingLists[KV.Key];
 		if (SubcategoriesPriority.Contains(KV.Key))
 		{
 			uint32 ValuePriority = SubcategoriesPriority[KV.Key];
@@ -117,14 +116,14 @@ void UCraftingList::SortCraftingListsBySubcategory()
 					SubcategoriesPriority[ArrayOfListBoxes[i]->GetListSubcategory()] <= ValuePriority)
 					continue;
 				IsElementInserted = true;
-				ArrayOfListBoxes.Insert(CurrentBox, ValuePriority);
+				ArrayOfListBoxes.Insert(KV.Value, ValuePriority);
 			}
 
 			if (!IsElementInserted)
-				ArrayOfListBoxes.Add(CurrentBox);
+				ArrayOfListBoxes.Add(KV.Value);
 		}
 		else
-			ArrayOfListBoxes.Add(CurrentBox);
+			ArrayOfListBoxes.Add(KV.Value);
 	}
 	MainVBoxArmor->ClearChildren();
 	MainVBoxWeapons->ClearChildren();
@@ -178,7 +177,7 @@ void UCraftingList::BuildCraftingList(TArray<FCraftingData*> CraftingList)
 		}
 	}
 	RefreshListButtonsVisibility();
-	SortCraftingListsBySubcategory();
+	//SortCraftingListsBySubcategory();
 }
 
 void UCraftingList::AssignCurrentlySelectedSlot(UCraftingListSlot* InSelectedSlot)
