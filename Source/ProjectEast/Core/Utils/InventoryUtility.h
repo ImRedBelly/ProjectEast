@@ -5,6 +5,7 @@
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/FGamepadButtonData.h"
+#include "ProjectEast/Core/UI/Crafting/CraftingMaterialsBar.h"
 
 class UInteractableComponent;
 

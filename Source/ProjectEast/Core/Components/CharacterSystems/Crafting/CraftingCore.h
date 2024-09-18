@@ -11,6 +11,8 @@ class PROJECTEAST_API UCraftingCore : public UActorComponent
 {
 	GENERATED_BODY()
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRefreshed);
+	
 public:
 	UCraftingCore();
 
@@ -52,6 +54,9 @@ public:
 	                                                 AActor* OwningPlayer);
 	bool GetIsShowLockedItems() const { return bIsShowLockedItems; }
 
+	
+	FOnRefreshed OnRefreshed;
+	
 protected:
 	UPROPERTY(EditAnywhere)
 	TArray<UDataTable*> CraftingDataTables;

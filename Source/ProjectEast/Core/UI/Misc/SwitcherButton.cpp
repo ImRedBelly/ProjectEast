@@ -39,7 +39,20 @@ void USwitcherButton::OnClickedButton()
 	if (CachedWidgetManager)
 	{
 		if (bOpenWidget)
-			CachedWidgetManager->SwitchWidgetTo(WidgetType);
+		{
+			if (WidgetType == EWidgetType::PlayerCrafting)
+			{
+				if(AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer()))
+				{
+					if(UPlayerCrafting* PlayerCrafting = PlayerController->GetPlayerCrafting())
+					{
+						PlayerCrafting->OpenCraftingWidget(nullptr, EWidgetType::PlayerCrafting);
+					}
+				}
+			}
+			else
+				CachedWidgetManager->SwitchWidgetTo(WidgetType);
+		}
 		else
 			CachedWidgetManager->SwitchTabTo(WidgetType);
 	}

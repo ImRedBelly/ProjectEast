@@ -1,6 +1,15 @@
 ﻿#include "PlayerCrafting.h"
 
+#include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
+
+void UPlayerCrafting::AssignCraftableData(FCraftingData* CraftingData)
+{
+	SelectedCraftingData = CraftingData;
+	if(OnNewItemSelected.IsBound())
+		OnNewItemSelected.Broadcast(*SelectedCraftingData);
+}
 
 void UPlayerCrafting::OpenCraftingWidget(UCraftingCore* CraftingCore, EWidgetType WidgetType)
 {
@@ -9,8 +18,9 @@ void UPlayerCrafting::OpenCraftingWidget(UCraftingCore* CraftingCore, EWidgetTyp
 	else
 		CurrentStationComponent = this;
 
+	WidgetManager->InitializeCraftingStation(CurrentStationComponent);
+	SetCurrentCraftingStation(CurrentStationComponent);
 	WidgetManager->OpenNewWidget(WidgetType);
-	WidgetManager->InitializeCraftingWidgets(CurrentStationComponent);
 	bIsCraftingWidgetOpen = true;
 }
 
@@ -42,11 +52,49 @@ bool UPlayerCrafting::IsCraftingRecipeLocked(FCraftingData* CraftingData)
 
 void UPlayerCrafting::FocusSelectedItem(FCraftingData* CraftingData)
 {
+	AssignCraftableData(CraftingData);
+	//AttachNewItemToPlayerPreview(SelectedCraftingData);
+	if(OnRefreshed.IsBound())
+		OnRefreshed.Broadcast();
 }
 
-TTuple<FItemData*, FSingleDTItem> UPlayerCrafting::GetCurrentCraftableData()
+TTuple<FItemData*, TArray<FSingleDTItem>> UPlayerCrafting::GetCurrentCraftableData()
 {
-	return MakeTuple(new FItemData(), FSingleDTItem());
+	if (InventoryUtility::IsCraftingDataValid(SelectedCraftingData))
+	{
+		auto Data = InventoryUtility::GetCraftableData(SelectedCraftingData);
+		return MakeTuple(Data.Get<0>()[0], Data.Get<1>());
+	}
+	return MakeTuple(new FItemData(), TArray<FSingleDTItem>());
+}
+
+void UPlayerCrafting::SetCurrentCraftingStation(UCraftingCore* StationComponent)
+{
+	CurrentStationComponent = StationComponent;
+}
+
+int32 UPlayerCrafting::FindItemQuantity(FItemData* ItemData, APlayerController* Controller)
+{
+	auto PlayerInventory = InventoryUtility::GetPlayerInventory(Controller);
+	if (IsValid(PlayerInventory))
+	{
+		auto Data = PlayerInventory->GetItemByData(ItemData);
+		if (Data.Get<1>())
+		{
+			return Data.Get<0>()->Quantity;
+		}
+	}
+
+	auto PlayerEquipment = InventoryUtility::GetPlayerEquipment(Controller);
+	if (IsValid(PlayerEquipment))
+	{
+		auto Data = PlayerEquipment->GetItemByID(ItemData->ID);
+		if (Data.Get<0>())
+		{
+			return Data.Get<1>()->Quantity;
+		}
+	}
+	return 0;
 }
 
 void UPlayerCrafting::BeginPlay()

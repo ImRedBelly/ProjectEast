@@ -12,7 +12,10 @@ class PROJECTEAST_API UPlayerCrafting : public UCraftingCore
 {
 	GENERATED_BODY()
 	
+		DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNewItemSelected, FCraftingData, CraftingData);
+
 public:
+	void AssignCraftableData(FCraftingData* CraftingData);
 	void OpenCraftingWidget(UCraftingCore* CraftingCore, EWidgetType WidgetType);
 	void CloseCraftingWidget();
 	void InitializeCrafting(AMainPlayerController* PlayerController);
@@ -20,13 +23,17 @@ public:
 	bool IsCraftingRecipeLocked(FCraftingData* CraftingData);
 	void FocusSelectedItem(FCraftingData* CraftingData);
 
-	TTuple<FItemData*, FSingleDTItem> GetCurrentCraftableData();
+	TTuple<FItemData*, TArray<FSingleDTItem>> GetCurrentCraftableData();
+	void SetCurrentCraftingStation(UCraftingCore* StationComponent);
+	UCraftingCore* GetCurrentStationComponent() const { return CurrentStationComponent; }
+	int32 FindItemQuantity(FItemData* ItemData, APlayerController* Controller);
 
+	FOnNewItemSelected OnNewItemSelected;
+	
 protected:
 	virtual void BeginPlay() override;
-	
-private:
 
+private:
 	UPROPERTY()
 	UCraftingCore* CurrentStationComponent;
 	UPROPERTY()
@@ -34,9 +41,9 @@ private:
 	UPROPERTY()
 	UWidgetManager* WidgetManager;
 
-	
+	FCraftingData* SelectedCraftingData = new FCraftingData();
 
 	TArray<FString> UnlockedRecipes;
-	
+
 	bool bIsCraftingWidgetOpen;
 };

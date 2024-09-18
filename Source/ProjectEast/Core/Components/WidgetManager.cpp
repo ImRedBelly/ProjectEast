@@ -109,16 +109,14 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 			SetActiveTab(EWidgetType::PlayerCrafting);
 			StartPlayerCapture();
 
-			CachedPlayerCraftingWindow = CreateWidget<
-				UCraftingWindowCore>(CachedPlayerController, PlayerCraftingWindow);
+			CachedPlayerCraftingWindow = CreateWidget<UCraftingWindowCore>(CachedPlayerController, PlayerCraftingWindow);
 
 			if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 				CachedPlayerCraftingWindow->AddToViewport(1);
 			else
 				CachedPlayerCraftingWindow->AddToPlayerScreen(1);
 
-			CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(),
-			                                             CachedPlayerController->GetPlayerCrafting());
+			CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(), CraftingStation);
 			InputMode.SetWidgetToFocus(CachedPlayerCraftingWindow->TakeWidget());
 		}
 		break;
@@ -128,14 +126,14 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 			SetActiveTab(EWidgetType::StationCrafting);
 			StartPlayerCapture();
 
-
-			CachedStationCraftingWindow = CreateWidget<UCraftingWindowCore>(
-				CachedPlayerController, StationCraftingWindow);
+			CachedStationCraftingWindow = CreateWidget<UCraftingWindowCore>(CachedPlayerController, StationCraftingWindow);
 
 			if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 				CachedStationCraftingWindow->AddToViewport(1);
 			else
 				CachedStationCraftingWindow->AddToPlayerScreen(1);
+
+			CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(), CraftingStation);
 			InputMode.SetWidgetToFocus(CachedStationCraftingWindow->TakeWidget());
 		}
 		break;
@@ -314,17 +312,9 @@ void UWidgetManager::DisplayMessageNotify(const FString Str)
 {
 }
 
-void UWidgetManager::InitializeCraftingWidgets(UCraftingCore* CraftingCore)
+void UWidgetManager::InitializeCraftingStation(UCraftingCore* CraftingCore)
 {
-	if (IsValid(CachedPlayerCraftingWindow))
-	{
-		if (!IsValid(CraftingCore))
-			CraftingCore = CachedPlayerController->GetPlayerCrafting();
-
-		CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(), CraftingCore);
-	}
-	if (IsValid(CachedStationCraftingWindow))
-		CachedStationCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(), CraftingCore);
+	CraftingStation = CraftingCore;
 }
 
 bool UWidgetManager::IsAnyMainWidgetOpen() const

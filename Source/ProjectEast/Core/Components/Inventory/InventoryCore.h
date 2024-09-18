@@ -96,6 +96,7 @@ public:
 	float GetOwnerGold() const { return OwnerGold; }
 	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
 	bool IsRefreshOnClosingWidget() const { return bIsRefreshOnClosingWidget; }
+	TTuple<FItemData*, bool> GetItemByData(FItemData* ItemData);
 	TTuple<bool, FText> TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,EInputMethodType InputMethod,UPlayerEquipment* Sender);
 
 protected:
@@ -161,7 +162,6 @@ protected:
 	FItemData* GetItemBySlot(EInventoryPanels Panel, uint32 SlitIndex);
 	TTuple<FItemData*, bool> GetItemByID(FString ID, EInventoryPanels InSpecifiedPanel);
 	TArray<FItemData*> GetCombinedInventories() const;
-	TTuple<FItemData*, bool> GetItemByData(FItemData* ItemData);
 	TArray<FItemData*> GetItemsOfSpecifiedType(EItemsType ItemsType) const;
 	uint32 GetAmountOfEmptySlots(EInventoryPanels Panels);
 	void SwitchActivePanel(EInventoryPanels Panel);

@@ -358,8 +358,8 @@ void UPlayerInventoryWidget::DisplaySampleSlots(int32 IndexSlot)
 	for (int i = 0; i < IndexSlot; ++i)
 	{
 		UPlayerInventorySlot* NewPlayerInventorySlot = CreateWidget<UPlayerInventorySlot>(this, DefaultPlayerInventorySlot);
-		UUniformGridSlot* CurrentSlot = CurrentPanel->AddChildToUniformGrid(
-			NewPlayerInventorySlot, CurrentRow, CurrentColumn);
+
+		UUniformGridSlot* CurrentSlot = CurrentPanel->AddChildToUniformGrid(NewPlayerInventorySlot, CurrentRow, CurrentColumn);
 		CurrentSlot->SetHorizontalAlignment(HAlign_Fill);
 		CurrentSlot->SetVerticalAlignment(VAlign_Fill);
 		CurrentColumn++;

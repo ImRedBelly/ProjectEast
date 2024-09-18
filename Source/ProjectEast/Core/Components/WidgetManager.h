@@ -72,7 +72,7 @@ public:
 	void OpenTextDocumentPopup(FItemData* ItemData, UUserWidget* ParentWidget);
 
 	void DisplayMessageNotify(const FString Str);
-	void InitializeCraftingWidgets(UCraftingCore* CraftingCore);
+	void InitializeCraftingStation(UCraftingCore* CraftingCore);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
@@ -111,6 +111,9 @@ private:
 	UCraftingWindowCore* CachedPlayerCraftingWindow;
 	UPROPERTY()
 	UCraftingWindowCore* CachedStationCraftingWindow;
+
+	UPROPERTY()
+	UCraftingCore* CraftingStation;
 
 	EWidgetType ActiveWidget;
 	EWidgetType ActiveTab;

@@ -111,7 +111,7 @@ bool InventoryUtility::IsItemClassValid(const FItemData* ItemData)
 
 bool InventoryUtility::IsCraftingDataValid(const FCraftingData* CraftingData)
 {
-	if(CraftingData->InputItems.IsValidIndex(0) && CraftingData->OutputItems.IsValidIndex(0))
+	if (CraftingData->InputItems.IsValidIndex(0) && CraftingData->OutputItems.IsValidIndex(0))
 		return true;
 	return false;
 }
@@ -133,7 +133,7 @@ bool InventoryUtility::AreItemSlotsEqual(const FItemData* ItemDataFirst, const F
 		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket2)
 		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket3)
 		|| (ItemDataFirst->EquipmentSlot == EItemSlot::Pocket4);
-	
+
 	auto ResultSecond = (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket1)
 		|| (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket2)
 		|| (ItemDataSecond->EquipmentSlot == EItemSlot::Pocket3)
@@ -289,9 +289,10 @@ TTuple<TArray<FItemData*>, TArray<FSingleDTItem>> InventoryUtility::GetCraftable
 	TArray<FSingleDTItem> Materials;
 	for (auto OutputItem : CraftingData->OutputItems)
 	{
-		if(IsValid(OutputItem.TableAndRow.DataTable))
+		if (IsValid(OutputItem.TableAndRow.DataTable))
 		{
-			auto ItemData = OutputItem.TableAndRow.DataTable->FindRow<FItemData>(OutputItem.TableAndRow.RowName, TEXT(""));
+			auto ItemData = OutputItem.TableAndRow.DataTable->FindRow<FItemData>(
+				OutputItem.TableAndRow.RowName, TEXT(""));
 			CraftableItems.Add(CopyItemData(ItemData));
 		}
 	}
@@ -556,5 +557,5 @@ void InventoryUtility::PlaySoundOnItemPickedUp()
 
 FCraftingData* InventoryUtility::GetCraftingDataFromTableRow(const FDataTableRowHandle& TableRow)
 {
-	return  TableRow.GetRow<FCraftingData>("");
+	return TableRow.GetRow<FCraftingData>("");
 }

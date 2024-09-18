@@ -1,4 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿#include "CraftingBase.h"
 
+#include "CraftingMaterialsBar.h"
+#include "ProjectEast/Core/Utils/InventoryUtility.h"
 
-#include "CraftingBase.h"
+void UCraftingBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+	CraftingMaterialsBar->InitializeWidget(InventoryUtility::GetPlayerCrafting(GetOwningPlayer()));
+}
