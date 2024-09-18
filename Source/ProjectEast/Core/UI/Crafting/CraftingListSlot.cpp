@@ -272,7 +272,7 @@ void UCraftingListSlot::SetItemRarityColor() const
 
 void UCraftingListSlot::SetTextColor() const
 {
-	auto Color = bIsSelected ? FLinearColor(1, 1, 1) : FLinearColor(.017684f, .022575f, .03125f);
+	auto Color = bIsSelected ? FLinearColor(.017684f, .022575f, .03125f) : FLinearColor(1, 1, 1);
 
 	TextItemName->SetColorAndOpacity(Color);
 	TextItemType->SetColorAndOpacity(Color);

@@ -39,7 +39,10 @@ void UEquipmentSlot::NativeDestruct()
 {
 	Super::NativeDestruct();
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 
 	ButtonItem->OnClicked.RemoveDynamic(this, &UEquipmentSlot::OnRightClick);
 	ButtonItem->OnHovered.RemoveDynamic(this, &UEquipmentSlot::OnHovered);
@@ -64,7 +67,10 @@ void UEquipmentSlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
 		CachedEquipmentPanel->AssignCurrentlyFocusedSlot(CurrentItemData->EquipmentSlot);
 		WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::Equipment);
 		if (IsValid(CachedToolTip))
+		{
 			CachedToolTip->RemoveFromParent();
+			CachedToolTip = nullptr;
+		}
 
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
@@ -189,7 +195,10 @@ void UEquipmentSlot::EmptySlot()
 	SetButtonStyle(CurrentItemData);
 	ButtonItem->SetToolTip(nullptr);
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 }
 
 void UEquipmentSlot::OnRightClick()
@@ -208,7 +217,10 @@ void UEquipmentSlot::RefreshToolTip()
 		{
 			ButtonItem->SetToolTip(nullptr);
 			if (IsValid(CachedToolTip))
+			{
 				CachedToolTip->RemoveFromParent();
+				CachedToolTip = nullptr;
+			}
 
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
@@ -222,7 +234,10 @@ void UEquipmentSlot::RefreshToolTip()
 		{
 			SetToolTip(ButtonItem);
 			if (IsValid(CachedToolTip))
+			{
 				CachedToolTip->RemoveFromParent();
+				CachedToolTip = nullptr;
+			}
 
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
@@ -390,7 +405,10 @@ void UEquipmentSlot::OnHovered()
 	if (!IsUsingGamepad())
 	{
 		if (IsValid(CachedToolTip))
+		{
 			CachedToolTip->RemoveFromParent();
+			CachedToolTip = nullptr;
+		}
 
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
@@ -407,7 +425,10 @@ void UEquipmentSlot::OnUnhovered()
 	ButtonItem->SetToolTip(nullptr);
 	BorderImage->SetColorAndOpacity(BorderUnHovered);
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 }
 
 bool UEquipmentSlot::TryWeaponsSwapped(UItemDataDragDropOperation* Operation)

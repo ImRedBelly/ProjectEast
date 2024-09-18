@@ -111,7 +111,7 @@ void UCraftingMaterialsSlot::SetBackgroundColor() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		auto Color = CurrentItemData->Quantity > CurrentQuantity ? GreenColor : RedColor;
+		auto Color = CurrentItemData->Quantity > CurrentQuantity ? RedColor : GreenColor;
 		SlotBackgroundGradient->SetColorAndOpacity(Color);
 	}
 }
@@ -120,7 +120,7 @@ void UCraftingMaterialsSlot::SetBackgroundColorText() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		auto Color = CurrentItemData->Quantity > CurrentQuantity ? GreenColor : RedColor;
+		auto Color = CurrentItemData->Quantity > CurrentQuantity ? RedColor : GreenColor;
 		TextSlash->SetColorAndOpacity(Color);
 		TextAmountNeed->SetColorAndOpacity(Color);
 		TextCurrentAmount->SetColorAndOpacity(Color);
