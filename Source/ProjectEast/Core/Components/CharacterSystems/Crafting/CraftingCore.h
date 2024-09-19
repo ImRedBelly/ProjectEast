@@ -33,6 +33,7 @@ public:
 	void FinishCraftingProcess();
 
 	TTuple<float, float> GetCraftingProcessTime();
+	int32 GetCraftingQueueLength() const {return CraftingQueue.Num();}
 	void AddToCraftingQueue(TArray<FCraftingData*> AddData);
 	void RemoveFromCraftingQueue(FCraftingData* RemoveData);
 	void ClearCraftingQueue(AActor* OwningPlayer);
@@ -49,6 +50,8 @@ public:
 	bool IsCraftableItemInQueue(FCraftingData* CraftingData);
 	uint8 GetItemQueueIndex(FString CraftingID);
 	bool CanBeAddedToQueue();
+	int32 GetMaxQueuedItems() const {return MaxQueuedItems;}
+	bool GetCanCraftItems() const {return CanCraftItems;}
 
 	TTuple<bool, FText> CanInitializeCraftingProcess(FCraftingData* CraftingData, uint8 AmountToCraft,
 	                                                 AActor* OwningPlayer);
@@ -65,6 +68,10 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	bool bIsShowLockedItems;
+	UPROPERTY(EditAnywhere)
+	int32 MaxQueuedItems;
+	UPROPERTY(EditAnywhere)
+	bool CanCraftItems;
 
 private:
 	TArray<FCraftingData*> CraftingList;
@@ -74,7 +81,6 @@ private:
 
 	FTimerHandle CraftingTimer;
 
-	int32 MaxQueuedItems;
 	float CraftingCostMultiplier;
 	float CraftingDurationRate;
 

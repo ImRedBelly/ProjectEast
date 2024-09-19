@@ -9,18 +9,6 @@ class ABaseEquippable;
 class AItemConsumable;
 class ABaseItemPickUp;
 
-USTRUCT()
-struct FItemsStatRow
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	EStateCategoryType Type;
-
-	UPROPERTY(EditAnywhere)
-	float Value;
-};
-
 
 UCLASS()
 class PROJECTEAST_API UMainItemData : public UPrimaryDataAsset

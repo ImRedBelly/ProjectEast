@@ -10,16 +10,16 @@
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UCraftingMaterialsSlot::InitializeSlot(FItemData* ItemData, int32 Quantity, int32 Index,
-	UCraftingMaterialsBar* ParentMaterialsBar)
+                                            UCraftingMaterialsBar* ParentMaterialsBar)
 {
 	CurrentItemData = ItemData;
-	
+
 	CurrentQuantity = Quantity;
 	SlotIndex = Index;
 
-	if(IsValid(ParentMaterialsBar))
+	if (IsValid(ParentMaterialsBar))
 		ParentWidgetRef = ParentMaterialsBar;
-	
+
 	SetItemName();
 	SetItemImage();
 	SetCurrentItemAmount();
@@ -33,11 +33,15 @@ void UCraftingMaterialsSlot::NativeConstruct()
 	Super::NativeConstruct();
 	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
 
+	ButtonItem->OnHovered.AddDynamic(this, &UCraftingMaterialsSlot::OnHovered);
+	ButtonItem->OnUnhovered.AddDynamic(this, &UCraftingMaterialsSlot::OnUnhovered);
 }
 
 void UCraftingMaterialsSlot::NativeDestruct()
 {
 	Super::NativeDestruct();
+	ButtonItem->OnHovered.RemoveDynamic(this, &UCraftingMaterialsSlot::OnHovered);
+	ButtonItem->OnUnhovered.RemoveDynamic(this, &UCraftingMaterialsSlot::OnUnhovered);
 	if (IsValid(ToolTipRef))
 	{
 		ToolTipRef->RemoveFromParent();
@@ -50,8 +54,8 @@ void UCraftingMaterialsSlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocus
 	if (IconButtonGameModule->IsUsingGamepad())
 	{
 		BorderItem->SetBrushColor(FLinearColor(1, 1, 1));
-	if(IsValid(ParentWidgetRef))
-		ParentWidgetRef->SetCurrentFocusedSlot(SlotIndex);
+		if (IsValid(ParentWidgetRef))
+			ParentWidgetRef->SetCurrentFocusedSlot(SlotIndex);
 		RefreshToolTipWidget();
 		SetTooltipPositionAndAlignment();
 	}

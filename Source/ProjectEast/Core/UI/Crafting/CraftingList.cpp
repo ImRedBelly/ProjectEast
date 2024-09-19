@@ -8,7 +8,10 @@ void UCraftingList::InitializeList(UPlayerCrafting* InPlayerCraftingCore, UCraft
 {
 	CachedPlayerCrafting = InPlayerCraftingCore;
 	CachedCraftingCore = InCraftingCore;
+
 	CreateCraftingList();
+	SwitchList(GetFirstValidListCategory());
+	SelectFirstItemOnList();
 }
 
 void UCraftingList::ScrollToSlot(UUserWidget* TargetWidget) const
@@ -84,6 +87,13 @@ void UCraftingList::CreateCraftingList()
 
 void UCraftingList::SelectFirstItemOnList()
 {
+	if (UCraftingListBox* CraftingListBox = GetFirstListBoxFromCategory(CurrentListCategory))
+	{
+		if (UCraftingListSlot* CraftingListSlot = CraftingListBox->GetSlotByIndex(0))
+		{
+			CraftingListSlot->SelectSlot();
+		}
+	}
 }
 
 void UCraftingList::RefreshListButtonsVisibility() const

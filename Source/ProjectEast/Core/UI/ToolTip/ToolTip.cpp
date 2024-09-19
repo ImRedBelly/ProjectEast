@@ -101,8 +101,7 @@ void UToolTip::SetItemType() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		TextItemType->SetText(
-			FText::FromString(UEnum::GetValueAsString(CurrentItemData->Class.GetDefaultObject()->Type)));
+		TextItemType->SetText(UEnum::GetDisplayValueAsText(CurrentItemData->Class.GetDefaultObject()->Type));
 	}
 }
 
@@ -110,8 +109,7 @@ void UToolTip::SetItemRarity() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
-		TextItemRarity->SetText(
-			FText::FromString(UEnum::GetValueAsString(CurrentItemData->Class.GetDefaultObject()->Rarity)));
+		TextItemRarity->SetText(UEnum::GetDisplayValueAsText(CurrentItemData->Class.GetDefaultObject()->Rarity));
 	}
 }
 
@@ -160,7 +158,7 @@ void UToolTip::BuildItemStats()
 			auto NewItemStatsSlot = CreateWidget<UItemStatsSlot>(this, DefaultItemStatsSlot);
 
 			FString StatName = UEnum::GetValueAsString(ItemsStat.Type);
-			NewItemStatsSlot->InitializeSlot(StatName, ItemsStat.Value, 0.0f, false);
+			NewItemStatsSlot->InitializeSlot(FText::FromString(StatName), ItemsStat.Value, 0.0f, false);
 
 			StatWidgets.Add(StatName, NewItemStatsSlot);
 			auto VerticalBoxSlot = VerticalBoxItemStats->AddChildToVerticalBox(NewItemStatsSlot);

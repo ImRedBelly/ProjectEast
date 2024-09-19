@@ -252,10 +252,10 @@ USTRUCT(BlueprintType)
 struct FSingleDTItem
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	FDataTableRowHandle TableAndRow;
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	int32 Quantity;
 };
@@ -332,3 +332,14 @@ struct FRandomizedLootTable
 	int32 MaxLootItems;
 };
 
+USTRUCT()
+struct FItemsStatRow
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	EStateCategoryType Type;
+
+	UPROPERTY(EditAnywhere)
+	float Value;
+};

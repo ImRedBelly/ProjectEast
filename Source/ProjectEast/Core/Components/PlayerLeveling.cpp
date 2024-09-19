@@ -2,7 +2,7 @@
 
 uint32 UPlayerLeveling::GetCurrentLevel()
 {
-	return 0;
+	return 1;
 }
 
 float UPlayerLeveling::GetCurrentExperience()

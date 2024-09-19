@@ -1,4 +1,11 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿#include "CraftingQueue.h"
 
+bool UCraftingQueue::CanBeFocused() const
+{
+	return IsValid(HorizontalBoxSlots->GetChildAt(0));
+}
 
-#include "CraftingQueue.h"
+void UCraftingQueue::SetWidgetToTransferFocus(UUserWidget* UserWidget)
+{
+	WidgetToTransferFocus = UserWidget;
+}

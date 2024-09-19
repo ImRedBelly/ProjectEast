@@ -12,7 +12,7 @@ class PROJECTEAST_API UItemStatsSlot : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void InitializeSlot(FString NameState, float ValueStat, float ValueComparison, bool ComparisonShow);
+	void InitializeSlot(FText NameState, float ValueStat, float ValueComparison, bool ComparisonShow);
 
 	void ShowComparisonValue(float Value);
 	void HideComparisonValue();
@@ -45,7 +45,7 @@ protected:
 	void UpdateViewSwitcher() const;
 
 private:
-	FString StatName;
+	FText StatName;
 	float StatValue;
 	float ComparisonValue;
 	bool ShowComparison;

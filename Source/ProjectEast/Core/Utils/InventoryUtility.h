@@ -17,6 +17,8 @@ public:
 	static UPlayerEquipment* GetPlayerEquipment(AActor* OwningPlayer);
 	static UPlayerCrafting* GetPlayerCrafting(AActor* OwningPlayer);
 	static UConsumableBuffs* GetConsumableBuffs(AActor* OwningPlayer);
+	static UPlayerLeveling* GetPlayerLeveling(AActor* OwningPlayer);
+	static UCraftingCore* GetCurrentCraftingStation(AActor* OwningPlayer);
 	static TTuple<bool, UInventoryCore*> GetInventoryFromInteractable(UInteractableComponent* InteractableComponent);
 	static bool SwitchHasOwnerAuthority(UActorComponent* ActorComponent);
 	static bool IsItemClassValid(const FItemData* ItemData);

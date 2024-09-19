@@ -1,5 +1,6 @@
 ﻿#include "InventoryUtility.h"
 #include "Engine/DataTable.h"
+#include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
@@ -81,6 +82,26 @@ UConsumableBuffs* InventoryUtility::GetConsumableBuffs(AActor* OwningPlayer)
 		if (IsValid(ConsumableBuffs))
 			return ConsumableBuffs;
 	}
+	return nullptr;
+}
+
+UPlayerLeveling* InventoryUtility::GetPlayerLeveling(AActor* OwningPlayer)
+{
+	if (IsValid(OwningPlayer))
+	{
+		UPlayerLeveling* PlayerLeveling = Cast<UPlayerLeveling>(
+			OwningPlayer->GetComponentByClass(UPlayerLeveling::StaticClass()));
+		if (IsValid(PlayerLeveling))
+			return PlayerLeveling;
+	}
+	return nullptr;
+}
+
+UCraftingCore* InventoryUtility::GetCurrentCraftingStation(AActor* OwningPlayer)
+{
+	auto PlayerCrafting = GetPlayerCrafting(OwningPlayer);
+	if (IsValid(PlayerCrafting))
+		return PlayerCrafting->GetCurrentStationComponent();
 	return nullptr;
 }
 

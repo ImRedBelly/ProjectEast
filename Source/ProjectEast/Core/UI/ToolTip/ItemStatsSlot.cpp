@@ -3,7 +3,7 @@
 #include "Components/WidgetSwitcher.h"
 #include "Kismet/KismetTextLibrary.h"
 
-void UItemStatsSlot::InitializeSlot(FString NameState, float ValueStat,
+void UItemStatsSlot::InitializeSlot(FText NameState, float ValueStat,
 	float ValueComparison, bool ComparisonShow)
 {
 	StatName = NameState;
@@ -29,7 +29,7 @@ void UItemStatsSlot::NativePreConstruct()
 	Super::NativePreConstruct();
 	if (IsDesignTime())
 	{
-		TextStatName->SetText(FText::FromString(StatName));
+		TextStatName->SetText(StatName);
 		TextStatValue->SetText(FText::FromString(FString::SanitizeFloat(StatValue)));
 		TextComparisonValue1->SetText(FText::FromString(FString::SanitizeFloat(ComparisonValue)));
 	}
