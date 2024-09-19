@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
+#include "ProjectEast/Core/Components/CharacterSystems/Crafting/CraftingCore.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "CraftingBase.generated.h"
 
@@ -26,7 +27,9 @@ UCLASS()
 class PROJECTEAST_API UCraftingBase : public UUserWidget
 {
 	GENERATED_BODY()
-
+public:
+	void InitializeCraftingBase(UPlayerCrafting* InPlayerCrafting, UCraftingCore* InCraftingCore);
+	
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UImage* ImageBackground;
@@ -102,7 +105,6 @@ private:
 	int32 CurrentAmount = 1;
 
 	virtual void NativePreConstruct() override;
-	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 	virtual FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 

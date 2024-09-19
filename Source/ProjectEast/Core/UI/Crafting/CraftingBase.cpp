@@ -13,29 +13,30 @@
 #include "ProjectEast/Core/UI/ToolTip/ItemStatsSlot.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
-void UCraftingBase::NativePreConstruct()
+void UCraftingBase::InitializeCraftingBase(UPlayerCrafting* InPlayerCrafting, UCraftingCore* InCraftingCore)
 {
-	Super::NativePreConstruct();
-	if (IsValid(QueueFocusTransfer))
-		CraftingQueue->SetWidgetToTransferFocus(QueueFocusTransfer);
-}
-
-void UCraftingBase::NativeConstruct()
-{
-	Super::NativeConstruct();
-	PlayerCrafting = InventoryUtility::GetPlayerCrafting(GetOwningPlayer());
-	PlayerEquipment = InventoryUtility::GetPlayerEquipment(GetOwningPlayer());
-	PlayerLeveling = InventoryUtility::GetPlayerLeveling(GetOwningPlayer());
-	CraftingStation = InventoryUtility::GetCurrentCraftingStation(GetOwningPlayer());
-
+	PlayerCrafting = InPlayerCrafting;
+	CraftingStation = InCraftingCore;
+	
+	auto OwningPlayer = GetOwningPlayer();
+	PlayerEquipment = InventoryUtility::GetPlayerEquipment(OwningPlayer);
+	PlayerLeveling = InventoryUtility::GetPlayerLeveling(OwningPlayer);
+	
 	PlayerCrafting->OnRefreshed.AddDynamic(this, &UCraftingBase::RefreshCraftingData);
 	CraftingStation->OnRefreshed.AddDynamic(this, &UCraftingBase::RefreshCraftingData);
 
 	CraftingMaterialsBar->InitializeWidget(PlayerCrafting);
 	PlayAnimation(ItemInfoAnimation);
 	WidgetSwitcherCraftingBox->SetActiveWidgetIndex(CraftingStation->GetCanCraftItems() ? 0 : 1);
-	
+
 	ButtonClearQueue->OnClicked.AddDynamic(this, &UCraftingBase::OnClicked);
+}
+
+void UCraftingBase::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+	if (IsValid(QueueFocusTransfer))
+		CraftingQueue->SetWidgetToTransferFocus(QueueFocusTransfer);
 }
 
 void UCraftingBase::NativeDestruct()
@@ -194,7 +195,8 @@ void UCraftingBase::SetRequiredLevelColor() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentCraftableItem) && IsValid(PlayerLeveling))
 	{
-		auto IsRequiredLevel = CurrentCraftableItem->Class.GetDefaultObject()->RequiredLevel <= PlayerLeveling->GetCurrentLevel();
+		auto IsRequiredLevel = CurrentCraftableItem->Class.GetDefaultObject()->RequiredLevel <= PlayerLeveling->
+			GetCurrentLevel();
 		ImageRequireLevelBackground->SetColorAndOpacity(IsRequiredLevel
 			                                                ? FLinearColor(0, 0.25f, .040356f)
 			                                                : FLinearColor(.296875f, 0, .026351f));

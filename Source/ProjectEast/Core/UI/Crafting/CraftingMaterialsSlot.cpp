@@ -16,9 +16,7 @@ void UCraftingMaterialsSlot::InitializeSlot(FItemData* ItemData, int32 Quantity,
 
 	CurrentQuantity = Quantity;
 	SlotIndex = Index;
-
-	if (IsValid(ParentMaterialsBar))
-		ParentWidgetRef = ParentMaterialsBar;
+	ParentWidgetRef = ParentMaterialsBar;
 
 	SetItemName();
 	SetItemImage();
@@ -54,8 +52,7 @@ void UCraftingMaterialsSlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocus
 	if (IconButtonGameModule->IsUsingGamepad())
 	{
 		BorderItem->SetBrushColor(FLinearColor(1, 1, 1));
-		if (IsValid(ParentWidgetRef))
-			ParentWidgetRef->SetCurrentFocusedSlot(SlotIndex);
+		ParentWidgetRef->SetCurrentFocusedSlot(SlotIndex);
 		RefreshToolTipWidget();
 		SetTooltipPositionAndAlignment();
 	}

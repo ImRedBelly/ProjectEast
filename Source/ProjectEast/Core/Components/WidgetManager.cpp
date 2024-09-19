@@ -133,7 +133,7 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 			else
 				CachedStationCraftingWindow->AddToPlayerScreen(1);
 
-			CachedPlayerCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(), CraftingStation);
+			CachedStationCraftingWindow->InitializeWindow(CachedPlayerController->GetPlayerCrafting(), CraftingStation);
 			InputMode.SetWidgetToFocus(CachedStationCraftingWindow->TakeWidget());
 		}
 		break;
