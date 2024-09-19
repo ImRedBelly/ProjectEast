@@ -20,7 +20,7 @@ void UPlayerCrafting::OpenCraftingWidget(UCraftingCore* CraftingCore, EWidgetTyp
 
 	WidgetManager->InitializeCraftingStation(CurrentStationComponent);
 	SetCurrentCraftingStation(CurrentStationComponent);
-	WidgetManager->OpenNewWidget(WidgetType);
+	WidgetManager->SwitchWidgetTo(WidgetType);
 	bIsCraftingWidgetOpen = true;
 }
 
