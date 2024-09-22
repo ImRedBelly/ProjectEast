@@ -1,9 +1,12 @@
 ﻿#include "InventoryUtility.h"
 #include "Engine/DataTable.h"
 #include "ProjectEast/Core/Components/PlayerLeveling.h"
+#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
+#include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 
 TArray<FItemData*> InventoryUtility::CommonSortingItems;
@@ -188,7 +191,12 @@ bool InventoryUtility::IsStackableAndHaveStacks(const FItemData* ItemData, int32
 	return ItemData->Class.GetDefaultObject()->bIsStackable && ItemData->Quantity > Quantity;
 }
 
-TTuple<bool, uint32> InventoryUtility::HasPartialStack(const TArray<FItemData*> ItemDataArray, FItemData* ItemData)
+bool InventoryUtility::AreCraftingDatasTheSame(const FCraftingData& CraftingData, FCraftingData* StoredCraftingData)
+{
+	return CraftingData.CraftingID == StoredCraftingData->CraftingID;
+}
+
+TTuple<bool, int32> InventoryUtility::HasPartialStack(const TArray<FItemData*> ItemDataArray, FItemData* ItemData)
 {
 	for (int i = 0; i < ItemDataArray.Num(); ++i)
 	{
@@ -236,7 +244,7 @@ TTuple<bool, FItemData*> InventoryUtility::FindItemByID(const TArray<FItemData*>
 	return MakeTuple(true, ItemData[0]);
 }
 
-TTuple<bool, uint32> InventoryUtility::FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData)
+TTuple<bool, int32> InventoryUtility::FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData)
 {
 	for (int i = 0; i < ItemDataArray.Num(); ++i)
 		if (AreItemsTheSame(ItemDataArray[i], ItemData))
@@ -293,9 +301,9 @@ TArray<FItemData*> InventoryUtility::GetAllItemsOfType(TArray<FItemData*> ItemDa
 	return ItemsDataByType;
 }
 
-uint32 InventoryUtility::FindAmountOfEmptySlots(TArray<FItemData*> ItemData)
+int32 InventoryUtility::FindAmountOfEmptySlots(TArray<FItemData*> ItemData)
 {
-	uint32 Amount = 0;
+	int32 Amount = 0;
 	for (int i = 0; i < ItemData.Num(); ++i)
 	{
 		if (!IsItemClassValid(ItemData[i]))
@@ -348,6 +356,23 @@ FItemData* InventoryUtility::CopyItemData(FItemData ItemData)
 	NewItemData->bIsAlreadyUsed = ItemData.bIsAlreadyUsed;
 	NewItemData->ValueModifier = ItemData.ValueModifier;
 	return NewItemData;
+}
+
+FCraftingData* InventoryUtility::CopyCraftingData(FCraftingData* ItemData)
+{
+	FCraftingData* NewCraftingData = new FCraftingData();
+	NewCraftingData->CraftingID = ItemData->CraftingID;
+	NewCraftingData->OutputItems = ItemData->OutputItems;
+	NewCraftingData->InputItems = ItemData->InputItems;
+	NewCraftingData->StartLocked = ItemData->StartLocked;
+	NewCraftingData->CraftingTime = ItemData->CraftingTime;
+	NewCraftingData->CraftingCost = ItemData->CraftingCost;
+	NewCraftingData->Category = ItemData->Category;
+	NewCraftingData->Subcategory = ItemData->Subcategory;
+	NewCraftingData->RequiredStations = ItemData->RequiredStations;
+	NewCraftingData->CraftingCounter = ItemData->CraftingCounter;
+	NewCraftingData->MaxCount = ItemData->MaxCount;
+	return NewCraftingData;
 }
 
 TArray<FItemData*> InventoryUtility::QuickSortItems(TArray<FItemData*> ItemData)

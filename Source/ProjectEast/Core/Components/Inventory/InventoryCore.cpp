@@ -1,5 +1,6 @@
 ﻿#include "InventoryCore.h"
 #include "PlayerEquipment.h"
+#include "PlayerInventory.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -37,7 +38,7 @@ void UInventoryCore::CallOnRemovedFromInventoryArray(FItemData& ItemData) const
 		OnRemovedFromInventoryArray.Broadcast(ItemData);
 }
 
-void UInventoryCore::CallOnHighlightSlot(uint32 Index) const
+void UInventoryCore::CallOnHighlightSlot(int32 Index) const
 {
 	if (OnHighlightInventorySlot.IsBound())
 		OnHighlightInventorySlot.Broadcast(Index);
@@ -667,7 +668,7 @@ TTuple<bool, int32> UInventoryCore::GetEmptyInventorySlot(const FItemData* ItemD
 	return MakeTuple(true, -1);
 }
 
-void UInventoryCore::ChangeInventorySize(EInventoryPanels Panels, uint32 Size)
+void UInventoryCore::ChangeInventorySize(EInventoryPanels Panels, int32 Size)
 {
 }
 
@@ -792,7 +793,7 @@ bool UInventoryCore::IsInventoryOverweight() const
 	return false;
 }
 
-TTuple<bool, int> UInventoryCore::GetEmptyInventorySlot(FItemData* ItemData)
+TTuple<bool, int32> UInventoryCore::GetEmptyInventorySlot(FItemData* ItemData)
 {
 	if (bIsUseInventorySize)
 	{
@@ -806,7 +807,7 @@ TTuple<bool, int> UInventoryCore::GetEmptyInventorySlot(FItemData* ItemData)
 	return MakeTuple(true, -1);
 }
 
-FItemData* UInventoryCore::GetItemBySlot(EInventoryPanels Panel, uint32 SlitIndex)
+FItemData* UInventoryCore::GetItemBySlot(EInventoryPanels Panel, int32 SlitIndex)
 {
 	auto InventoryData = GetInventoryAndSize(Panel).Get<0>();
 	if (InventoryData.IsValidIndex(SlitIndex))
@@ -859,7 +860,7 @@ TArray<FItemData*> UInventoryCore::GetItemsOfSpecifiedType(EItemsType ItemsType)
 	return InventoryUtility::GetAllItemsOfType(GetCombinedInventories(), ItemsType);
 }
 
-uint32 UInventoryCore::GetAmountOfEmptySlots(EInventoryPanels Panels)
+int32 UInventoryCore::GetAmountOfEmptySlots(EInventoryPanels Panels)
 {
 	return InventoryUtility::FindAmountOfEmptySlots(GetInventoryAndSize(Panels).Get<0>());
 }
@@ -880,7 +881,7 @@ void UInventoryCore::SwitchActivePanel(EInventoryPanels Panel)
 	}
 }
 
-void UInventoryCore::RemoveItemQuantity(FItemData* ItemData, uint32 Quantity)
+void UInventoryCore::RemoveItemQuantity(FItemData* ItemData, int32 Quantity)
 {
 	FItemData* LocalItemData = ItemData;
 

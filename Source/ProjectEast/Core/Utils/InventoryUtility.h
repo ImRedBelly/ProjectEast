@@ -1,12 +1,13 @@
 ﻿#pragma once
-#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
-#include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
-#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
-#include "ProjectEast/Core/Data/FGamepadButtonData.h"
-#include "ProjectEast/Core/UI/Crafting/CraftingMaterialsBar.h"
 
+class UInventoryCore;
+class UCraftingCore;
+class UConsumableBuffs;
+class UPlayerCrafting;
+class UPlayerEquipment;
+class UPlayerInventory;
+class UPlayerLeveling;
 class UInteractableComponent;
 
 class InventoryUtility
@@ -29,22 +30,24 @@ public:
 	static bool AreWeaponTypesEqual(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool CanWeaponsBeSwapped(const FItemData* ItemDataFirst, const FItemData* ItemDataSecond);
 	static bool IsStackableAndHaveStacks(const FItemData* ItemData, int32 Quantity);
-	static TTuple<bool, uint32> HasPartialStack(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);
+	static bool AreCraftingDatasTheSame(const FCraftingData& CraftingData, FCraftingData* StoredCraftingData);
+	static TTuple<bool, int32> HasPartialStack(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);
 	static EInventoryPanels GetInventoryPanelFromItem(const FItemData* ItemData);
 	static TTuple<bool, int32> FindEmptySlotInArray(const TArray<FItemData*> ItemData);
 	static TTuple<bool, FItemData*> FindItemByID(const TArray<FItemData*> ItemData, FString ID);
-	static TTuple<bool, uint32> FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);
+	static TTuple<bool, int32> FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData);
 	static TTuple<bool, EItemSlot> FindEmptyEquipmentSlot(TMap<EItemSlot, FItemData*> EquipmentData, TArray<EItemSlot> SlotsToSearch, EItemSlot DefaultSlot);
 	static float CalculateStackedItemWeight(FItemData* ItemData);
 	static float CalculateStackedItemValue(FItemData* ItemData);
 	static void TakeAllItemsFromInventory(AActor* Interactor, UInventoryCore* ActorInventory);
 	static bool CanItemBeRemoved(FItemData* ItemData);
 	static TArray<FItemData*> GetAllItemsOfType(TArray<FItemData*> ItemData, EItemsType ItemsType);
-	static uint32 FindAmountOfEmptySlots(TArray<FItemData*> ItemData);
+	static int32 FindAmountOfEmptySlots(TArray<FItemData*> ItemData);
 	static TTuple<TArray<FItemData*>, TArray<FSingleDTItem>> GetCraftableData(FCraftingData* CraftingData);
 
 	static FItemData* CopyItemData(FItemData* ItemData);
 	static FItemData* CopyItemData(FItemData ItemData);
+	static FCraftingData* CopyCraftingData(FCraftingData* ItemData);
 	
 	static TArray<FItemData*> QuickSortItems(TArray<FItemData*> ItemData);
 	static TArray<FItemData*> SortItemsByType(TArray<FItemData*> ItemData);

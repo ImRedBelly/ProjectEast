@@ -6,6 +6,7 @@
 #include "Components/VerticalBoxSlot.h"
 #include "Kismet/KismetTextLibrary.h"
 #include "ProjectEast/Core/Components/PlayerLeveling.h"
+#include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/UI/Misc/ValueView.h"
@@ -30,6 +31,7 @@ void UCraftingBase::InitializeCraftingBase(UPlayerCrafting* InPlayerCrafting, UC
 	WidgetSwitcherCraftingBox->SetActiveWidgetIndex(CraftingStation->GetCanCraftItems() ? 0 : 1);
 
 	ButtonClearQueue->OnClicked.AddDynamic(this, &UCraftingBase::OnClicked);
+	CraftingBar->InitializeBar(PlayerCrafting, CraftingStation);
 }
 
 void UCraftingBase::NativePreConstruct()

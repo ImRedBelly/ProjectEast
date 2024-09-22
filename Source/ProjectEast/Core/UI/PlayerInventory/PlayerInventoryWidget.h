@@ -106,7 +106,7 @@ protected:
 	void RefreshInventory(EInventoryPanels Panel);
 
 	UFUNCTION()
-	void HighlightSlot(uint32 SlotIndex);
+	void HighlightSlot(int32 SlotIndex);
 
 	UFUNCTION()
 	void SwitchInventoryPanel(EInventoryPanels NewPanel);

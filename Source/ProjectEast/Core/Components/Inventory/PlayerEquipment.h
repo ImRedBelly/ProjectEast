@@ -69,6 +69,8 @@ public:
 
 	void UpdateAddedItem(FItemData* ItemData);
 	void UpdateRemovedItem(FItemData* ItemData);
+	void CallOnItemAttach(FItemData& ItemData);
+	void CallOnItemDetach(FItemData& ItemData);
 
 #pragma endregion NetworkReplication
 

@@ -1,6 +1,7 @@
 ﻿#include "BaseItemPickUp.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 
 ABaseItemPickUp::ABaseItemPickUp()
 {

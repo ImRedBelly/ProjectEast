@@ -192,7 +192,7 @@ void UPlayerInventoryWidget::SetFocusToSlot(uint32 SlotIndex) const
 	}
 }
 
-void UPlayerInventoryWidget::HighlightSlot(uint32 SlotIndex)
+void UPlayerInventoryWidget::HighlightSlot(int32 SlotIndex)
 {
 	if (UPlayerInventorySlot* CurrentSlot = Cast<UPlayerInventorySlot>(
 		GetUniformGridFromPanel(GetActivePanel())->GetChildAt(SlotIndex)))

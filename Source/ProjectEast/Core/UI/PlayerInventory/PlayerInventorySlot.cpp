@@ -12,6 +12,7 @@
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
@@ -64,7 +65,10 @@ void UPlayerInventorySlot::NativeConstruct()
 void UPlayerInventorySlot::NativeDestruct()
 {
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 
 	ButtonItem->OnClicked.RemoveDynamic(this, &UPlayerInventorySlot::OnRightClick);
 	ButtonItem->OnHovered.RemoveDynamic(this, &UPlayerInventorySlot::OnHovered);
@@ -109,7 +113,10 @@ void UPlayerInventorySlot::NativeOnRemovedFromFocusPath(const FFocusEvent& InFoc
 	BorderObject->SetBrushColor(BorderUnHovered);
 	HideItemComparison();
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 }
 
 void UPlayerInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
@@ -415,7 +422,10 @@ void UPlayerInventorySlot::OnHovered()
 	{
 		StopAnimation(AnimationHighlight);
 		if (IsValid(CachedToolTip))
+		{
 			CachedToolTip->RemoveFromParent();
+			CachedToolTip = nullptr;
+		}
 
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
@@ -433,7 +443,10 @@ void UPlayerInventorySlot::OnUnhovered()
 	BorderObject->SetBrushColor(BorderUnHovered);
 	HideItemComparison();
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 }
 
 void UPlayerInventorySlot::ShowItemComparison() const
@@ -503,7 +516,10 @@ void UPlayerInventorySlot::RefreshTooltipGamepad()
 	if (ButtonItem->HasKeyboardFocus())
 	{
 		if (IsValid(CachedToolTip))
+		{
 			CachedToolTip->RemoveFromParent();
+			CachedToolTip = nullptr;
+		}
 		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 		CachedToolTip->AddToViewport();
 		SetToolTipPositionAndAlignment();
@@ -519,7 +535,10 @@ void UPlayerInventorySlot::RefreshToolTip()
 			ButtonItem->SetToolTip(nullptr);
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
+			{
 				CachedToolTip->RemoveFromParent();
+				CachedToolTip = nullptr;
+			}
 
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
@@ -534,7 +553,10 @@ void UPlayerInventorySlot::RefreshToolTip()
 			ButtonItem->SetToolTip(nullptr);
 			HideItemComparison();
 			if (IsValid(CachedToolTip))
+			{
 				CachedToolTip->RemoveFromParent();
+				CachedToolTip = nullptr;
+			}
 
 			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
@@ -596,7 +618,10 @@ void UPlayerInventorySlot::EmptySlot()
 	SetItemQuantity();
 	ButtonItem->SetToolTip(nullptr);
 	if (IsValid(CachedToolTip))
+	{
 		CachedToolTip->RemoveFromParent();
+		CachedToolTip = nullptr;
+	}
 }
 
 void UPlayerInventorySlot::SetItemQuantity() const

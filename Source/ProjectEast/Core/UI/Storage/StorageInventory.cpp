@@ -6,6 +6,8 @@
 #include "Components/WidgetSwitcher.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UStorageInventory::NativeConstruct()
@@ -178,7 +180,7 @@ UUniformGridPanel* UStorageInventory::GetUniformGridFromPanel(EInventoryPanels P
 	}
 }
 
-void UStorageInventory::HighlightSlot(uint32 SlotIndex)
+void UStorageInventory::HighlightSlot(int32 SlotIndex)
 {
 	if (UStorageSlot* CurrentSlot = Cast<UStorageSlot>(
 		GetUniformGridFromPanel(GetActivePanel())->GetChildAt(SlotIndex)))

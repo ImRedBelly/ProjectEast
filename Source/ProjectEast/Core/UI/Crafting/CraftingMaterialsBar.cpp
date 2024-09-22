@@ -44,7 +44,7 @@ FReply UCraftingMaterialsBar::NativeOnFocusReceived(const FGeometry& InGeometry,
 	return FReply::Handled();
 }
 
-void UCraftingMaterialsBar::OnNewItemSelected(FCraftingData CraftingData)
+void UCraftingMaterialsBar::OnNewItemSelected(FCraftingData& CraftingData)
 {
 	CurrentlyFocusedSlot = 0;
 }

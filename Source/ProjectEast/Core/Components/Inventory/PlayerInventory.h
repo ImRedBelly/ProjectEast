@@ -27,6 +27,7 @@ public:
 	virtual void InitializeInventory(APlayerController* PlayerController) override;
 	virtual void BeginPlay() override;
 	virtual void ClientTransferItemReturnValue(bool Success, FText FailureMessage) override;
+	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex) override;
 	void ClientInitializeInventory(APlayerController* PlayerController);
 	void InputInteraction() const;
 	void ServerTakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer);
@@ -98,7 +99,6 @@ private:
 										   EInputMethodType Initiator, EInputMethodType Destination,
 										   AActor* OwningPlayer) override;
 	bool AttemptUsingTransferredItem(FItemData* ItemData, UInventoryCore* Sender);
-	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex) override;
 	virtual void SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem) override;
 	
 	AMainPlayerController* CashedPlayerController;

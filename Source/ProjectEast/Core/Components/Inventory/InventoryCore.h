@@ -11,7 +11,7 @@ class UPlayerEquipment;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRefreshInventory, EInventoryPanels, Panel);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemovedFromInventoryArray, FItemData&, ItemData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAddedToInventoryArray, FItemData&, ItemData);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHighlightInventorySlot, uint32, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHighlightInventorySlot, int32, Index);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedActivePanel, EInventoryPanels, Panel);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedOwnerGold);
@@ -83,19 +83,23 @@ public:
 	void CallOnRefreshInventory(EInventoryPanels Panel) const;
 	void CallOnAddedToInventorySlot(FItemData& ItemData) const;
 	void CallOnRemovedFromInventoryArray(FItemData& ItemData) const;
-	void CallOnHighlightSlot(uint32 Index) const;
+	void CallOnHighlightSlot(int32 Index) const;
 	EInventoryPanels GetActivePanel() const;
 	TTuple<TArray<FItemData*>, int32> GetInventoryAndSize(EInventoryPanels Panel);
 	void SwitchedActivePanel(EInventoryPanels Panel);
 	EItemRemoveType GetItemRemoveType(FItemData* ItemData) const;
 	void AddGoldToOwner(float Gold);
+	void RemoveGoldFromOwner(float Gold);
 	void AddToStackInInventory(FItemData* ItemData, int32 Index);
 	virtual void AddItemToInventoryArray(FItemData* ItemData, int32 SlotIndex);
 	void AddWeightToInventory(float Weight);
+	void RemoveItemQuantity(FItemData* ItemData, int32 Quantity);
 
+	int32 GetAmountOfEmptySlots(EInventoryPanels Panels);
 	float GetOwnerGold() const { return OwnerGold; }
 	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
 	bool IsRefreshOnClosingWidget() const { return bIsRefreshOnClosingWidget; }
+	TTuple<bool, int32> GetEmptyInventorySlot(FItemData* ItemData);
 	TTuple<FItemData*, bool> GetItemByData(FItemData* ItemData);
 	TTuple<bool, FText> TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,EInputMethodType InputMethod,UPlayerEquipment* Sender);
 
@@ -156,16 +160,12 @@ protected:
 	                                                      UInventoryCore* Sender, AActor* OwningPlayer);
 	virtual void SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem);
 	bool HasEnoughGold(FItemData* ItemData) const;
-	void RemoveGoldFromOwner(float Gold);
 	bool IsInventoryOverweight() const;
-	TTuple<bool, int> GetEmptyInventorySlot(FItemData* ItemData);
-	FItemData* GetItemBySlot(EInventoryPanels Panel, uint32 SlitIndex);
+	FItemData* GetItemBySlot(EInventoryPanels Panel, int32 SlitIndex);
 	TTuple<FItemData*, bool> GetItemByID(FString ID, EInventoryPanels InSpecifiedPanel);
 	TArray<FItemData*> GetCombinedInventories() const;
 	TArray<FItemData*> GetItemsOfSpecifiedType(EItemsType ItemsType) const;
-	uint32 GetAmountOfEmptySlots(EInventoryPanels Panels);
 	void SwitchActivePanel(EInventoryPanels Panel);
-	void RemoveItemQuantity(FItemData* ItemData, uint32 Quantity);
 	void ModifyItemValue(FItemData* ItemData) const;
 	void RandomizeInitialItems();
 	FItemData* RandomizeItemParameters(FItemData* ItemData);
@@ -179,7 +179,7 @@ protected:
 	                                       AActor* OwningPlayer);
 	TTuple<bool, int32> GetEmptyInventorySlot(const FItemData* ItemData);
 
-	void ChangeInventorySize(EInventoryPanels Panels, uint32 Size);
+	void ChangeInventorySize(EInventoryPanels Panels, int32 Size);
 	void OnRep_OwnerGold();
 	void OnRep_InventorySizeP1();
 	void OnRep_InventorySizeP2();

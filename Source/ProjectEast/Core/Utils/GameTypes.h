@@ -311,9 +311,9 @@ struct FCraftingData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly)
 	TArray<ECraftingStation> RequiredStations;
 	UPROPERTY(EditDefaultsOnly)
-	uint8 CraftingCounter;
+	int32 CraftingCounter;
 	UPROPERTY(EditDefaultsOnly)
-	uint8 MaxCount;
+	int32 MaxCount;
 };
 
 

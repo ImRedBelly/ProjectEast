@@ -37,7 +37,7 @@ private:
 	UFUNCTION()
 	void RefreshCraftingData();
 	UFUNCTION()
-	void OnNewItemSelected(FCraftingData CraftingData);
+	void OnNewItemSelected(FCraftingData& CraftingData);
 
 	void SetCurrentCraftingData();
 	void BindEventDispatchers();

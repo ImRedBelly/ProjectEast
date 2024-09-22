@@ -71,9 +71,9 @@ private:
 	UPROPERTY()
 	UWidgetManager* WidgetManager;
 
-	FItemData* PreviewItemData;
-	FItemData* StoredPreviewData;
-	FCraftingData* SelectedCraftingData;
+	FItemData* PreviewItemData = new FItemData();
+	FItemData* StoredPreviewData = new FItemData();
+	FCraftingData* SelectedCraftingData = new FCraftingData();
 
 	TArray<FString> UnlockedRecipes;
 

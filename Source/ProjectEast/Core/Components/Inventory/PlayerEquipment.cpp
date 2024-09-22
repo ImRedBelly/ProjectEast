@@ -1,4 +1,6 @@
 ﻿#include "PlayerEquipment.h"
+
+#include "PlayerInventory.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Actors/Inventory/BaseEquippable.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
@@ -32,9 +34,9 @@ void UPlayerEquipment::BuildEquipment()
 	for (auto i = 0; i <= static_cast<int32>(EItemSlot::Pocket4); ++i)
 	{
 		EItemSlot EnumValue = static_cast<EItemSlot>(i);
-		if(EnumValue == EItemSlot::None)
+		if (EnumValue == EItemSlot::None)
 			continue;
-		
+
 		if (EquipmentData.Find(EnumValue))
 		{
 			FItemData* NewItemData = EquipmentData[EnumValue];
@@ -58,15 +60,15 @@ void UPlayerEquipment::BuildInitialEquipment()
 	{
 		auto DataTable = InitialEquipment[i].TableAndRow.DataTable;
 		auto RowName = InitialEquipment[i].TableAndRow.RowName;
-	
+
 		auto CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
 		FItemData* CopyItem = InventoryUtility::CopyItemData(CurrentItemData);
 		CopyItem->Quantity = FMathf::Clamp(InitialEquipment[i].Quantity, 1, InitialEquipment[i].Quantity);
-	
+
 		auto AssignItem = AssignItemFromEquipmentSlot(CopyItem);
 		AddItemToEquipmentArray(CopyItem, AssignItem->EquipmentSlot);
 		AttachItemToEquipment(CopyItem);
-	
+
 		auto PlayerInventory = InventoryUtility::GetPlayerInventory(GetOwner());
 		if (IsValid(PlayerInventory))
 			PlayerInventory->AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(CopyItem));
@@ -151,6 +153,18 @@ void UPlayerEquipment::UpdateRemovedItem(FItemData* ItemData)
 		OnItemDetach.Broadcast(*EquipmentData[ItemData->EquipmentSlot]);
 }
 
+void UPlayerEquipment::CallOnItemAttach(FItemData& ItemData)
+{
+	if (OnItemAttach.IsBound())
+		OnItemAttach.Broadcast(ItemData);
+}
+
+void UPlayerEquipment::CallOnItemDetach(FItemData& ItemData)
+{
+	if (OnItemDetach.IsBound())
+		OnItemDetach.Broadcast(ItemData);
+}
+
 void UPlayerEquipment::AddItemToEquipmentArray(FItemData* ItemData, EItemSlot Slot)
 {
 	if (InventoryUtility::SwitchHasOwnerAuthority(this))
@@ -174,7 +188,7 @@ void UPlayerEquipment::RemoveItemFromEquipmentArray(FItemData* ItemData)
 	if (InventoryUtility::SwitchHasOwnerAuthority(this))
 	{
 		auto CurrentSlot = ItemData->EquipmentSlot;
-		
+
 		EquipmentData.Remove(CurrentSlot);
 		FItemData* EmptyItemData = new FItemData();
 		EmptyItemData->EquipmentSlot = CurrentSlot;
@@ -380,11 +394,10 @@ FItemData* UPlayerEquipment::AssignItemFromEquipmentSlot(FItemData* ItemData)
 			}
 			else
 				return GetItemByEquipmentSlot(EItemSlot::Weapon).Get<1>();
-			
 		}
 		else
 		{
-			AAA = 	GetItemByEquipmentSlot(ItemData->EquipmentSlot);
+			AAA = GetItemByEquipmentSlot(ItemData->EquipmentSlot);
 			return AAA.Get<1>();
 		}
 	}
@@ -405,24 +418,26 @@ void UPlayerEquipment::ToggleEquippableSocket(bool CombatMode, EItemSlot Slot) c
 
 void UPlayerEquipment::SpawnAndAttachEquippableActor(FItemData* ItemData)
 {
-	if(InventoryUtility::SwitchHasOwnerAuthority(this))
+	if (InventoryUtility::SwitchHasOwnerAuthority(this))
 	{
-		if(InventoryUtility::IsItemClassValid(ItemData))
+		if (InventoryUtility::IsItemClassValid(ItemData))
 		{
 			switch (ItemData->EquipmentSlot)
 			{
 			case EItemSlot::Weapon:
 				{
 					auto Reference = GetEquippedActorReference(ItemData->EquipmentSlot);
-					if(IsValid(Reference))
+					if (IsValid(Reference))
 						Reference->Destroy();
-					
+
 					FActorSpawnParameters Parameters;
 					Parameters.Owner = GetOwner();
 					Parameters.TransformScaleMethod = ESpawnActorScaleMethod::SelectDefaultAtRuntime;
 					Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
-					
-					auto NewActor = GetWorld()->SpawnActor<ABaseEquippable>(ItemData->Class.GetDefaultObject()->EquippableClass, GetOwner()->GetActorTransform(), Parameters);
+
+					auto NewActor = GetWorld()->SpawnActor<ABaseEquippable>(
+						ItemData->Class.GetDefaultObject()->EquippableClass, GetOwner()->GetActorTransform(),
+						Parameters);
 					NewActor->InitializeItem(ItemData->EquipmentSlot);
 					EquippableReferences.Add(ItemData->EquipmentSlot, NewActor);
 					NewActor->EventToggleCombatMode(true);
@@ -431,15 +446,17 @@ void UPlayerEquipment::SpawnAndAttachEquippableActor(FItemData* ItemData)
 			case EItemSlot::Shield:
 				{
 					auto Reference = GetEquippedActorReference(ItemData->EquipmentSlot);
-					if(IsValid(Reference))
+					if (IsValid(Reference))
 						Reference->Destroy();
-					
+
 					FActorSpawnParameters Parameters;
 					Parameters.Owner = GetOwner();
 					Parameters.TransformScaleMethod = ESpawnActorScaleMethod::SelectDefaultAtRuntime;
 					Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::Undefined;
-					
-					auto NewActor = GetWorld()->SpawnActor<ABaseEquippable>(ItemData->Class.GetDefaultObject()->EquippableClass, GetOwner()->GetActorTransform(), Parameters);
+
+					auto NewActor = GetWorld()->SpawnActor<ABaseEquippable>(
+						ItemData->Class.GetDefaultObject()->EquippableClass, GetOwner()->GetActorTransform(),
+						Parameters);
 					NewActor->InitializeItem(ItemData->EquipmentSlot);
 					EquippableReferences.Add(ItemData->EquipmentSlot, NewActor);
 					NewActor->EventToggleCombatMode(true);
@@ -474,15 +491,16 @@ void UPlayerEquipment::TryToUnequipAssociatedSlot(FItemData* ItemData, UInventor
 			AssociatedSlot = EItemSlot::Weapon;
 			break;
 		}
-		
+
 		switch (ItemData->Class.GetDefaultObject()->WeaponType)
 		{
 		case EWeaponType::TwoHand:
 			{
 				auto Item = GetItemByEquipmentSlot(AssociatedSlot);
-				if(Item.Get<0>())
+				if (Item.Get<0>())
 				{
-					auto TransferData = Inventory->TransferItemFromEquipment(Item.Get<1>(), new FItemData(), EInputMethodType::RightClick, this);
+					auto TransferData = Inventory->TransferItemFromEquipment(
+						Item.Get<1>(), new FItemData(), EInputMethodType::RightClick, this);
 					Inventory->ClientTransferItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>());
 				}
 			}
@@ -491,11 +509,12 @@ void UPlayerEquipment::TryToUnequipAssociatedSlot(FItemData* ItemData, UInventor
 		case EWeaponType::OffHand:
 			{
 				auto Item = GetItemByEquipmentSlot(AssociatedSlot);
-				if(Item.Get<0>())
+				if (Item.Get<0>())
 				{
-					if(ItemData->Class.GetDefaultObject()->WeaponType == EWeaponType::TwoHand)
+					if (ItemData->Class.GetDefaultObject()->WeaponType == EWeaponType::TwoHand)
 					{
-						auto TransferData = Inventory->TransferItemFromEquipment(Item.Get<1>(), nullptr, EInputMethodType::RightClick, this);
+						auto TransferData = Inventory->TransferItemFromEquipment(
+							Item.Get<1>(), nullptr, EInputMethodType::RightClick, this);
 						Inventory->ClientTransferItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>());
 					}
 				}
@@ -505,7 +524,8 @@ void UPlayerEquipment::TryToUnequipAssociatedSlot(FItemData* ItemData, UInventor
 	}
 }
 
-TTuple<bool, FText> UPlayerEquipment::TransferItemFromInventoryToEquipment(FItemData* ItemData, FItemData* InSlotData, UInventoryCore* Inventory,EInputMethodType Method)
+TTuple<bool, FText> UPlayerEquipment::TransferItemFromInventoryToEquipment(
+	FItemData* ItemData, FItemData* InSlotData, UInventoryCore* Inventory, EInputMethodType Method)
 {
 	FItemData* InSlotItemData = InSlotData;
 	auto EquippedData = CanItemBeEquipped(ItemData);
@@ -513,7 +533,7 @@ TTuple<bool, FText> UPlayerEquipment::TransferItemFromInventoryToEquipment(FItem
 	{
 		if (Method == EInputMethodType::RightClick)
 			InSlotItemData = AssignItemFromEquipmentSlot(ItemData);
-		
+
 		if (InventoryUtility::IsItemClassValid(InSlotItemData))
 		{
 			if (InventoryUtility::AreItemsTheSame(ItemData, InSlotItemData)
