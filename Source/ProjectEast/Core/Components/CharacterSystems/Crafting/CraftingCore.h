@@ -73,8 +73,10 @@ public:
 	int32 GetItemQueueIndex(FString CraftingID);
 	int32 GetCraftingQueueLength() const { return CraftingQueue.Num(); }
 
+	bool GetCraftOnlyWhenWindowIsOpen() const { return CraftOnlyWhenWindowIsOpen; }
 	bool GetIsShowLockedItems() const { return bIsShowLockedItems; }
 	bool GetCanCraftItems() const { return bCanCraftItems; }
+	bool GetSpawnCraftedItem() const { return bSpawnCraftedItem; }
 	int32 GetMaxQueuedItems() const { return MaxQueuedItems; }
 	float GetCraftingCostMultiplier() const { return CraftingCostMultiplier; }
 
@@ -106,7 +108,7 @@ protected:
 	int32 MaxQueuedItems;
 
 	UPROPERTY(EditAnywhere)
-	FCraftingData& EmptyCraftingData;
+	FCraftingData EmptyCraftingData;
 
 private:
 	TArray<FCraftingData*> CraftingList;
