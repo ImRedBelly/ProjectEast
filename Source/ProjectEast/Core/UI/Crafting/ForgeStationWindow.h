@@ -3,7 +3,10 @@
 #include "CoreMinimal.h"
 #include "CraftingWindowCore.h"
 #include "Components/Button.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ForgeStationWindow.generated.h"
+
+class UPopupItemAdded;
 
 UCLASS()
 class PROJECTEAST_API UForgeStationWindow : public UCraftingWindowCore
@@ -13,11 +16,16 @@ class PROJECTEAST_API UForgeStationWindow : public UCraftingWindowCore
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonClose;
-
+	UPROPERTY(meta=(BindWidget))
+	UPopupItemAdded* PopupItemAdded;
+	
 private:
-	virtual void NativeConstruct() override;
+	virtual void InitializeWindow(UPlayerCrafting* InPlayerCraftingCore, UCraftingCore* InCraftingCore) override;
 	virtual void NativeDestruct() override;
 
+	UFUNCTION()
+	void OnItemCrafted(FCraftingData& CraftingData, AActor* OwnningPlayer);
+	
 	UFUNCTION()
 	void CloseWidget();
 };

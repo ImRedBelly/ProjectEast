@@ -6,7 +6,7 @@
 void UPopupItemAdded::InitializeWidget(FItemData* ItemData)
 {
 	CurrentItemData = ItemData;
-	if (InventoryUtility::IsItemClassValid(ItemData))
+	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
 		SetItemImage();
 		SetItemName();
@@ -29,12 +29,12 @@ void UPopupItemAdded::SetItemName() const
 
 void UPopupItemAdded::SetItemType() const
 {
-	TextItemName->SetText(UEnum::GetDisplayValueAsText(CurrentItemData->Class.GetDefaultObject()->Type));
+	TextItemType->SetText(UEnum::GetDisplayValueAsText(CurrentItemData->Class.GetDefaultObject()->Type));
 }
 
 void UPopupItemAdded::SetItemRarity() const
 {
-	TextItemName->SetText(UEnum::GetDisplayValueAsText(CurrentItemData->Class.GetDefaultObject()->Rarity));
+	TextItemRarity->SetText(UEnum::GetDisplayValueAsText(CurrentItemData->Class.GetDefaultObject()->Rarity));
 }
 
 void UPopupItemAdded::SetItemRarityColor() const
