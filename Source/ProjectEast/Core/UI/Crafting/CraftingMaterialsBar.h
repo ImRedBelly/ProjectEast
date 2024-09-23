@@ -17,7 +17,7 @@ class PROJECTEAST_API UCraftingMaterialsBar : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void InitializeWidget(UPlayerCrafting* InPlayerCrafting);
+	void InitializeWidget(UPlayerCrafting* InPlayerCrafting, UCraftingCore* InCraftingStation);
 	void SetCurrentFocusedSlot(int32 INT32);
 
 protected:

@@ -4,6 +4,7 @@
 #include "Components/Image.h"
 #include "Components/ScrollBox.h"
 #include "Components/VerticalBox.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void ULootBar::SetCurrentlyFocusedSlot(ULootBarSlot* LootBarSlot)

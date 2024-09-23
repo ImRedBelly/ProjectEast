@@ -5,18 +5,15 @@
 #include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
-void UCraftingMaterialsBar::InitializeWidget(UPlayerCrafting* InPlayerCrafting)
+void UCraftingMaterialsBar::InitializeWidget(UPlayerCrafting* InPlayerCrafting, UCraftingCore* InCraftingStation)
 {
 	PlayerCrafting = InPlayerCrafting;
+	CraftingStation = InCraftingStation;
 
-	if (IsValid(PlayerCrafting))
+	if (IsValid(PlayerCrafting) && IsValid(CraftingStation))
 	{
-		CraftingStation = PlayerCrafting->GetCurrentStationComponent();
-		if (IsValid(CraftingStation))
-		{
-			RefreshCraftingData();
-			BindEventDispatchers();
-		}
+		RefreshCraftingData();
+		BindEventDispatchers();
 	}
 }
 
@@ -99,13 +96,14 @@ void UCraftingMaterialsBar::BuildMaterialsSlots()
 			NewItemData->Quantity = RequiredMaterials[i].Quantity;
 
 			int32 Quantity = PlayerCrafting->FindItemQuantity(NewItemData, GetOwningPlayer());
-			UCraftingMaterialsSlot* MaterialsSlot = CreateWidget<UCraftingMaterialsSlot>(this, CraftingMaterialsSlotClass);
+			UCraftingMaterialsSlot* MaterialsSlot = CreateWidget<UCraftingMaterialsSlot>(
+				this, CraftingMaterialsSlotClass);
 			MaterialsSlot->InitializeSlot(NewItemData, Quantity, i, this);
-			
+
 			UUniformGridSlot* Element = UniformGridMaterials->AddChildToUniformGrid(MaterialsSlot, Row, Column);
 			Element->SetHorizontalAlignment(HAlign_Fill);
 			Element->SetVerticalAlignment(VAlign_Fill);
-			
+
 			Column++;
 			if (Column >= RowLength)
 			{

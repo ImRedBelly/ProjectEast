@@ -10,11 +10,11 @@ void UCraftingBar::InitializeBar(UPlayerCrafting* InPlayerCrafting, UCraftingCor
 {
 	PlayerCrafting = InPlayerCrafting;
 	CraftingStation = InCraftingStation;
-	
+
 	SliderValue->SetValue(0);
 	ProgressBarSelectAmount->SetPercent(0);
 	TextValue->SetText(FText::FromString(FString::FromInt(1)));
-	
+
 	BindEventDispatchers();
 }
 
@@ -92,9 +92,8 @@ void UCraftingBar::OnValueChangedSlider(float Value)
 	if (CanChangeSliderValue())
 	{
 		ValueSlider = Value;
-		ProgressBarSelectAmount->SetPercent(Value);
+		ProgressBarSelectAmount->SetPercent(ValueSlider);
 
-		SetCurrentSliderValue();
 		SetCurrentCraftableAmount();
 		SetCraftingCost();
 	}
@@ -113,8 +112,10 @@ void UCraftingBar::RefreshWidgetData()
 	if (InventoryUtility::IsCraftingDataValid(SelectedCraftingData))
 	{
 		StoredCraftingData = SelectedCraftingData;
-		WidgetSwitcherIsLocked->
-			SetActiveWidgetIndex(PlayerCrafting->IsCraftingRecipeLocked(StoredCraftingData) ? 1 : 0);
+
+		bool IsCraftingRecipeLocked = PlayerCrafting->IsCraftingRecipeLocked(StoredCraftingData);
+		WidgetSwitcherIsLocked->SetActiveWidgetIndex(IsCraftingRecipeLocked ? 1 : 0);
+		
 		if (CraftingStation->IsCrafting() && CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
 		{
 			auto TimeData = CraftingStation->GetCraftingProcessTime();
@@ -124,22 +125,21 @@ void UCraftingBar::RefreshWidgetData()
 			SetCraftableItemName();
 			CurrentAmount = 1;
 			SetMaxCraftableAmount();
-			SetCurrentSliderValue();
 			CanvasSliderBox->SetIsEnabled(false);
 		}
 		else
 		{
 			StopAnimation(CraftingAnimation);
-			WidgetSwitcherIsLocked->SetActiveWidgetIndex(PlayerCrafting->IsCraftableItemInQueue(StoredCraftingData)
-				                                             ? 2
-				                                             : 0);
+
+			bool IsCraftableItemInQueue = PlayerCrafting->IsCraftableItemInQueue(StoredCraftingData);
+			WidgetSwitcherIsLocked->SetActiveWidgetIndex(IsCraftableItemInQueue ? 2 : 0);
+
 			ProgressBarCrafting->SetPercent(0);
 			SliderValue->SetIsEnabled(true);
 			BorderCraftingCounter->SetVisibility(ESlateVisibility::Collapsed);
 			CanvasSliderBox->SetIsEnabled(!CraftingStation->IsCraftableItemInQueue(StoredCraftingData));
 			SetMaxCraftableAmount();
 			SetCurrentCraftableAmount();
-			SetCurrentSliderValue();
 			SetCraftingCost();
 		}
 	}
@@ -163,7 +163,6 @@ void UCraftingBar::OnCraftingStopped(FCraftingData& CraftingData)
 	else
 	{
 		SetMaxCraftableAmount();
-		SetCurrentSliderValue();
 	}
 }
 
@@ -188,7 +187,6 @@ void UCraftingBar::CraftingProcessStarted()
 	{
 		CurrentAmount = 1;
 		SetMaxCraftableAmount();
-		SetCurrentSliderValue();
 	}
 }
 
@@ -220,14 +218,15 @@ void UCraftingBar::AttemptCrafting()
 
 void UCraftingBar::PlayCraftingAnimation(float PlayAtTime, float CraftingDuration)
 {
-	PlayAnimation(CraftingAnimation, UKismetMathLibrary::NormalizeToRange(PlayAtTime, 0, CraftingDuration),
-	              1, EUMGSequencePlayMode::Type::Forward,
-	              UKismetMathLibrary::Clamp(CraftingDuration, 1, CraftingDuration));
+	float StartTime = UKismetMathLibrary::NormalizeToRange(PlayAtTime, 0, CraftingDuration);
+	float Speed = 1 / FMathf::Clamp(CraftingDuration, 1, CraftingDuration);
+	PlayAnimation(CraftingAnimation, StartTime, 1, EUMGSequencePlayMode::Type::Forward, Speed);
 }
 
 void UCraftingBar::SetCurrentCraftableAmount()
 {
 	CurrentAmount = UKismetMathLibrary::MapRangeClamped(ValueSlider, 0, 1, 1, MaxAmount);
+	TextValue->SetText(FText::FromString(FString::FromInt(CurrentAmount)));
 }
 
 void UCraftingBar::SetMaxCraftableAmount()
@@ -242,7 +241,7 @@ void UCraftingBar::SetMaxCraftableAmount()
 		{
 			FItemData* ItemData = Data.TableAndRow.DataTable->FindRow<FItemData>(Data.TableAndRow.RowName, TEXT(""));
 			int32 QuantityFound = PlayerCrafting->FindItemQuantity(ItemData, GetOwningPlayer());
-			
+
 			int32 Delta = QuantityFound / Data.Quantity;
 
 			if (Delta < LocalMin)
@@ -275,12 +274,6 @@ void UCraftingBar::SetCraftableItemName() const
 	}
 }
 
-void UCraftingBar::SetCurrentSliderValue()
-{
-	ValueSlider = UKismetMathLibrary::Clamp(UKismetMathLibrary::NormalizeToRange(CurrentAmount, 1, MaxAmount), 0, 1);
-	TextValue->SetText(FText::FromString(FString::FromInt(ValueSlider)));
-}
-
 void UCraftingBar::SetCraftingCost() const
 {
 	float Cost = CurrentAmount * (StoredCraftingData->CraftingCost * CraftingStation->GetCraftingCostMultiplier());
@@ -306,44 +299,34 @@ void UCraftingBar::SetCraftableItemImage() const
 	}
 }
 
-void UCraftingBar::ModifySliderValue(float Value)
-{
-	CurrentAmount += Value;
-	ValueSlider = UKismetMathLibrary::NormalizeToRange(CurrentAmount, 1, MaxAmount);
-	SetCurrentCraftableAmount();
-	SetCraftingCost();
-}
+// void UCraftingBar::ModifySliderValue(float Value)
+// {
+// 	CurrentAmount += Value;
+// 	ValueSlider = UKismetMathLibrary::NormalizeToRange(CurrentAmount, 1, MaxAmount);
+// 	SetCurrentCraftableAmount();
+// 	SetCraftingCost();
+// }
 
-float UCraftingBar::GetSliderValue() const
-{
-	return ValueSlider;
-}
+// FText UCraftingBar::GetCraftingCounterText() const
+// {
+// 	if (CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
+// 	{
+// 		auto Data = CraftingStation->GetFirstItemFromQueue();
+// 		auto Counter = Data->MaxCount - (Data->CraftingCounter - 1);
+// 		return FText::FromString(FString::FromInt(Counter));
+// 	}
+// 	return FText::FromString("0");
+// }
 
-FText UCraftingBar::GetCurrentAmountText() const
-{
-	return FText::FromString(FString::FromInt(CurrentAmount));
-}
-
-FText UCraftingBar::GetCraftingCounterText() const
-{
-	if (CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
-	{
-		auto Data = CraftingStation->GetFirstItemFromQueue();
-		auto Counter = Data->MaxCount - (Data->CraftingCounter - 1);
-		return FText::FromString(FString::FromInt(Counter));
-	}
-	return FText::FromString("0");
-}
-
-FText UCraftingBar::GetCraftingMaxCounterText() const
-{
-	if (CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
-	{
-		auto Data = CraftingStation->GetFirstItemFromQueue();
-		return FText::FromString(FString::FromInt(Data->MaxCount));
-	}
-	return FText::FromString("0");
-}
+// FText UCraftingBar::GetCraftingMaxCounterText() const
+// {
+// 	if (CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
+// 	{
+// 		auto Data = CraftingStation->GetFirstItemFromQueue();
+// 		return FText::FromString(FString::FromInt(Data->MaxCount));
+// 	}
+// 	return FText::FromString("0");
+// }
 
 FCraftingData* UCraftingBar::GetCraftingData() const
 {

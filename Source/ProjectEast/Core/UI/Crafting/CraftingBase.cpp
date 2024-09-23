@@ -26,11 +26,12 @@ void UCraftingBase::InitializeCraftingBase(UPlayerCrafting* InPlayerCrafting, UC
 	PlayerCrafting->OnRefreshed.AddDynamic(this, &UCraftingBase::RefreshCraftingData);
 	CraftingStation->OnRefreshed.AddDynamic(this, &UCraftingBase::RefreshCraftingData);
 
-	CraftingMaterialsBar->InitializeWidget(PlayerCrafting);
+	CraftingMaterialsBar->InitializeWidget(PlayerCrafting, CraftingStation);
 	PlayAnimation(ItemInfoAnimation);
 	WidgetSwitcherCraftingBox->SetActiveWidgetIndex(CraftingStation->GetCanCraftItems() ? 0 : 1);
 
 	ButtonClearQueue->OnClicked.AddDynamic(this, &UCraftingBase::OnClicked);
+	CraftingQueue->InitializeQueue(CraftingStation);
 	CraftingBar->InitializeBar(PlayerCrafting, CraftingStation);
 }
 

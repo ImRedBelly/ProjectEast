@@ -72,6 +72,7 @@ public:
 
 	int32 GetItemQueueIndex(FString CraftingID);
 	int32 GetCraftingQueueLength() const { return CraftingQueue.Num(); }
+	TArray<FCraftingData*> GetCraftingQueue() const { return CraftingQueue; }
 
 	bool GetCraftOnlyWhenWindowIsOpen() const { return CraftOnlyWhenWindowIsOpen; }
 	bool GetIsShowLockedItems() const { return bIsShowLockedItems; }

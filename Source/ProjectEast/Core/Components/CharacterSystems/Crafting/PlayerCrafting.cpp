@@ -203,7 +203,7 @@ void UPlayerCrafting::ClientTryToCraftReturnValue(bool ReturnValue, FText Messag
 {
 	if (ReturnValue)
 	{
-		ItemCrafted(PlayerController);
+		Sender->ItemCrafted(PlayerController);
 		if (OnRefreshed.IsBound())
 			OnRefreshed.Broadcast();
 	}
@@ -290,10 +290,12 @@ TTuple<bool, TArray<FItemData*>> UPlayerCrafting::SecureMaterialItems(TArray<FSi
 				if (InventoryUtility::IsItemClassValid(FindItemData))
 				{
 					auto ItemData = PlayerInventory->GetItemByData(FindItemData);
-					if (ItemData.Get<1>() && ItemData.Get<0>()->Quantity >= AmountToCraft * Material.Quantity)
+
+					int32 AmountToRemove = AmountToCraft * Material.Quantity;
+					if (ItemData.Get<1>() && ItemData.Get<0>()->Quantity >= AmountToRemove)
 					{
 						FItemData* NewItemData = InventoryUtility::CopyItemData(ItemData.Get<0>());
-						NewItemData->Quantity = Material.Quantity;
+						NewItemData->Quantity = AmountToRemove;
 						SecuredItems.Add(NewItemData);
 						bCanBeRemoved = true;
 					}

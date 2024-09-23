@@ -2,7 +2,6 @@
 
 #include "PlayerCrafting.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
@@ -16,13 +15,14 @@ void UCraftingCore::BeginPlay()
 void UCraftingCore::ItemCrafted(AActor* OwningPlayer)
 {
 	FCraftingData* FirstItemInQueue = GetFirstItemFromQueue();
+	FCraftingData* AAA = FirstItemInQueue;
 	if (OnItemCrafted.IsBound())
 		OnItemCrafted.Broadcast(*FirstItemInQueue, OwningPlayer);
 
-	UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(GetWorld(), CraftingTimer);
+	GetWorld()->GetTimerManager().ClearTimer(CraftingTimer);
 	DecreaseCraftingCounter(FirstItemInQueue);
-
-	if (TryToStartCraftingProcess())
+	
+	if (!TryToStartCraftingProcess())
 		FinishCraftingProcess();
 
 	if (OnRefreshed.IsBound())
@@ -53,13 +53,19 @@ void UCraftingCore::TryToCraftCurrentItem()
 void UCraftingCore::SpawnCraftedItem(FCraftingData* CraftingData, AActor* OwningPlayer) const
 {
 	if (OnSpawnCraftedItem.IsBound())
-		OnSpawnCraftedItem.Broadcast(*CraftingData, OwningPlayer);
+	{
+		FCraftingData* Data = InventoryUtility::CopyCraftingData(CraftingData);
+		OnSpawnCraftedItem.Broadcast(*Data, OwningPlayer);
+	}
 }
 
 void UCraftingCore::FailedToInitializeCraftingProcess(FCraftingData* CraftingData, int32 AmountToCraft) const
 {
 	if (OnFailedToInitialize.IsBound())
-		OnFailedToInitialize.Broadcast(*CraftingData, AmountToCraft);
+	{
+		FCraftingData* Data = InventoryUtility::CopyCraftingData(CraftingData);
+		OnFailedToInitialize.Broadcast(*Data, AmountToCraft);
+	}
 }
 
 void UCraftingCore::InitializeCraftingProcess(FCraftingData* CraftingData, int32 AmountToCraft)
@@ -147,15 +153,14 @@ bool UCraftingCore::TryToStartCraftingProcess()
 	FCraftingData* FirstItem = GetFirstItemFromQueue();
 	if (InventoryUtility::IsCraftingDataValid(FirstItem))
 	{
-		StartCraftingProcess(FirstItem);
-		return true;
+		return StartCraftingProcess(FirstItem);
 	}
 	return false;
 }
 
 bool UCraftingCore::CanStartCraftingProcess(FCraftingData* CraftingData) const
 {
-	return !UKismetSystemLibrary::K2_TimerExistsHandle(GetWorld(), CraftingTimer) &&
+	return !GetWorld()->GetTimerManager().IsTimerActive(CraftingTimer) &&
 		CraftingData->CraftingCounter > 0;
 }
 
@@ -166,7 +171,9 @@ bool UCraftingCore::StartCraftingProcess(FCraftingData* CraftingData)
 		StartCraftingTimer(CraftingData->CraftingTime);
 		bIsCrafting = true;
 		if (OnCraftingProcessStarted.IsBound())
+		{
 			OnCraftingProcessStarted.Broadcast(*CraftingData);
+		}
 
 		return true;
 	}
@@ -177,7 +184,7 @@ void UCraftingCore::StopCraftingProcess(FCraftingData* CraftingData, AActor* Own
 {
 	if (IsCurrentlyCrafted(CraftingData))
 	{
-		UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(GetWorld(), CraftingTimer);
+		GetWorld()->GetTimerManager().ClearTimer(CraftingTimer);
 		bIsCrafting = false;
 	}
 	UPlayerCrafting* PlayerCrafting = InventoryUtility::GetPlayerCrafting(OwningPlayer);
@@ -185,7 +192,10 @@ void UCraftingCore::StopCraftingProcess(FCraftingData* CraftingData, AActor* Own
 		PlayerCrafting->ServerReturnSecuredMaterials(CraftingData, this, OwningPlayer);
 
 	if (OnCraftingProcessStopped.IsBound())
-		OnCraftingProcessStopped.Broadcast(*CraftingData);
+	{
+		FCraftingData* Data = InventoryUtility::CopyCraftingData(CraftingData);
+		OnCraftingProcessStopped.Broadcast(*Data);
+	}
 	RemoveFromCraftingQueue(CraftingData);
 }
 
@@ -194,16 +204,19 @@ void UCraftingCore::FinishCraftingProcess()
 	bIsCrafting = false;
 	FCraftingData* FirstItem = GetFirstItemFromQueue();
 	if (OnCraftingProcessFinished.IsBound())
-		OnCraftingProcessFinished.Broadcast(*FirstItem);
+	{
+		FCraftingData* Data = InventoryUtility::CopyCraftingData(FirstItem);
+		OnCraftingProcessFinished.Broadcast(*Data);
+	}
 	RemoveFromCraftingQueue(FirstItem);
 }
 
 TTuple<float, float> UCraftingCore::GetCraftingProcessTime() const
 {
-	if (UKismetSystemLibrary::K2_IsTimerActiveHandle(GetWorld(), CraftingTimer))
+	if (GetWorld()->GetTimerManager().IsTimerActive(CraftingTimer))
 	{
-		auto CurrentTime = UKismetSystemLibrary::K2_GetTimerElapsedTimeHandle(GetWorld(), CraftingTimer);
-		auto LeftTime = UKismetSystemLibrary::K2_GetTimerRemainingTimeHandle(GetWorld(), CraftingTimer);
+		auto CurrentTime = GetWorld()->GetTimerManager().GetTimerElapsed(CraftingTimer);
+		auto LeftTime = GetWorld()->GetTimerManager().GetTimerRemaining(CraftingTimer);
 		return MakeTuple(CurrentTime, LeftTime);
 	}
 
@@ -216,13 +229,17 @@ void UCraftingCore::AddToCraftingQueue(FCraftingData* AddData)
 	{
 		auto Quantity = CraftingQueue.AddUnique(AddData);
 		if (OnAddedToQueue.IsBound())
+		{
 			OnAddedToQueue.Broadcast(*AddData, Quantity);
+		}
 	}
 	else
 	{
 		auto ModifyData = ModifyCraftingCounter(AddData->CraftingID, AddData->CraftingCounter, AddData->MaxCount);
 		if (OnAddedToQueue.IsBound())
+		{
 			OnAddedToQueue.Broadcast(*ModifyData, GetItemQueueIndex(AddData->CraftingID));
+		}
 	}
 	TryToStartCraftingProcess();
 }
@@ -234,7 +251,10 @@ void UCraftingCore::RemoveFromCraftingQueue(FCraftingData* RemoveData)
 	{
 		CraftingQueue.RemoveAt(Index);
 		if (OnRemoveFromQueue.IsBound())
-			OnRemoveFromQueue.Broadcast(*RemoveData, Index);
+		{
+			FCraftingData* Data = InventoryUtility::CopyCraftingData(RemoveData);
+			OnRemoveFromQueue.Broadcast(*Data, Index);
+		}
 		TryToStartCraftingProcess();
 	}
 }
@@ -244,7 +264,7 @@ void UCraftingCore::ClearCraftingQueue(AActor* OwningPlayer)
 	UPlayerCrafting* PlayerCrafting = InventoryUtility::GetPlayerCrafting(OwningPlayer);
 	if (IsValid(PlayerCrafting))
 	{
-		UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(GetWorld(), CraftingTimer);
+		GetWorld()->GetTimerManager().ClearTimer(CraftingTimer);
 		bIsCrafting = false;
 
 		for (auto CraftingData : CraftingQueue)
@@ -262,7 +282,8 @@ TTuple<bool, FCraftingData*> UCraftingCore::GetItemFromQueueByID(FString ID)
 	int32 Index = GetItemQueueIndex(ID);
 	if (Index > -1)
 	{
-		return MakeTuple(true, CraftingQueue[Index]);
+		FCraftingData* Data = InventoryUtility::CopyCraftingData(CraftingQueue[Index]);
+		return MakeTuple(true, Data);
 	}
 
 	return MakeTuple(false, &EmptyCraftingData);
@@ -298,7 +319,7 @@ void UCraftingCore::StartCraftingTimer(float CraftingTime)
 {
 	float TimeValue = CraftingTime * (1 / CraftingDurationRate);
 	float Time = FMathf::Clamp(TimeValue, 1, TimeValue);
-	GetWorld()->GetTimerManager().SetTimer(CraftingTimer, this, &UCraftingCore::TryToCraftCurrentItem, Time, true, 0);
+	GetWorld()->GetTimerManager().SetTimer(CraftingTimer, this, &UCraftingCore::TryToCraftCurrentItem, Time, false);
 }
 
 bool UCraftingCore::IsCurrentlyCrafted(FCraftingData* CraftingData)

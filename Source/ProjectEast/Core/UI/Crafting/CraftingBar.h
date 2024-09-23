@@ -124,15 +124,12 @@ private:
 	void SetCurrentCraftableAmount();
 	void SetMaxCraftableAmount();
 	void SetCraftableItemName() const;
-	void SetCurrentSliderValue();
 	void SetCraftingCost() const;
 	void SetCraftableItemImage() const;
-	void ModifySliderValue(float Value);
+	//void ModifySliderValue(float Value);
 
-	float GetSliderValue() const;
-	FText GetCurrentAmountText() const;
-	FText GetCraftingCounterText() const;
-	FText GetCraftingMaxCounterText() const;
+	//FText GetCraftingCounterText() const;
+	//FText GetCraftingMaxCounterText() const;
 	FCraftingData* GetCraftingData() const;
 	bool CanChangeSliderValue() const;
 	bool CanStartCrafting();

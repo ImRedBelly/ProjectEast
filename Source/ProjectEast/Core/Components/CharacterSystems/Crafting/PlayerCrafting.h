@@ -63,6 +63,10 @@ public:
 	void ClientRefreshUIData(UCraftingCore* Target) const;
 	void ClientUnlockCraftingRecipe(FString CraftingID);
 
+protected:
+	UPROPERTY(EditAnywhere)
+	bool bIsCraftingWidgetOpen = true;
+	
 private:
 	UPROPERTY()
 	UCraftingCore* CurrentStationComponent;
@@ -76,6 +80,4 @@ private:
 	FCraftingData* SelectedCraftingData = new FCraftingData();
 
 	TArray<FString> UnlockedRecipes;
-
-	bool bIsCraftingWidgetOpen;
 };

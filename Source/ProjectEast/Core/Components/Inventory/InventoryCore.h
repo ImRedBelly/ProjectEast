@@ -192,7 +192,7 @@ protected:
 	void UpdateViewItem(FItemData* ItemData, bool IsRemove);
 
 private:
-	float OwnerGold;
+	float OwnerGold = 100;
 	float CurrentInventoryWeight;
 
 	void LocalSwapItemsInInventory(FItemData* LocalFirstItem, FItemData* LocalSecondItem);
