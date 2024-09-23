@@ -1,10 +1,6 @@
 ﻿#include "ValueView.h"
 
-void UValueView::SetItemData(FItemData* ItemData)
-{
-}
-
-void UValueView::SetValue(float Value)
+void UValueView::SetValue(float Value) const
 {
 	TextValue->SetText(FText::FromString(FString::SanitizeFloat(Value)));
 }

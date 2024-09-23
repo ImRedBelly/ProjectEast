@@ -3,7 +3,9 @@
 #include "CraftingQueue.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ProjectEast/Core/Components/CharacterSystems/Crafting/CraftingCore.h"
+#include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
+#include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UCraftingQueueSlot::InitializeSlot(UCraftingCore* InCraftingStation, FCraftingData* InCraftingData,
                                         UCraftingQueue* ParentWidget, int32 Index)
@@ -13,15 +15,39 @@ void UCraftingQueueSlot::InitializeSlot(UCraftingCore* InCraftingStation, FCraft
 	ParentWidgetRef = ParentWidget;
 	SlotIndex = Index;
 
-	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
+	if (InventoryUtility::IsCraftingDataValid(CraftingData))
+	{
+		auto CraftableData = InventoryUtility::GetCraftableData(CraftingData);
 
+		AmountToCraft = CraftingData->MaxCount;
+		if (CraftableData.Get<0>().IsValidIndex(0))
+		{
+			FItemData* ItemData = CraftableData.Get<0>()[0];
+			if (InventoryUtility::IsItemClassValid(ItemData))
+			{
+				ImageItem->SetBrushFromTexture(ItemData->Class.GetDefaultObject()->ImageItem);
+			}
+		}
+	}
+
+
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
+	CraftingStation->OnCraftingProcessStarted.AddDynamic(this, &UCraftingQueueSlot::OnCraftingStarted);
 	ButtonCancel->OnClicked.AddDynamic(this, &UCraftingQueueSlot::OnClicked);
 	ButtonMain->OnHovered.AddDynamic(this, &UCraftingQueueSlot::OnHovered);
 	ButtonMain->OnUnhovered.AddDynamic(this, &UCraftingQueueSlot::OnUnhovered);
+
+	PlayCraftingAnimation();
+	SetCraftingCounterText();
 }
 
 void UCraftingQueueSlot::NativeDestruct()
 {
+	StopCraftingAnimation();
+
+	if (IsValid(CraftingStation))
+		CraftingStation->OnCraftingProcessStarted.RemoveDynamic(this, &UCraftingQueueSlot::OnCraftingStarted);
+
 	ButtonCancel->OnClicked.RemoveDynamic(this, &UCraftingQueueSlot::OnClicked);
 	ButtonMain->OnHovered.RemoveDynamic(this, &UCraftingQueueSlot::OnHovered);
 	ButtonMain->OnUnhovered.RemoveDynamic(this, &UCraftingQueueSlot::OnUnhovered);
@@ -88,6 +114,26 @@ void UCraftingQueueSlot::OnUnhovered()
 	SetTextColor();
 }
 
+void UCraftingQueueSlot::OnCraftingStarted(FCraftingData& Data)
+{
+	PlayCraftingAnimation();
+}
+
+void UCraftingQueueSlot::PlayCraftingAnimation()
+{
+	auto ProcessTime = CraftingStation->GetCraftingProcessTime();
+	float FullTime = ProcessTime.Get<0>() + ProcessTime.Get<1>();
+
+	float StartTime = UKismetMathLibrary::NormalizeToRange(ProcessTime.Get<0>(), 0, FullTime);
+	float Speed = 1 / FMathf::Clamp(FullTime, 1, FullTime);
+	PlayAnimation(CraftingAnimation, StartTime, 1, EUMGSequencePlayMode::Type::Forward, Speed);
+}
+
+void UCraftingQueueSlot::StopCraftingAnimation()
+{
+	StopAnimation(CraftingAnimation);
+}
+
 void UCraftingQueueSlot::SelectSlot()
 {
 	PlayAnimation(HoveredAnimation, 0, 1, EUMGSequencePlayMode::Type::Forward, 1, false);
@@ -105,25 +151,18 @@ void UCraftingQueueSlot::StopCraftingItem() const
 	}
 }
 
-void UCraftingQueueSlot::SetCraftingPercentage() const
-{
-	if (CraftingStation->IsCurrentlyCrafted(CraftingData))
-	{
-		auto ProcessTime = CraftingStation->GetCraftingProcessTime();
-		ProgressBarCrafting->SetPercent(UKismetMathLibrary::NormalizeToRange(ProcessTime.Get<0>(), 0,
-		                                                                     ProcessTime.Get<0>() + ProcessTime.Get<
-			                                                                     1>()));
-	}
-	else
-		ProgressBarCrafting->SetPercent(0);
-}
-
 void UCraftingQueueSlot::SetTextColor() const
 {
 	FLinearColor EnableColor = FLinearColor(1, 1, 1);
 	FLinearColor DisableColor = FLinearColor(.023153f, .029557f, .040915f);
 	BorderCancel->SetBrushColor(bIsFocused ? EnableColor : DisableColor);
 	TextCancel->SetColorAndOpacity(bIsFocused ? DisableColor : EnableColor);
+}
+
+void UCraftingQueueSlot::SetCraftingCounterText() const
+{
+	TextCurrentCraftingCounterAmount->SetText(GetCurrentAmount());
+	TextMaxCraftingCounterAmount->SetText(GetMaxAmount());
 }
 
 FText UCraftingQueueSlot::GetCurrentAmount() const

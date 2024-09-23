@@ -169,12 +169,12 @@ void UToolTip::BuildItemStats()
 
 void UToolTip::SetItemWeight() const
 {
-	WeightView->SetItemData(CurrentItemData);
+	WeightView->SetValue(CurrentItemData->Class.GetDefaultObject()->Weight);
 }
 
 void UToolTip::SetItemValue() const
 {
-	ValueView->SetItemData(CurrentItemData);
+	ValueView->SetValue(CurrentItemData->Class.GetDefaultObject()->Value);
 }
 
 void UToolTip::SetItemRequiredLevel() const

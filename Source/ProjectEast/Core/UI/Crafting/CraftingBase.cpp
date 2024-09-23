@@ -162,12 +162,12 @@ void UCraftingBase::BuildStatsSlots()
 
 void UCraftingBase::SetItemWeight() const
 {
-	WeightView->SetItemData(CurrentCraftableItem);
+	WeightView->SetValue(CurrentCraftableItem->Class.GetDefaultObject()->Weight);
 }
 
 void UCraftingBase::SetItemValue() const
 {
-	ValueView->SetItemData(CurrentCraftableItem);
+	ValueView->SetValue(CurrentCraftableItem->Class.GetDefaultObject()->Value);
 }
 
 float UCraftingBase::GetComparisonValue(EItemSlot SlotType, FItemsStatRow Stat) const

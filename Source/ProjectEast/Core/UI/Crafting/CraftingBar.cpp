@@ -123,6 +123,7 @@ void UCraftingBar::RefreshWidgetData()
 			BorderCraftingCounter->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 			SetCraftableItemImage();
 			SetCraftableItemName();
+			SetCraftingCounterText();
 			CurrentAmount = 1;
 			SetMaxCraftableAmount();
 			CanvasSliderBox->SetIsEnabled(false);
@@ -132,7 +133,7 @@ void UCraftingBar::RefreshWidgetData()
 			StopAnimation(CraftingAnimation);
 
 			bool IsCraftableItemInQueue = PlayerCrafting->IsCraftableItemInQueue(StoredCraftingData);
-			WidgetSwitcherIsLocked->SetActiveWidgetIndex(IsCraftableItemInQueue ? 2 : 0);
+			WidgetSwitcherButtonContent->SetActiveWidgetIndex(IsCraftableItemInQueue ? 2 : 0);
 
 			ProgressBarCrafting->SetPercent(0);
 			SliderValue->SetIsEnabled(true);
@@ -221,6 +222,7 @@ void UCraftingBar::PlayCraftingAnimation(float PlayAtTime, float CraftingDuratio
 	float StartTime = UKismetMathLibrary::NormalizeToRange(PlayAtTime, 0, CraftingDuration);
 	float Speed = 1 / FMathf::Clamp(CraftingDuration, 1, CraftingDuration);
 	PlayAnimation(CraftingAnimation, StartTime, 1, EUMGSequencePlayMode::Type::Forward, Speed);
+	WidgetSwitcherButtonContent->SetActiveWidgetIndex(1);
 }
 
 void UCraftingBar::SetCurrentCraftableAmount()
@@ -299,34 +301,32 @@ void UCraftingBar::SetCraftableItemImage() const
 	}
 }
 
-// void UCraftingBar::ModifySliderValue(float Value)
-// {
-// 	CurrentAmount += Value;
-// 	ValueSlider = UKismetMathLibrary::NormalizeToRange(CurrentAmount, 1, MaxAmount);
-// 	SetCurrentCraftableAmount();
-// 	SetCraftingCost();
-// }
+void UCraftingBar::SetCraftingCounterText() const
+{
+	TextCurrentCraftingCounterAmount->SetText(GetCraftingCounterText());
+	TextMaxCraftingCounterAmount->SetText(GetCraftingMaxCounterText());
+}
 
-// FText UCraftingBar::GetCraftingCounterText() const
-// {
-// 	if (CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
-// 	{
-// 		auto Data = CraftingStation->GetFirstItemFromQueue();
-// 		auto Counter = Data->MaxCount - (Data->CraftingCounter - 1);
-// 		return FText::FromString(FString::FromInt(Counter));
-// 	}
-// 	return FText::FromString("0");
-// }
+FText UCraftingBar::GetCraftingCounterText() const
+{
+	if (CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
+	{
+		auto Data = CraftingStation->GetFirstItemFromQueue();
+		auto Counter = Data->MaxCount - (Data->CraftingCounter - 1);
+		return FText::FromString(FString::FromInt(Counter));
+	}
+	return FText::FromString("0");
+}
 
-// FText UCraftingBar::GetCraftingMaxCounterText() const
-// {
-// 	if (CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
-// 	{
-// 		auto Data = CraftingStation->GetFirstItemFromQueue();
-// 		return FText::FromString(FString::FromInt(Data->MaxCount));
-// 	}
-// 	return FText::FromString("0");
-// }
+FText UCraftingBar::GetCraftingMaxCounterText() const
+{
+	if (CraftingStation->IsCurrentlyCrafted(StoredCraftingData))
+	{
+		auto Data = CraftingStation->GetFirstItemFromQueue();
+		return FText::FromString(FString::FromInt(Data->MaxCount));
+	}
+	return FText::FromString("0");
+}
 
 FCraftingData* UCraftingBar::GetCraftingData() const
 {

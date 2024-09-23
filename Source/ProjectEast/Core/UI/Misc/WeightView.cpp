@@ -1,10 +1,6 @@
 ﻿#include "WeightView.h"
 
-void UWeightView::SetItemData(FItemData* ItemData)
-{
-}
-
-void UWeightView::SetValue(float Weight)
+void UWeightView::SetValue(float Weight) const
 {
 	TextValue->SetText(FText::FromString(FString::SanitizeFloat(Weight)));
 }

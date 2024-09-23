@@ -18,10 +18,13 @@ UCLASS()
 class PROJECTEAST_API UCraftingQueueSlot : public UUserWidget
 {
 	GENERATED_BODY()
+
 public:
 	void InitializeSlot(UCraftingCore* InCraftingStation, FCraftingData* InCraftingData, UCraftingQueue* ParentWidget, int32 Index);
-protected:
+	void PlayCraftingAnimation();
+	void StopCraftingAnimation();
 
+protected:
 	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonMain;
 	UPROPERTY(meta=(BindWidget))
@@ -35,10 +38,15 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* TextCancel;
 	UPROPERTY(meta=(BindWidget))
-	UProgressBar* ProgressBarCrafting;
+	UTextBlock* TextCurrentCraftingCounterAmount;
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TextMaxCraftingCounterAmount;
 
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* HoveredAnimation;
+
+	UPROPERTY(Transient, meta=(BindWidgetAnim))
+	UWidgetAnimation* CraftingAnimation;
 
 private:
 	UPROPERTY()
@@ -64,11 +72,13 @@ private:
 	void OnHovered();
 	UFUNCTION()
 	void OnUnhovered();
+	UFUNCTION()
+	void OnCraftingStarted(FCraftingData& Data);
 
 	void SelectSlot();
 	void StopCraftingItem() const;
-	void SetCraftingPercentage() const;
 	void SetTextColor() const;
+	void SetCraftingCounterText() const;
 	FText GetCurrentAmount() const;
 	FText GetMaxAmount() const;
 };

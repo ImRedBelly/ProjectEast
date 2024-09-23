@@ -47,6 +47,10 @@ protected:
 	UTextBlock* TextItemName;
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* TextMaxAmount;
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TextCurrentCraftingCounterAmount;
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* TextMaxCraftingCounterAmount;
 
 	UPROPERTY(meta=(BindWidget))
 	UProgressBar* ProgressBarSelectAmount;
@@ -126,10 +130,10 @@ private:
 	void SetCraftableItemName() const;
 	void SetCraftingCost() const;
 	void SetCraftableItemImage() const;
-	//void ModifySliderValue(float Value);
 
-	//FText GetCraftingCounterText() const;
-	//FText GetCraftingMaxCounterText() const;
+	void SetCraftingCounterText() const;
+	FText GetCraftingCounterText() const;
+	FText GetCraftingMaxCounterText() const;
 	FCraftingData* GetCraftingData() const;
 	bool CanChangeSliderValue() const;
 	bool CanStartCrafting();
