@@ -1,5 +1,6 @@
 ﻿#include "Storage.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 
 AStorage::AStorage()

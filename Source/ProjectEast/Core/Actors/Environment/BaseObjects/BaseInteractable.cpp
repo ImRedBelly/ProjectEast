@@ -12,13 +12,13 @@ ABaseInteractable::ABaseInteractable()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 
 	InteractionWidget->SetVisibility(false);
-	
+
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	InteractionWidget->SetupAttachment(RootComponent);
 	InteractableArea->SetupAttachment(RootComponent);
 	SkeletalMeshComponent->SetupAttachment(RootComponent);
 	StaticMeshComponent->SetupAttachment(RootComponent);
-	
+
 	InteractableArea->SetBoxExtent(FVector(100.0f, 100.0f, 100.0f));
 }
 
@@ -28,6 +28,11 @@ void ABaseInteractable::Initialize()
 	Array.Add(StaticMeshComponent);
 	Array.Add(SkeletalMeshComponent);
 	InteractableComponent->SetupInteractableReferences(InteractableArea, InteractionWidget, Array);
+}
+
+void ABaseInteractable::Interaction(AActor* Interactor)
+{
+	OnInteraction();
 }
 
 bool ABaseInteractable::CanBeInteractedWith()

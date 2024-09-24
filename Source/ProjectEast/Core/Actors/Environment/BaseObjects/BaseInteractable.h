@@ -18,6 +18,8 @@ public:
 	ABaseInteractable();
 	
 	virtual void Initialize() override;
+	
+	virtual void Interaction(AActor* Interactor) override;
 	virtual bool CanBeInteractedWith() override;
 
 protected:
@@ -35,4 +37,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMeshComponent;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInteraction();
 };
