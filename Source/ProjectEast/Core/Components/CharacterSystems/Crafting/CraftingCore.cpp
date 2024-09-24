@@ -15,7 +15,6 @@ void UCraftingCore::BeginPlay()
 void UCraftingCore::ItemCrafted(AActor* OwningPlayer)
 {
 	FCraftingData* FirstItemInQueue = GetFirstItemFromQueue();
-	FCraftingData* AAA = FirstItemInQueue;
 	if (OnItemCrafted.IsBound())
 		OnItemCrafted.Broadcast(*FirstItemInQueue, OwningPlayer);
 
@@ -53,10 +52,7 @@ void UCraftingCore::TryToCraftCurrentItem()
 void UCraftingCore::SpawnCraftedItem(FCraftingData* CraftingData, AActor* OwningPlayer) const
 {
 	if (OnSpawnCraftedItem.IsBound())
-	{
-		FCraftingData* Data = InventoryUtility::CopyCraftingData(CraftingData);
-		OnSpawnCraftedItem.Broadcast(*Data, OwningPlayer);
-	}
+		OnSpawnCraftedItem.Broadcast(*CraftingData, OwningPlayer);
 }
 
 void UCraftingCore::FailedToInitializeCraftingProcess(FCraftingData* CraftingData, int32 AmountToCraft) const

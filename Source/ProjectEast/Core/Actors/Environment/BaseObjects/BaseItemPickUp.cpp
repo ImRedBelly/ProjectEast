@@ -3,6 +3,11 @@
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 
+
+void ABaseItemPickUp::MulticastSetPhysicsSimulation() const
+{
+	SetPhysicsSimulationAndCollision();
+}
 ABaseItemPickUp::ABaseItemPickUp()
 {
 	InventoryCore = CreateDefaultSubobject<UInventoryCore>(TEXT("InventoryCore"));
@@ -68,11 +73,6 @@ void ABaseItemPickUp::Destroyed()
 }
 
 void ABaseItemPickUp::GameLoad()
-{
-	SetPhysicsSimulationAndCollision();
-}
-
-void ABaseItemPickUp::MulticastSetPhysicsSimulation() const
 {
 	SetPhysicsSimulationAndCollision();
 }

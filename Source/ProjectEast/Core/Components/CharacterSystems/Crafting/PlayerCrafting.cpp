@@ -30,22 +30,24 @@ void UPlayerCrafting::OpenCraftingWidget(UCraftingCore* CraftingCore, EWidgetTyp
 void UPlayerCrafting::CloseCraftingWidget()
 {
 	UPlayerEquipment* PlayerEquipment = PlayerController->GetPlayerEquipment();
-	if (IsValid(PlayerEquipment))
+		if (IsValid(PlayerEquipment))
 	{
 		PlayerEquipment->CallOnItemDetach(*PreviewItemData);
 		PlayerEquipment->CallOnItemAttach(*StoredPreviewData);
 
-		PreviewItemData = nullptr;
-		StoredPreviewData = nullptr;
-		bIsCraftingWidgetOpen = false;
 
 		if (IsValid(CurrentStationComponent) && CurrentStationComponent->GetCraftOnlyWhenWindowIsOpen())
 		{
 			CurrentStationComponent->ClearCraftingQueue(PlayerController);
 			CurrentStationComponent->StopCraftingProcess(GetFirstItemFromQueue(), PlayerController);
 		}
+		
 		CurrentStationComponent = nullptr;
-		SelectedCraftingData = nullptr;
+		
+		PreviewItemData = &EmptyItemData;
+		StoredPreviewData = &EmptyItemData;
+		bIsCraftingWidgetOpen = false;
+		SelectedCraftingData = &EmptyCraftingData;
 	}
 	WidgetManager->CloseActiveWidget();
 }

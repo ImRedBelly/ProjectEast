@@ -15,10 +15,21 @@ class PROJECTEAST_API AForge : public ABaseInteractable
 
 public:
 	AForge();
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void ClientStartInteraction(AActor* Interactor) override;
 	virtual void ClientEndInteraction(AActor* Interactor) override;
 
-private:
+protected:
+	UPROPERTY(EditAnywhere)
+	USceneComponent* SpawnPoint;
+
 	UPROPERTY(EditAnywhere)
 	UCraftingCore* CraftingCore;
+
+private:
+	virtual void BeginPlay() override;
+	virtual void BeginDestroy() override;
+
+	UFUNCTION()
+	void SpawnCraftedItems(FCraftingData& CraftingData, AActor* ItemOwner);
 };

@@ -83,6 +83,6 @@ public:
 	TSubclassOf<AItemConsumable> ConsumableClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Item Interactable")
-	ABaseItemPickUp* InteractableClass;
+	TSubclassOf<ABaseItemPickUp> InteractableClass;
 	
 };

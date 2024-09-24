@@ -17,7 +17,7 @@ void UForgeStationWindow::InitializeWindow(UPlayerCrafting* InPlayerCraftingCore
 void UForgeStationWindow::NativeDestruct()
 {
 	ButtonClose->OnClicked.RemoveDynamic(this, &UForgeStationWindow::CloseWidget);
-	CraftingCore->OnItemCrafted.AddDynamic(this, &UForgeStationWindow::OnItemCrafted);
+	CraftingCore->OnItemCrafted.RemoveDynamic(this, &UForgeStationWindow::OnItemCrafted);
 	Super::NativeDestruct();
 }
 

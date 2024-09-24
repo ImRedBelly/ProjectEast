@@ -109,6 +109,8 @@ protected:
 	int32 MaxQueuedItems;
 
 	UPROPERTY(EditAnywhere)
+	FItemData EmptyItemData;
+	UPROPERTY(EditAnywhere)
 	FCraftingData EmptyCraftingData;
 
 private:

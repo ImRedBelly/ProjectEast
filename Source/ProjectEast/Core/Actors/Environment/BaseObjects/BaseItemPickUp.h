@@ -11,6 +11,10 @@ class PROJECTEAST_API ABaseItemPickUp : public ABaseInteractable
 {
 	GENERATED_BODY()
 
+public:
+	void MulticastSetPhysicsSimulation() const;
+	UInventoryCore* GetInventoryCore() const { return InventoryCore; }
+
 protected:
 	ABaseItemPickUp();
 
@@ -29,7 +33,6 @@ protected:
 
 	virtual void GameLoad() override;
 
-	void MulticastSetPhysicsSimulation() const;
 	void SetPhysicsSimulationAndCollision() const;
 
 	void OnRemoveInteraction() const;
