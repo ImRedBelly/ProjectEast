@@ -101,6 +101,7 @@ public:
 	bool IsRefreshOnClosingWidget() const { return bIsRefreshOnClosingWidget; }
 	TTuple<bool, int32> GetEmptyInventorySlot(FItemData* ItemData);
 	TTuple<FItemData*, bool> GetItemByData(FItemData* ItemData);
+	TTuple<FItemData*, bool> GetItemByID(FString ID, EInventoryPanels InSpecifiedPanel);
 	TTuple<bool, FText> TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,EInputMethodType InputMethod,UPlayerEquipment* Sender);
 
 protected:
@@ -162,7 +163,6 @@ protected:
 	bool HasEnoughGold(FItemData* ItemData) const;
 	bool IsInventoryOverweight() const;
 	FItemData* GetItemBySlot(EInventoryPanels Panel, int32 SlitIndex);
-	TTuple<FItemData*, bool> GetItemByID(FString ID, EInventoryPanels InSpecifiedPanel);
 	TArray<FItemData*> GetCombinedInventories() const;
 	TArray<FItemData*> GetItemsOfSpecifiedType(EItemsType ItemsType) const;
 	void SwitchActivePanel(EInventoryPanels Panel);

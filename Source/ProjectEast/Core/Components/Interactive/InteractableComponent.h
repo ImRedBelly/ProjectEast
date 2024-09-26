@@ -8,10 +8,10 @@
 #include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "InteractableComponent.generated.h"
 
+class UInventoryCore;
 class UBoxComponent;
 class UWidgetComponent;
 class UInteractionWidget;
-
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -20,15 +20,17 @@ class PROJECTEAST_API UInteractableComponent : public UActorComponent, public II
 	GENERATED_BODY()
 
 public:
-	
 	UBoxComponent* GetInteractionVolume() const;
-	bool IsInteractable() const ;
+	bool IsInteractable() const;
 	bool IsShowLootBar() const;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interaction Settings")
+	TMap<AActor*, int32> AssociatedInteractableActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interaction Settings")
 	bool bIsInteractable = true;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings")
 	bool bDestroyAfterPickup;
 
@@ -60,13 +62,25 @@ protected:
 	bool bIsCheckForAssociatedActors;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings")
-	bool bCanReInitialized = true;;
+	bool bCanReInitialized = true;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings")
 	bool bIsRemoveAssociatedInteractablesOnComplete;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings")
 	bool bIsShowLootBar = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Settings|SpecifiedPanel")
+	bool bUseSpecifiedPanel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Settings|SpecifiedPanel",meta=(EditCondition="bUseSpecifiedPanel", EditConditionHides))
+	FString KeyID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Settings|SpecifiedPanel",meta=(EditCondition="bUseSpecifiedPanel", EditConditionHides))
+	bool bRemoveItemAfterInteraction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Settings|SpecifiedPanel",meta=(EditCondition="bUseSpecifiedPanel", EditConditionHides))
+	EInventoryPanels SpecifiedPanel;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings|Advanced")
 	FName InteractableTag = "Interactable";
@@ -80,9 +94,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings|Advanced")
 	float InteractionTimerRate = 0.05f;
 
-	
 	virtual void BeginPlay() override;
-	
+
 private:
 	AActor* CachedInteractor;
 	bool bIsAlreadyInteracted;
@@ -94,7 +107,6 @@ private:
 
 	TArray<UPrimitiveComponent*> ObjectsHighlight;
 
-	TMap<AActor*, int32> AssociatedInteractableActors;
 
 	FTimerHandle KeyDownTimer;
 	FEnhancedActionKeyMapping PressedInteractionKey;
@@ -111,7 +123,7 @@ public:
 	virtual void ClientEndInteraction(AActor* Interactor) override;
 	virtual void ClientPreInteraction(AActor* Interactor) override;
 	virtual bool CanBeInteractedWith() override;
-	
+
 
 #pragma region BeforeInteraction
 
@@ -132,7 +144,8 @@ public:
 	void OnMultiplePress();
 	void ResetClickCounter();
 
-	
+	bool CheckForSpecificItemInInventory(AActor* Interactor) const;
+
 #pragma endregion BeforeInteraction
 
 #pragma region OnInteraction
@@ -166,12 +179,11 @@ public:
 	bool IsTargetInteractableValue();
 	void ToggleCanBeReInitialized(bool Condition);
 	void ToggleIsInteractable(bool Condition);
-	
-	
+
+
 	int32 CurrentClickCount;
 	int32 MaxClickCount = 15;
 	float SpeedFillBorder = 0.075f;
 	float FirstDelayResetClick = 0.5f;
 	FTimerHandle ClickResetTimerHandle;
-
 };

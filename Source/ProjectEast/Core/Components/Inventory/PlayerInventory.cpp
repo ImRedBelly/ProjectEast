@@ -83,7 +83,7 @@ void UPlayerInventory::ClientTakeItemReturnValue(bool Success, FText FailureMess
 			CashedPlayerController->RemoveInteractionFromObject(GetCurrentInteractable());
 	}
 	else
-		CashedPlayerController->GetWidgetManager()->DisplayMessageNotify(FailureMessage.ToString());
+		CashedPlayerController->GetWidgetManager()->DisplayMessage(FailureMessage.ToString());
 }
 
 void UPlayerInventory::CloseInventoryWidget()

@@ -113,7 +113,7 @@ void UPlayerEquipment::ClientTransferItemReturnValue(bool Success, FText Failure
 	if (!Success)
 	{
 		UWidgetManager* WidgetManager = Cast<AMainPlayerController>(GetOwner())->GetWidgetManager();
-		WidgetManager->DisplayMessageNotify(FailureMessage.ToString());
+		WidgetManager->DisplayMessage(FailureMessage.ToString());
 	}
 }
 

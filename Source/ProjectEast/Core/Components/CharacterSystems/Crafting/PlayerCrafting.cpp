@@ -211,7 +211,7 @@ void UPlayerCrafting::ClientTryToCraftReturnValue(bool ReturnValue, FText Messag
 	}
 	else
 	{
-		WidgetManager->DisplayMessageNotify(Message.ToString());
+		WidgetManager->DisplayMessage(Message.ToString());
 		Sender->StopCraftingProcess(GetFirstItemFromQueue(), PlayerController);
 	}
 }
@@ -250,7 +250,7 @@ void UPlayerCrafting::ClientInitializeCraftingProcessReturnValue(bool ReturnValu
 	}
 	else
 	{
-		WidgetManager->DisplayMessageNotify(Message.ToString());
+		WidgetManager->DisplayMessage(Message.ToString());
 		Sender->FailedToInitializeCraftingProcess(CraftingData, AmountToCraft);
 	}
 }

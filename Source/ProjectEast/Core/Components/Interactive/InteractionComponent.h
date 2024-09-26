@@ -6,6 +6,7 @@
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "InteractionComponent.generated.h"
 
+class AMainPlayerController;
 class UInteractableComponent;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -15,7 +16,7 @@ class PROJECTEAST_API UInteractionComponent : public UActorComponent, public IOb
 
 public:
 	UFUNCTION(Unreliable,Client)
-	void InitializeInteraction(APlayerController* PlayerController);
+	void InitializeInteraction(AMainPlayerController* PlayerController);
 	
 	UInteractableComponent* GetInteractableComponent() const;
 	TArray<FEnhancedActionKeyMapping> GetInteractionKeys() const;
@@ -41,7 +42,7 @@ protected:
 
 private:
 	UInteractableComponent* CurrentInteractableComponent;
-	APlayerController* CachedPlayerController;
+	AMainPlayerController* CachedPlayerController;
 	APawn* CachedPawn;
 
 	FTimerHandle InteractionTimer;

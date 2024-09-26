@@ -891,19 +891,12 @@
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/Pistol/Pistol_skelmesh_Skeleton.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_Ladder_30cm.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_WindowFrame.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/UI/Crafting/WBP_CraftingBar.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/UI/Crafting/WBP_CraftingBar.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/CraftingCore.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/CraftingCore.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Crafting/CraftingBar.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Crafting/CraftingBar.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Crafting/CraftingBar.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Crafting/CraftingBar.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/PlayerInventory/PlayerInventorySlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/PlayerInventory/PlayerInventorySlot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/InventoryUtility.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/InventoryUtility.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/InventoryUtility.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/InventoryUtility.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Environment/BaseObjects/BaseInteractable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Environment/BaseObjects/BaseInteractable.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Environment/BaseObjects/BaseInteractable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Environment/BaseObjects/BaseInteractable.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Environment/Miscellaneous/Storage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Environment/Miscellaneous/Storage.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1107,6 +1100,7 @@
       <workItem from="1726848699751" duration="1290000" />
       <workItem from="1726893118747" duration="14648000" />
       <workItem from="1726977830890" duration="234000" />
+      <workItem from="1727166217917" duration="557000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />

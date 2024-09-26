@@ -8,6 +8,8 @@
 #include "Components/TextBlock.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
@@ -492,7 +494,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 		case EItemRemoveType::CannotBeRemoved:
 			{
 				if (WidgetManager)
-					WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
+					WidgetManager->DisplayMessage("Item cannot be Removed.");
 			}
 			break;
 		}

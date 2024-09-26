@@ -35,12 +35,6 @@ void AMainPlayerController::OnInteraction() const
 		PlayerInventory->InputInteraction();
 }
 
-void AMainPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-	WidgetManager->InitializeWidgetManager(this, PlayerInventory);
-}
-
 void AMainPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
@@ -61,10 +55,10 @@ void AMainPlayerController::InputActionInventory()
 
 void AMainPlayerController::InitializeComponents()
 {
-	InteractionComponent->InitializeInteraction(this);
 	PlayerInventory->InitializeInventory(this);
 	PlayerEquipment->InitializeEquipment();
 	PlayerCrafting->InitializeCrafting(this);
+	InteractionComponent->InitializeInteraction(this);
 }
 
 void AMainPlayerController::InitializeInteractionWithObject(UInteractableComponent* InteractableComponent)

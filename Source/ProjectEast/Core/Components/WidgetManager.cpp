@@ -8,16 +8,14 @@
 #include "ProjectEast/Core/UI/Crafting/PlayerCraftingWindow.h"
 #include "ProjectEast/Core/UI/HUD/MainWindow.h"
 #include "ProjectEast/Core/UI/Menus/Pause.h"
+#include "ProjectEast/Core/UI/Misc/Popups/PopupMessage.h"
 #include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
 #include "ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.h"
 #include "ProjectEast/Core/UI/Storage/StorageWindow.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
-void UWidgetManager::InitializeWidgetManager(AMainPlayerController* PlayerController, UPlayerInventory* PlayerInventory)
+void UWidgetManager::InitializeWidgetManager()
 {
-	CachedPlayerController = PlayerController;
-	CachedPlayerInventory = PlayerInventory;
-
 	CachedMainWindow = CreateWidget<UMainWindow>(CachedPlayerController, DefaultMainWindow);
 	if (UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 		CachedMainWindow->AddToPlayerScreen();
@@ -306,15 +304,36 @@ void UWidgetManager::OpenConfirmationPopup(const FString Str, FItemData* ItemDat
 
 void UWidgetManager::OpenTextDocumentPopup(FItemData* ItemData, UUserWidget* ParentWidget)
 {
+	
+	CachedSplitStackPopup = CreateWidget<USplitStackPopup>(CachedPlayerController, DefaultSplitStackPopup);
 }
 
-void UWidgetManager::DisplayMessageNotify(const FString Str)
+void UWidgetManager::DisplayMessage(const FString Message)
 {
+	if(!Message.IsEmpty())
+	{
+		auto NewPopupMessage = CreateWidget<UPopupMessage>(CachedPlayerController, PopupMessageClass);
+		NewPopupMessage->DisplayMessage(FText::FromString(Message));
+		
+		if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
+			NewPopupMessage->AddToViewport(1);
+		else
+			NewPopupMessage->AddToPlayerScreen(1);
+	}
 }
 
 void UWidgetManager::InitializeCraftingStation(UCraftingCore* CraftingCore)
 {
 	CraftingStation = CraftingCore;
+}
+
+void UWidgetManager::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	CachedPlayerController = Cast<AMainPlayerController>(GetOwner());
+	CachedPlayerInventory = CachedPlayerController->GetPlayerInventory();
+	InitializeWidgetManager();
 }
 
 bool UWidgetManager::IsAnyMainWidgetOpen() const

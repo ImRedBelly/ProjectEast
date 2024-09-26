@@ -5,6 +5,7 @@
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "WidgetManager.generated.h"
 
+class UPopupMessage;
 class UInventoryCore;
 class UPlayerInventory;
 class APlayerCapture;
@@ -25,13 +26,14 @@ class PROJECTEAST_API UWidgetManager : public UActorComponent
 	GENERATED_BODY()
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchWidget, EWidgetType, WidgetType);
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchTab, EWidgetType, WidgetType);
-	
+
 public:
 	FOnSwitchWidget OnSwitchWidget;
 	FOnSwitchTab OnSwitchTab;
-	
-	void InitializeWidgetManager(AMainPlayerController* PlayerController, UPlayerInventory* PlayerInventory);
+
+	void InitializeWidgetManager();
 	void SetActiveWidget(EWidgetType WidgetType);
 	EWidgetType GetActiveWidget();
 
@@ -71,7 +73,7 @@ public:
 	                           UUserWidget* UserWidget);
 	void OpenTextDocumentPopup(FItemData* ItemData, UUserWidget* ParentWidget);
 
-	void DisplayMessageNotify(const FString Str);
+	void DisplayMessage(const FString Message);
 	void InitializeCraftingStation(UCraftingCore* CraftingCore);
 
 protected:
@@ -89,6 +91,10 @@ protected:
 	TSubclassOf<UPlayerCraftingWindow> PlayerCraftingWindow;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<UForgeStationWindow> StationCraftingWindow;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Popups")
+	TSubclassOf<UPopupMessage> PopupMessageClass;
+
+	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY()

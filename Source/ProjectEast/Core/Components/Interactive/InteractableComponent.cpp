@@ -1,10 +1,13 @@
 ﻿#include "InteractableComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
-#include "GameFramework/InputSettings.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ProjectEast/Core/Actors/Interfaces/Interactable.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/UI/Misc/Interaction/InteractionWidget.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
@@ -56,7 +59,7 @@ void UInteractableComponent::SetWidgetLocalOwner(APlayerController* OwningPlayer
 {
 	CachedInteractionWidget = CreateWidget<UInteractionWidget>(OwningPlayer, BaseInteractionWidget);
 	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
-	
+
 	if (IsValid(CachedInteractionWidget))
 	{
 		CachedInteractionWidget->SetText(DefaultInteractionText);
@@ -130,6 +133,34 @@ void UInteractableComponent::ResetClickCounter()
 	}
 }
 
+bool UInteractableComponent::CheckForSpecificItemInInventory(AActor* Interactor) const
+{
+	if (bUseSpecifiedPanel)
+	{
+		if (!IsValid(Interactor))
+			return true;
+		
+		AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Interactor);
+		UInventoryCore* Inventory = PlayerController->GetPlayerInventory();
+
+		if (!IsValid(Inventory) || KeyID.IsEmpty())
+			return false;
+
+		auto ItemByID = Inventory->GetItemByID(KeyID, SpecifiedPanel);
+		if (ItemByID.Get<1>())
+		{
+			if (bRemoveItemAfterInteraction)
+			{
+				Inventory->RemoveItemFromInventoryArray(ItemByID.Get<0>());
+			}
+			return true;
+		}
+		PlayerController->GetWidgetManager()->DisplayMessage("Locked. Key Required.");
+		return false;
+	}
+	return true;
+}
+
 void UInteractableComponent::StartInteraction()
 {
 	if (IObjectInteraction* ObjectInteractable = Cast<IObjectInteraction>(CachedInteractor))
@@ -144,12 +175,16 @@ void UInteractableComponent::Initialize()
 #pragma region OnInteraction
 void UInteractableComponent::Interaction(AActor* Interactor)
 {
+	if (!CheckForSpecificItemInInventory(Interactor))
+		return;
+
 	CachedInteractor = Interactor;
 	bIsAlreadyInteracted = true;
 
 	if (IInteractable* ObjectInteractable = Cast<IInteractable>(GetOwner()))
 		ObjectInteractable->Interaction(Interactor);
 
+	OnAssociatedActorInteraction(Interactor);
 	RemoveInteractionByResponse();
 }
 
@@ -179,7 +214,7 @@ void UInteractableComponent::ClientPreInteraction(AActor* Interactor)
 
 bool UInteractableComponent::CanBeInteractedWith()
 {
-	return IInteractable::CanBeInteractedWith();
+	return bIsInteractable;
 }
 
 void UInteractableComponent::OnInitialize() const
@@ -207,75 +242,66 @@ void UInteractableComponent::OnClientInteraction(AActor* Interactor)
 
 void UInteractableComponent::OnAssociatedActorInteraction(AActor* Interactor)
 {
-	CachedInteractor = Interactor;
-
-	TArray<AActor*> Keys;
-	AssociatedInteractableActors.GetKeys(Keys);
-
-	for (AActor* Key : Keys)
+	for (auto KV : AssociatedInteractableActors)
 	{
-		if (!IsValid(Key))
-			continue;
+		if (IsValid(KV.Key))
+		{
+			UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
+				KV.Key->GetComponentByClass(StaticClass()));
 
-		UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
-			Key->GetComponentByClass(StaticClass()));
-
-		if (!IsValid(InteractableComponent))
-			continue;
-
-		InteractableComponent->OnCheckForInteractionWithAssociate(Interactor);
+			if (IsValid(InteractableComponent))
+				InteractableComponent->OnCheckForInteractionWithAssociate(Interactor);
+		}
 	}
 }
 
 void UInteractableComponent::OnCheckForInteractionWithAssociate(AActor* Interactor)
 {
-	CachedInteractor = Interactor;
-	if (bIsCheckForAssociatedActors)
+	if (!bIsCheckForAssociatedActors || IsTargetInteractableValue())
 	{
-		if (IsTargetInteractableValue())
+		Interaction(Interactor);
+
+		if (bIsRemoveAssociatedInteractablesOnComplete)
 		{
-			TArray<AActor*> Keys;
-			AssociatedInteractableActors.GetKeys(Keys);
-
-
-			if (IInteractable* Interactable = Cast<IInteractable>(CachedInteractor))
-				Interactable->Interaction(Interactor);
-			if (bIsRemoveAssociatedInteractablesOnComplete)
+			for (auto KV : AssociatedInteractableActors)
 			{
-				for (AActor* Key : Keys)
+				if (IsValid(KV.Key))
 				{
 					UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
-						Key->GetComponentByClass(StaticClass()));
+						KV.Key->GetComponentByClass(StaticClass()));
 					if (IsValid(InteractableComponent))
 						InteractableComponent->OnRemoveInteraction();
 				}
-
-				InteractableResponse = EInteractionResponse::OnlyOnce;
 			}
-			else
+
+			InteractableResponse = EInteractionResponse::OnlyOnce;
+		}
+		else
+		{
+			if (InteractableResponse != EInteractionResponse::Persistent)
 			{
-				if (InteractableResponse != EInteractionResponse::Persistent)
+				for (auto KV : AssociatedInteractableActors)
 				{
-					for (AActor* Key : Keys)
+					if (IsValid(KV.Key))
 					{
 						UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
-							Key->GetComponentByClass(StaticClass()));
+							KV.Key->GetComponentByClass(StaticClass()));
 						if (IsValid(InteractableComponent))
 							InteractableComponent->OnRemoveInteraction();
 					}
 				}
+			}
 
-				switch (InteractableResponse)
-				{
-				case EInteractionResponse::Persistent:
-					break;
-				case EInteractionResponse::OnlyOnce:
-					InteractableResponse = EInteractionResponse::OnlyOnce;
-					break;
-				case EInteractionResponse::Temporary:
-					ToggleCanBeReInitialized(false);
-					break;
-				}
+			switch (InteractableResponse)
+			{
+			case EInteractionResponse::Persistent:
+				break;
+			case EInteractionResponse::OnlyOnce:
+				InteractableResponse = EInteractionResponse::OnlyOnce;
+				break;
+			case EInteractionResponse::Temporary:
+				ToggleCanBeReInitialized(false);
+				break;
 			}
 		}
 	}
@@ -312,19 +338,14 @@ void UInteractableComponent::OnClientEndInteraction(AActor* Interactor) const
 
 void UInteractableComponent::OnAssociatedActorEndInteraction() const
 {
-	TArray<AActor*> Keys;
-	AssociatedInteractableActors.GetKeys(Keys);
-
-	for (AActor* Key : Keys)
+	for (auto KV : AssociatedInteractableActors)
 	{
-		if (IsValid(Key))
+		if (IsValid(KV.Key))
 		{
 			UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
-				Key->GetComponentByClass(StaticClass()));
+				KV.Key->GetComponentByClass(StaticClass()));
 			if (IsValid(InteractableComponent))
-			{
 				InteractableComponent->OnEndInteraction(CachedInteractor);
-			}
 		}
 	}
 }
@@ -341,7 +362,7 @@ void UInteractableComponent::OnClientRemoveInteraction()
 
 	bIsInteractable = false;
 	InteractableArea = nullptr;
-	
+
 	if (bDestroyAfterPickup)
 		GetOwner()->Destroy();
 }
@@ -362,15 +383,12 @@ void UInteractableComponent::OnReInitialize()
 
 void UInteractableComponent::OnReInitializeAssociatedActors() const
 {
-	TArray<AActor*> Keys;
-	AssociatedInteractableActors.GetKeys(Keys);
-
-	for (AActor* Key : Keys)
+	for (auto KV : AssociatedInteractableActors)
 	{
-		if (IsValid(Key))
+		if (IsValid(KV.Key))
 		{
 			UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
-				Key->GetComponentByClass(StaticClass()));
+				KV.Key->GetComponentByClass(StaticClass()));
 			if (IsValid(InteractableComponent))
 			{
 				InteractableComponent->ToggleCanBeReInitialized(true);
@@ -429,19 +447,14 @@ bool UInteractableComponent::IsTargetInteractableValue()
 {
 	bool bIsTargetInteractableValue = false;
 
-	TArray<AActor*> Keys;
-	AssociatedInteractableActors.GetKeys(Keys);
-
-	for (AActor* Key : Keys)
+	for (auto KV : AssociatedInteractableActors)
 	{
-		if (AssociatedInteractableActors.Find(Key))
+		if (IsValid(KV.Key))
 		{
 			UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(
-				Key->GetComponentByClass(StaticClass()));
-			if (AssociatedInteractableActors[Key] == InteractableComponent->InteractableValue)
-			{
+				KV.Key->GetComponentByClass(StaticClass()));
+			if (KV.Value == InteractableComponent->InteractableValue)
 				bIsTargetInteractableValue = true;
-			}
 			else
 			{
 				bIsTargetInteractableValue = false;
@@ -502,7 +515,7 @@ void UInteractableComponent::FindPressedKeyByActionName(TArray<FEnhancedActionKe
 			break;
 		}
 	}
-	
+
 	if (!bIsFindKey && InteractionKeys.Num() > 0)
 	{
 		PressedInteractionKey = FEnhancedActionKeyMapping();

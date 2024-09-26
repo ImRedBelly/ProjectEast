@@ -295,7 +295,7 @@ void UEquipmentSlot::DropOnTheGround()
 			                                     EItemDestination::DropBar, this);
 		break;
 	case EItemRemoveType::CannotBeRemoved:
-			WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
+			WidgetManager->DisplayMessage("Item cannot be Removed.");
 		break;
 	}
 }

@@ -3,15 +3,15 @@
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 
 class UInteractableComponent;
 class UInteractable;
 
-void UInteractionComponent::InitializeInteraction_Implementation(APlayerController* PlayerController)
+void UInteractionComponent::InitializeInteraction_Implementation(AMainPlayerController* PlayerController)
 {
-	if (IsValid(PlayerController))
-		CachedPlayerController = PlayerController;
+	CachedPlayerController = PlayerController;
 
 	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
 	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::UpdateInteraction,

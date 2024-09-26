@@ -64,9 +64,8 @@ TSoftObjectPtr<UTexture2D> FIconButtonGameModule::GetTextureForKey(UInputMapping
 				|| (!IsUsingGamepad() && FoundMapping.Key.IsGamepadKey()))
 					continue;
 
-			UE_LOG(LogTemp, Warning, TEXT("FoundMapping.Key.IsGamepadKey: %s"),
-			       ( FoundMapping.Key.IsGamepadKey() ? TEXT("true") : TEXT("false") ));
-			UE_LOG(LogTemp, Warning, TEXT("IsUsingGamepad: %s"), ( IsUsingGamepad() ? TEXT("true") : TEXT("false") ));
+			//UE_LOG(LogTemp, Warning, TEXT("FoundMapping.Key.IsGamepadKey: %s"),( FoundMapping.Key.IsGamepadKey() ? TEXT("true") : TEXT("false") ));
+			//UE_LOG(LogTemp, Warning, TEXT("IsUsingGamepad: %s"), ( IsUsingGamepad() ? TEXT("true") : TEXT("false") ));
 
 			if (!Data || (Data->Key != FoundMapping.Key))continue;
 

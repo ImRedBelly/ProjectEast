@@ -78,7 +78,7 @@ bool UDropBar::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& I
 			}
 			break;
 		case EItemRemoveType::CannotBeRemoved:
-			CachedWidgetManager->DisplayMessageNotify("Item cannot be Removed.");
+			CachedWidgetManager->DisplayMessage("Item cannot be Removed.");
 			break;
 		}
 	}

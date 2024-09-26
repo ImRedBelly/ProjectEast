@@ -568,7 +568,7 @@ void UPlayerInventorySlot::RefreshToolTip()
 void UPlayerInventorySlot::DropOnTheGround() const
 {
 	if (CachedPlayerInventory->GetItemRemoveType(CurrentItemData) == EItemRemoveType::OnConfirmation)
-		WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
+		WidgetManager->DisplayMessage("Item cannot be Removed.");
 
 	WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", CurrentItemData, nullptr, nullptr,
 	                                     CachedPlayerInventory, EInputMethodType::RightClick,
@@ -749,7 +749,7 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 		break;
 	case EItemRemoveType::CannotBeRemoved:
 
-		WidgetManager->DisplayMessageNotify("Item cannot be Removed.");
+		WidgetManager->DisplayMessage("Item cannot be Removed.");
 		break;
 	}
 }

@@ -241,7 +241,7 @@ TTuple<bool, FItemData*> InventoryUtility::FindItemByID(const TArray<FItemData*>
 		if (ItemData[i]->ID == ID)
 			return MakeTuple(true, ItemData[i]);
 	}
-	return MakeTuple(true, ItemData[0]);
+	return MakeTuple(false, nullptr);
 }
 
 TTuple<bool, int32> InventoryUtility::FindItemIndex(const TArray<FItemData*> ItemDataArray, FItemData* ItemData)

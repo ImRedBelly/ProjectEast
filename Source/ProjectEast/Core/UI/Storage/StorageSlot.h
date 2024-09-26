@@ -81,7 +81,7 @@ protected:
 
 private:
 	UInventoryCore* ActorInventory;
-	UInventoryCore* PlayerInventory;
+	UPlayerInventory* PlayerInventory;
 
 	AMainPlayerController* CachedPlayerController;
 	UWidgetManager* WidgetManager;

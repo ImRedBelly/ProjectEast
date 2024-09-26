@@ -20,6 +20,7 @@ ABaseInteractable::ABaseInteractable()
 	StaticMeshComponent->SetupAttachment(RootComponent);
 
 	InteractableArea->SetBoxExtent(FVector(100.0f, 100.0f, 100.0f));
+	bReplicates = true;
 }
 
 void ABaseInteractable::Initialize()
