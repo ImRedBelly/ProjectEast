@@ -80,9 +80,9 @@ protected:
 	UWidgetAnimation* ToolTipAnimation;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UToolTip> DefaultToolTip;
+	TSubclassOf<UToolTip> ToolTipClass;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UItemStatsSlot> DefaultItemStatsSlot;
+	TSubclassOf<UItemStatsSlot> ItemStatsSlotClass;
 
 	virtual void NativeConstruct() override;
 

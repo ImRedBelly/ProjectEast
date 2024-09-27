@@ -34,7 +34,6 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UWidgetSwitcher* WidgetSwitcher;
 	
-	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	
 	FText GetStatValue() const;
@@ -45,7 +44,6 @@ protected:
 	void UpdateViewSwitcher() const;
 
 private:
-	FText StatName;
 	float StatValue;
 	float ComparisonValue;
 	bool ShowComparison;

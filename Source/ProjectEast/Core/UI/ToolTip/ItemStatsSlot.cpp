@@ -6,10 +6,13 @@
 void UItemStatsSlot::InitializeSlot(FText NameState, float ValueStat,
 	float ValueComparison, bool ComparisonShow)
 {
-	StatName = NameState;
 	StatValue = ValueStat;
 	ComparisonValue = ValueComparison;
 	ShowComparison = ComparisonShow;
+
+	TextStatName->SetText(NameState);
+	TextStatValue->SetText(FText::FromString(FString::SanitizeFloat(StatValue)));
+	TextComparisonValue1->SetText(FText::FromString(FString::SanitizeFloat(ComparisonValue)));
 }
 
 void UItemStatsSlot::ShowComparisonValue(float Value)
@@ -24,16 +27,7 @@ void UItemStatsSlot::HideComparisonValue()
 	ShowComparison = false;
 	UpdateViewSwitcher();
 }
-void UItemStatsSlot::NativePreConstruct()
-{
-	Super::NativePreConstruct();
-	if (IsDesignTime())
-	{
-		TextStatName->SetText(StatName);
-		TextStatValue->SetText(FText::FromString(FString::SanitizeFloat(StatValue)));
-		TextComparisonValue1->SetText(FText::FromString(FString::SanitizeFloat(ComparisonValue)));
-	}
-}
+
 
 void UItemStatsSlot::NativeConstruct()
 {
@@ -76,8 +70,7 @@ void UItemStatsSlot::SetAppropriateComparisonBox() const
 
 void UItemStatsSlot::UpdateViewSwitcher() const
 {
-	WidgetSwitcher->
-		SetVisibility(ShowComparison ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+	WidgetSwitcher->SetVisibility(ShowComparison ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 
 	if (ShowComparison)
 		SetAppropriateComparisonBox();

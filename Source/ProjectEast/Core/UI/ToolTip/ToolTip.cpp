@@ -47,7 +47,7 @@ void UToolTip::ShowComparisonToolTip()
 		auto Data = PlayerEquipment->GetItemByEquipmentSlot(CurrentItemData->EquipmentSlot);
 		if (Data.Get<0>())
 		{
-			auto NewToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
+			auto NewToolTip = CreateWidget<UToolTip>(this, ToolTipClass);
 			NewToolTip->InitializeToolTip(Data.Get<1>(), true);
 			ComparisonToolTip = NewToolTip;
 			auto GridSlot = UniformGrid->AddChildToUniformGrid(ComparisonToolTip, 0, 0);
@@ -155,12 +155,12 @@ void UToolTip::BuildItemStats()
 		VerticalBoxItemStats->ClearChildren();
 		for (auto ItemsStat : CurrentItemData->Class.GetDefaultObject()->Stats)
 		{
-			auto NewItemStatsSlot = CreateWidget<UItemStatsSlot>(this, DefaultItemStatsSlot);
+			auto NewItemStatsSlot = CreateWidget<UItemStatsSlot>(this, ItemStatsSlotClass);
 
-			FString StatName = UEnum::GetValueAsString(ItemsStat.Type);
-			NewItemStatsSlot->InitializeSlot(FText::FromString(StatName), ItemsStat.Value, 0.0f, false);
+			FText StatName = UEnum::GetDisplayValueAsText(ItemsStat.Type);
+			NewItemStatsSlot->InitializeSlot(StatName, ItemsStat.Value, 0.0f, false);
 
-			StatWidgets.Add(StatName, NewItemStatsSlot);
+			StatWidgets.Add(StatName.ToString(), NewItemStatsSlot);
 			auto VerticalBoxSlot = VerticalBoxItemStats->AddChildToVerticalBox(NewItemStatsSlot);
 			VerticalBoxSlot->SetHorizontalAlignment(HAlign_Fill);
 		}
@@ -184,7 +184,7 @@ void UToolTip::SetItemRequiredLevel() const
 		uint32 RequiredLevel = CurrentItemData->Class.GetDefaultObject()->RequiredLevel;
 		if (RequiredLevel > 0)
 		{
-			TextRequiredLevel->SetText(FText::FromString(FString::FromInt(RequiredLevel)));
+			TextRequiredLevelValue->SetText(FText::FromString(FString::FromInt(RequiredLevel)));
 			HorizontalBoxRequiredLevel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		}
 		else
@@ -219,7 +219,7 @@ void UToolTip::SetItemDurability() const
 		{
 			uint32 Durability = CurrentItemData->Durability;
 			FString DurabilityString = FString::Printf(TEXT("%d%%"), Durability);
-			TextRequiredLevel->SetText(FText::FromString(DurabilityString));
+			TextDurabilityValue->SetText(FText::FromString(DurabilityString));
 			HorizontalBoxDurability->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		}
 		else
