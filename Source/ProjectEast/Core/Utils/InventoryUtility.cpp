@@ -281,7 +281,9 @@ void InventoryUtility::TakeAllItemsFromInventory(AActor* Interactor, UInventoryC
 	{
 		auto PlayerInventory = GetPlayerInventory(Interactor);
 		if (IsValid(PlayerInventory))
+		{	
 			PlayerInventory->ServerTakeAllItems(ActorInventory, Interactor);
+		}
 	}
 }
 

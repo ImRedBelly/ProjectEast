@@ -8,6 +8,7 @@ void ABaseItemPickUp::MulticastSetPhysicsSimulation() const
 {
 	SetPhysicsSimulationAndCollision();
 }
+
 ABaseItemPickUp::ABaseItemPickUp()
 {
 	InventoryCore = CreateDefaultSubobject<UInventoryCore>(TEXT("InventoryCore"));
@@ -36,13 +37,15 @@ void ABaseItemPickUp::ClientStartInteraction(AActor* Interactor)
 	if (InteractableComponent->IsShowLootBar())
 	{
 		InteractableComponent->ToggleInteractionWidget(false);
-		
+
 		auto PlayerInventory = InventoryUtility::GetPlayerInventory(CachedLocalInteractor);
 		if (IsValid(PlayerInventory))
 			PlayerInventory->OpenLootBarWidget();
 	}
 	else
+	{
 		InventoryUtility::TakeAllItemsFromInventory(CachedLocalInteractor, InventoryCore);
+	}
 }
 
 void ABaseItemPickUp::ClientEndInteraction(AActor* Interactor)

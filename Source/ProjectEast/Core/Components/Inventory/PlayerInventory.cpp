@@ -45,6 +45,7 @@ void UPlayerInventory::ServerTakeItem(FItemData* ItemData, UInventoryCore* Sende
 
 void UPlayerInventory::ServerTakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer)
 {
+	TakeAllItems(Sender, OwningPlayer);
 }
 
 void UPlayerInventory::ServerSpawnLootBag(FItemData* ItemData, AActor* OwningPlayer)
@@ -72,6 +73,8 @@ void UPlayerInventory::ServerModifyItemDurability(FItemData* ItemData, uint32 Am
 
 void UPlayerInventory::ClientItemLooted(FItemData* ItemData)
 {
+	if(OnItemLooted.IsBound())
+		OnItemLooted.Broadcast(*ItemData);
 }
 
 void UPlayerInventory::ClientTakeItemReturnValue(bool Success, FText FailureMessage, bool RemoveInteraction) const
@@ -207,8 +210,7 @@ void UPlayerInventory::TakeItem(FItemData* ItemData, UInventoryCore* Sender, AAc
 {
 	if (InventoryUtility::IsItemClassValid(ItemData) && IsValid(Sender))
 	{
-		FItemData* LocalItemData = ItemData;
-		auto TransferData = TransferItemFromInventory(LocalItemData, nullptr, EInputMethodType::RightClick, Sender,
+		auto TransferData = TransferItemFromInventory(ItemData, nullptr, EInputMethodType::RightClick, Sender,
 		                                              OwningPlayer);
 
 		auto InventoryData = Sender->GetInventoryAndSize(EInventoryPanels::P1);
@@ -217,12 +219,42 @@ void UPlayerInventory::TakeItem(FItemData* ItemData, UInventoryCore* Sender, AAc
 		                          !InventoryData.Get<0>().IsValidIndex(0));
 
 		if (TransferData.Get<0>())
-			ClientItemLooted(LocalItemData);
+			ClientItemLooted(ItemData);
 	}
 }
 
-void UPlayerInventory::TakeAllItems()
-{
+void UPlayerInventory::TakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer)
+	{
+	if (IsValid(Sender))
+	{
+		bool bReturnValue = true;
+		FText FailureMessage;
+		auto InventoryData = Sender->GetInventoryAndSize(EInventoryPanels::P1);
+
+		for (auto ItemData : InventoryData.Get<0>())
+		{
+			if (InventoryUtility::IsItemClassValid(ItemData))
+			{				
+				auto TransferData = TransferItemFromInventory(ItemData, nullptr, EInputMethodType::RightClick, Sender,
+															  OwningPlayer);
+
+				if (TransferData.Get<0>())
+				{
+					ClientItemLooted(ItemData);
+				}
+				else
+				{
+					bReturnValue = false;
+					FailureMessage = TransferData.Get<1>();
+					CashedPlayerController->GetWidgetManager()->DisplayMessage(FailureMessage.ToString());
+					break;
+				}
+			}
+		}
+		
+		bool IsFirstElementNotValid = !Sender->GetInventoryAndSize(EInventoryPanels::P1).Get<0>().IsValidIndex(0);
+		ClientTakeItemReturnValue(bReturnValue, FailureMessage,IsFirstElementNotValid);
+	}
 }
 
 void UPlayerInventory::DropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer)
@@ -305,10 +337,10 @@ TTuple<bool, FText> UPlayerInventory::TransferItemFromInventory(FItemData* ItemD
                                                                 AActor* OwningPlayer)
 {
 	//TODO проверь этот метод потом, ты его писал очень уставший может что сделал не так, не ленись!
-	FItemData* LocalItemData = ItemData;
+
 	if (InventoryUtility::IsItemClassValid(ItemData) && IsValid(Sender))
 	{
-		if (!AttemptUsingTransferredItem(LocalItemData, Sender))
+		if (!AttemptUsingTransferredItem(ItemData, Sender))
 		{
 			if (Sender->CheckOwnerGold())
 				if (!HasEnoughGold(ItemData))
@@ -347,14 +379,14 @@ TTuple<bool, FText> UPlayerInventory::TransferItemFromInventory(FItemData* ItemD
 
 			if (Sender->CheckOwnerGold() && CheckOwnerGold())
 			{
-				auto LocalValue = InventoryUtility::CalculateStackedItemValue(LocalItemData);
+				auto LocalValue = InventoryUtility::CalculateStackedItemValue(ItemData);
 				RemoveGoldFromOwner(LocalValue);
 				Sender->AddGoldToOwner(LocalValue);
 			}
 
-			Sender->RemoveItemFromInventoryArray(LocalItemData);
+			Sender->RemoveItemFromInventoryArray(ItemData);
 			if (IsValid(Sender))
-				Sender->RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(LocalItemData));
+				Sender->RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
 
 			return MakeTuple(true, FText::FromString(""));
 		}
@@ -486,7 +518,7 @@ void UPlayerInventory::AddItemToInventoryArray(FItemData* ItemData, int32 SlotIn
 			CurrentInventoryArray[SlotIndex] = NewItemData;
 
 			ApplyChangesToInventoryArray(InventoryPanel, CurrentInventoryArray);
-	
+
 
 			if (UKismetSystemLibrary::IsStandalone(GetWorld()))
 			{

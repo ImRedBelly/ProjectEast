@@ -14,7 +14,7 @@ class AMainPlayerController;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeItem);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeAllItems);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemLooted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemLooted, FItemData&, ItemData);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemUsed, FItemData, ItemData);
 
 
@@ -83,7 +83,7 @@ private:
 	void ClientTakeItemReturnValue(bool Success, FText FailureMessage, bool RemoveInteraction) const;
 
 	void TakeItem(FItemData* ItemData, UInventoryCore* Sender, AActor* OwningPlayer);
-	void TakeAllItems();
+	void TakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer);
 	void DropItemOnTheGround(FItemData* ItemData, EItemDestination Initiator, AActor* OwningPlayer);
 	void SpawnLootBagNearThePlayer(FItemData* ItemData, AActor* OwningPlayer);
 	void SpawnItemMeshNearThePlayer();

@@ -67,7 +67,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings")
 	bool bIsRemoveAssociatedInteractablesOnComplete;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interaction Settings")
 	bool bIsShowLootBar = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction Settings|SpecifiedPanel")

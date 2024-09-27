@@ -15,6 +15,8 @@ ABaseInteractable::ABaseInteractable()
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	InteractionWidget->SetupAttachment(RootComponent);
+	InteractionWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	
 	InteractableArea->SetupAttachment(RootComponent);
 	SkeletalMeshComponent->SetupAttachment(RootComponent);
 	StaticMeshComponent->SetupAttachment(RootComponent);
