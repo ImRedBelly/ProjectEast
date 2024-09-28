@@ -267,41 +267,39 @@ void UInventoryCore::BeginPlay()
 
 void UInventoryCore::BuildInitialInventory()
 {
+	// for (int i = 0; i < AllItemsFromDT.Num(); ++i)
+	// {
+	// 	auto& DataTableItem = AllItemsFromDT[i];
+	// 	if (IsValid(DataTableItem))
+	// 	{
+	// 		TArray<FName> Names = DataTableItem->GetRowNames();
+	// 		for (int a = 0; a < Names.Num(); ++a)
+	// 		{
+	// 			CurrentItemData = DataTableItem->FindRow<FItemData>(Names[a], TEXT(""));
+	// 			FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);
+	// 	
+	// 			auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
+	// 			if (DataEmptySlot.Get<0>())
+	// 			{
+	// 				AddItemToInventoryArray(CurrentItemDataBase, DataEmptySlot.Get<1>());
+	// 				AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(CurrentItemDataBase));
+	// 			}
+	// 		}
+	// 	}
+	// }
+
 	RandomizeInitialItems();
-
-	FItemData* CurrentItemData;
-
-	for (int i = 0; i < AllItemsFromDT.Num(); ++i)
-	{
-		auto& DataTableItem = AllItemsFromDT[i];
-		if (IsValid(&DataTableItem))
-		{
-			TArray<FName> Names = DataTableItem.GetRowNames();
-			for (int a = 0; a < Names.Num(); ++a)
-			{
-				CurrentItemData = DataTableItem.FindRow<FItemData>(Names[a], TEXT(""));
-				FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);
-		
-				auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
-				if (DataEmptySlot.Get<0>())
-				{
-					AddItemToInventoryArray(CurrentItemDataBase, DataEmptySlot.Get<1>());
-					AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(CurrentItemDataBase));
-				}
-			}
-		}
-	}
 
 	for (int i = 0; i < SingleDTItem.Num(); ++i)
 	{
 		auto DataTable = SingleDTItem[i].TableAndRow.DataTable;
 		auto RowName = SingleDTItem[i].TableAndRow.RowName;
-	
-		CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
-		
+
+		FItemData* CurrentItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
+
 		FItemData* CurrentItemDataBase = InventoryUtility::CopyItemData(CurrentItemData);
 		CurrentItemDataBase->Quantity = FMathf::Clamp(SingleDTItem[i].Quantity, 1, SingleDTItem[i].Quantity);
-	
+
 		auto DataEmptySlot = GetEmptyInventorySlot(CurrentItemDataBase);
 		if (DataEmptySlot.Get<0>())
 		{
@@ -310,7 +308,7 @@ void UInventoryCore::BuildInitialInventory()
 		}
 	}
 
-	AllItemsFromDT.Empty();
+	//AllItemsFromDT.Empty();
 	SingleDTItem.Empty();
 	RandomizedItemsData.Empty();
 
@@ -371,7 +369,7 @@ void UInventoryCore::RemoveItemFromInventoryArray(FItemData* ItemData)
 			LocalInventory.Remove(ItemData);
 		}
 
-		
+
 		ApplyChangesToInventoryArray(NewInventory, LocalInventory);
 
 		if (UKismetSystemLibrary::IsStandalone(GetWorld()))
@@ -398,18 +396,18 @@ void UInventoryCore::BuildInventory(EInventoryPanels Panel)
 	{
 		for (int i = 0; i < LocalSize; ++i)
 		{
-			if(!LocalInventory.IsValidIndex(i))
+			if (!LocalInventory.IsValidIndex(i))
 				LocalInventory.Add(new FItemData());
 			LocalInventory[i]->Index = i;
 			LocalInventory[i]->bIsEquipped = false;
 		}
-				
+
 		ApplyChangesToInventoryArray(Panel, LocalInventory);
 	}
 	else
 	{
 		TArray<FItemData*> CurrentEmptyInventoryArray;
-		
+
 		for (int i = 0; i < LocalInventory.Num(); ++i)
 		{
 			if (InventoryUtility::IsItemClassValid(LocalInventory[i]))
@@ -458,7 +456,6 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromInventory(FItemData* ItemDat
 {
 	if (InventoryUtility::IsItemClassValid(ItemData) && IsValid(Sender))
 	{
-		
 		if (Sender->CheckOwnerGold() && !HasEnoughGold(ItemData))
 			return MakeTuple(false, FText::FromString(MessageNotEnoughGold));
 
@@ -480,7 +477,7 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromInventory(FItemData* ItemDat
 					break;
 				}
 			case EInputMethodType::DragAndDrop:
-					AddItemToInventoryArray(ItemData, IsSlotData->Index);
+				AddItemToInventoryArray(ItemData, IsSlotData->Index);
 				break;
 			}
 		}
@@ -493,7 +490,7 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromInventory(FItemData* ItemDat
 			RemoveGoldFromOwner(DeltaGold);
 			Sender->AddGoldToOwner(DeltaGold);
 		}
-					
+
 		Sender->RemoveItemFromInventoryArray(ItemData);
 		Sender->RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
 		return MakeTuple(true, FText());
@@ -501,7 +498,8 @@ TTuple<bool, FText> UInventoryCore::TransferItemFromInventory(FItemData* ItemDat
 	return MakeTuple(false, FText());
 }
 
-TTuple<bool, FText> UInventoryCore::TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData, EInputMethodType InputMethod, UPlayerEquipment* Sender)
+TTuple<bool, FText> UInventoryCore::TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,
+                                                              EInputMethodType InputMethod, UPlayerEquipment* Sender)
 {
 	if (InventoryUtility::IsItemClassValid(ItemData) && IsValid(Sender))
 	{
@@ -626,12 +624,92 @@ EItemRemoveType UInventoryCore::GetItemRemoveType(FItemData* ItemData) const
 
 void UInventoryCore::RandomizeInitialItems()
 {
+	for (int i = 0; i < RandomizedItemsData.Num(); ++i)
+	{
+		TArray<FItemData*> DrawnItems;
+		TArray<FItemData*> NotDrawnItems;
+
+		if (IsValid(RandomizedItemsData[i].DataTable))
+		{
+			auto DataTable = RandomizedItemsData[i].DataTable;
+			for (auto RowName : DataTable->GetRowNames())
+			{
+				FItemData* ItemData = DataTable->FindRow<FItemData>(RowName,TEXT(""));
+
+				if (RandomizedItemsData[i].MaxLootItems > DrawnItems.Num())
+				{
+					if (InventoryUtility::IsItemClassValid(ItemData))
+					{
+						if (ItemData->Class.GetDefaultObject()->DropPercentage >=
+							UKismetMathLibrary::RandomIntegerInRange(0, 100))
+						{
+							DrawnItems.Add(ItemData);
+							RandomizeItemParameters(ItemData);
+							auto SlotData = GetEmptyInventorySlot(ItemData);
+							if (SlotData.Get<0>())
+							{
+								AddItemToInventoryArray(ItemData, SlotData.Get<1>());
+								AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
+							}
+						}
+						else
+						{
+							NotDrawnItems.Add(ItemData);
+						}
+					}
+				}
+				else
+					break;
+			}
+
+			if (DrawnItems.Num() < RandomizedItemsData[i].MinLootItems)
+			{
+				int32 Length = RandomizedItemsData[i].MinLootItems - DrawnItems.Num();
+				for (int a = 0; a < Length; ++a)
+				{
+					if (NotDrawnItems.Num() >= 1)
+					{
+						auto NewItemData = NotDrawnItems[UKismetMathLibrary::RandomIntegerInRange(
+							0, NotDrawnItems.Num() - 1)];
+						FItemData* ItemData = InventoryUtility::CopyItemData(NewItemData);
+						NotDrawnItems.Remove(NewItemData);
+
+						RandomizeItemParameters(ItemData);
+						auto SlotData = GetEmptyInventorySlot(ItemData);
+						if (SlotData.Get<0>())
+						{
+							AddItemToInventoryArray(ItemData, SlotData.Get<1>());
+							AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 FItemData* UInventoryCore::RandomizeItemParameters(FItemData* ItemData)
 {
-	FItemData* RandomItem = new FItemData();
-	return RandomItem;
+	TArray<TSubclassOf<UMainItemData>> LootClasses = ItemData->Class.GetDefaultObject()->LootClasses;
+	if (LootClasses.Num() != 0)
+	{
+		auto LootClass = LootClasses[UKismetMathLibrary::RandomIntegerInRange(0, LootClasses.Num() - 1)];
+		ItemData->Class = LootClass;
+	}
+
+	float ValueQuantity = UKismetMathLibrary::RandomIntegerInRange(ItemData->Class.GetDefaultObject()->MinRandQuantity,
+	                                                               ItemData->Class.GetDefaultObject()->MaxRandQuantity);
+	ValueQuantity = FMathf::Clamp(ValueQuantity, 1, ValueQuantity);
+	ItemData->Quantity = ValueQuantity;
+
+	float ValueDurability = UKismetMathLibrary::RandomIntegerInRange(
+		ItemData->Class.GetDefaultObject()->MinRandDurability,
+		ItemData->Class.GetDefaultObject()->MaxRandDurability);
+
+	ValueDurability = FMathf::Clamp(ValueDurability, 1, 100);
+	ItemData->Durability = ValueDurability;
+
+	return ItemData;
 }
 
 void UInventoryCore::SplitItemsInInventory(UInventoryCore* Sender, FItemData* ItemData, FItemData* InSlotData,
@@ -641,8 +719,8 @@ void UInventoryCore::SplitItemsInInventory(UInventoryCore* Sender, FItemData* It
 {
 	auto TransferData = TransferItemFromInventory(ItemData, InSlotData, Method, Sender, OwningPlayer);
 	Sender->ClientTransferItemReturnValue(TransferData.Get<0>(), TransferData.Get<1>());
-	if(TransferData.Get<0>())
-		if(InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
+	if (TransferData.Get<0>())
+		if (InventoryUtility::IsStackableAndHaveStacks(StackableLeft, 0))
 			Sender->AddItemToInventoryArray(StackableLeft, StackableLeft->Index);
 }
 
@@ -718,7 +796,7 @@ void UInventoryCore::AddItemToInventoryArray(FItemData* ItemData, int32 SlotInde
 			CurrentInventoryArray[SlotIndex] = NewItemData;
 
 			ApplyChangesToInventoryArray(InventoryPanel, CurrentInventoryArray);
-	
+
 
 			if (UKismetSystemLibrary::IsStandalone(GetWorld()))
 			{
@@ -762,7 +840,8 @@ void UInventoryCore::AddToStackInInventory(FItemData* ItemData, int32 Index)
 {
 	auto NewItemData = InventoryUtility::CopyItemData(ItemData);
 	NewItemData->Index = Index;
-	NewItemData->Quantity = GetItemBySlot(InventoryUtility::GetInventoryPanelFromItem(ItemData), Index)->Quantity + ItemData->Quantity;
+	NewItemData->Quantity = GetItemBySlot(InventoryUtility::GetInventoryPanelFromItem(ItemData), Index)->Quantity +
+		ItemData->Quantity;
 	AddItemToInventoryArray(NewItemData, Index);
 }
 
@@ -885,7 +964,7 @@ void UInventoryCore::RemoveItemQuantity(FItemData* ItemData, int32 Quantity)
 {
 	FItemData* LocalItemData = ItemData;
 
-	
+
 	if (UKismetMathLibrary::Greater_IntInt(LocalItemData->Quantity, Quantity))
 	{
 		RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(LocalItemData));
@@ -893,8 +972,8 @@ void UInventoryCore::RemoveItemQuantity(FItemData* ItemData, int32 Quantity)
 		AddItemToInventoryArray(ItemData, ItemData->Index);
 		AddWeightToInventory(InventoryUtility::CalculateStackedItemWeight(LocalItemData));
 	}
-	
-	else if (UKismetMathLibrary::LessEqual_IntInt(LocalItemData->Quantity ,Quantity))
+
+	else if (UKismetMathLibrary::LessEqual_IntInt(LocalItemData->Quantity, Quantity))
 	{
 		RemoveItemFromInventoryArray(ItemData);
 		RemoveWeightFromInventory(InventoryUtility::CalculateStackedItemWeight(ItemData));
@@ -920,22 +999,22 @@ void UInventoryCore::LocalSwapItemsInInventory(FItemData* LocalFirstItem, FItemD
 {
 	EInventoryPanels InventoryPanel = InventoryUtility::GetInventoryPanelFromItem(LocalFirstItem);
 	TArray<FItemData*> LocalInventoryData = GetInventoryAndSize(InventoryPanel).Get<0>();
-	
+
 	FItemData* NewFirstItemData = InventoryUtility::CopyItemData(LocalFirstItem);
 	NewFirstItemData->Index = LocalSecondItem->Index;
 	NewFirstItemData->bIsEquipped = false;
 	if (LocalInventoryData.IsValidIndex(LocalSecondItem->Index))
 		LocalInventoryData[LocalSecondItem->Index] = NewFirstItemData;
-	
+
 	FItemData* NewSecondItemData = InventoryUtility::CopyItemData(LocalSecondItem);
 	NewSecondItemData->Index = LocalFirstItem->Index;
 	NewSecondItemData->bIsEquipped = false;
 	if (LocalInventoryData.IsValidIndex(LocalFirstItem->Index))
 		LocalInventoryData[LocalFirstItem->Index] = NewSecondItemData;
-	
+
 	ApplyChangesToInventoryArray(InventoryPanel, LocalInventoryData);
 	CallOnRefreshInventory(InventoryPanel);
-	
+
 	if (!UKismetSystemLibrary::IsStandalone(this))
 		UpdateViewersInventory(InventoryPanel);
 }

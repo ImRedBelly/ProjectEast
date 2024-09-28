@@ -13,7 +13,7 @@ class PROJECTEAST_API UPlayerLeveling : public UActorComponent
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGainedExperience, float, ExpGained);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelChanged);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCurrentExpChanged);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelUp, uint8, NewLevel);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelUp, int32, NewLevel);
 
 public:
 	FOnGainedExperience OnGainedExperience;
@@ -21,7 +21,7 @@ public:
 	FOnCurrentExpChanged OnCurrentExpChanged;
 	FOnLevelUp OnLevelUp;
 
-	uint32 GetCurrentLevel();
+	int32 GetCurrentLevel();
 	float GetCurrentExperience();
 	float GetLevelMaxExperience();
 };

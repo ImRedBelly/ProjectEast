@@ -43,6 +43,7 @@ void UWallRunComponent::BeginPlay()
 void UWallRunComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
 {
+	return;
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (bIsWallRunning)

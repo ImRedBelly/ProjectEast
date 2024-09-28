@@ -101,6 +101,9 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 		}
 		CachedPlayerInventory->OpenStorageWidget();
 		break;
+	case EWidgetType::Vendor:
+		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "OPEN VENDOR WIDGET");
+		break;
 	case EWidgetType::PlayerCrafting:
 		{
 			InventoryUtility::PlaySoundOnOpeningWidget();

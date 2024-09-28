@@ -1,6 +1,6 @@
 ﻿#include "PlayerLeveling.h"
 
-uint32 UPlayerLeveling::GetCurrentLevel()
+int32 UPlayerLeveling::GetCurrentLevel()
 {
 	return 1;
 }

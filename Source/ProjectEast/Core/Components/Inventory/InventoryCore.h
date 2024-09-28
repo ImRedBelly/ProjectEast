@@ -105,13 +105,17 @@ public:
 	TTuple<bool, FText> TransferItemFromEquipment(FItemData* ItemData, FItemData* IsSlotData,EInputMethodType InputMethod,UPlayerEquipment* Sender);
 
 protected:
+	
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+//	TArray<UDataTable*> AllItemsFromDT;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FSingleDTItem> SingleDTItem;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FRandomizedLootTable> RandomizedItemsData;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ESortMethod DefaultSortingMethod;
-
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FSingleDTItem> SingleDTItem;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<EInventoryPanels> PanelsToUse;
 
@@ -134,9 +138,7 @@ protected:
 
 	EInventoryPanels ActivePanel;
 	
-	TArray<UDataTable> AllItemsFromDT;
 	TArray<APlayerState*> CurrentViewers;
-	TArray<FRandomizedLootTable> RandomizedItemsData;
 
 	TArray<FItemData*> InventoryP1;
 	TArray<FItemData*> InventoryP2;

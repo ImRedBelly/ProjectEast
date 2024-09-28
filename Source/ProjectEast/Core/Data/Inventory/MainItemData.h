@@ -41,7 +41,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Item Stats")
 	float Value;
 	UPROPERTY(EditDefaultsOnly, Category="Item Stats")
-	uint32 RequiredLevel;
+	int32 RequiredLevel;
 	UPROPERTY(EditDefaultsOnly, Category="Item Stats")
 	TArray<FItemsStatRow> Stats;
 
@@ -62,17 +62,17 @@ public:
 	FString CraftingIDToUnlock;
 
 	UPROPERTY(EditDefaultsOnly, Category="Loot Randomization")
-	uint32 DropPercentage;
+	int32 DropPercentage;
 	UPROPERTY(EditDefaultsOnly, Category="Loot Randomization")
-	TArray<UMainItemData*> LootClasses;
+	TArray<TSubclassOf<UMainItemData>> LootClasses;
 	UPROPERTY(EditDefaultsOnly, Category="Loot Randomization")
-	uint32 MinRandQuantity;
+	int32 MinRandQuantity;
 	UPROPERTY(EditDefaultsOnly, Category="Loot Randomization")
-	uint32 MaxRandQuantity;
+	int32 MaxRandQuantity;
 	UPROPERTY(EditDefaultsOnly, Category="Loot Randomization")
-	uint32 MinRandDurability;
+	int32 MinRandDurability;
 	UPROPERTY(EditDefaultsOnly, Category="Loot Randomization")
-	uint32 MaxRandDurability;
+	int32 MaxRandDurability;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Item Equip")
 	TSubclassOf<ABaseEquippable> EquippableClass;

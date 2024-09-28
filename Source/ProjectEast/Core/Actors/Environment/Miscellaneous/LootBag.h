@@ -17,8 +17,8 @@ protected:
 	
 	ALootBag();
 	
-	virtual void Interaction(AActor* Interactor) override;
-	virtual void EndInteraction(AActor* Interactor) override;
+	//virtual void Interaction(AActor* Interactor) override;
+	//virtual void EndInteraction(AActor* Interactor) override;
 	virtual void RemoveInteraction() override;
 	virtual void ClientStartInteraction(AActor* Interactor) override;
 	virtual void ClientEndInteraction(AActor* Interactor) override;
@@ -26,9 +26,9 @@ protected:
 	
 private:
 	void OnDestroyed() const;
-
-	UPROPERTY()
-	AActor* MainInteractor;
+	
+	// UPROPERTY()
+	// AActor* MainInteractor;
 	UPROPERTY()
 	AActor* LocalInteractor;
 };

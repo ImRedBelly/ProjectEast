@@ -8,17 +8,17 @@ ALootBag::ALootBag()
     InventoryCore = CreateDefaultSubobject<UInventoryCore>(TEXT("InventoryCore"));
 }
 
-void ALootBag::Interaction(AActor* Interactor)
-{
-    if(IsValid(Interactor))
-        MainInteractor = Interactor;
-}
-
-void ALootBag::EndInteraction(AActor* Interactor)
-{
-    if(IsValid(Interactor))
-        MainInteractor = Interactor;
-}
+// void ALootBag::Interaction(AActor* Interactor)
+// {
+//     if(IsValid(Interactor))
+//         MainInteractor = Interactor;
+// }
+//
+// void ALootBag::EndInteraction(AActor* Interactor)
+// {
+//     if(IsValid(Interactor))
+//         MainInteractor = Interactor;
+// }
 
 void ALootBag::RemoveInteraction()
 {

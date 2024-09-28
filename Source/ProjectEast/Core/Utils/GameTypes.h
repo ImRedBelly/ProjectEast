@@ -253,10 +253,10 @@ struct FSingleDTItem
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	FDataTableRowHandle TableAndRow;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	int32 Quantity;
 };
 
@@ -317,7 +317,7 @@ struct FCraftingData : public FTableRowBase
 };
 
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FRandomizedLootTable
 {
 	GENERATED_BODY()
