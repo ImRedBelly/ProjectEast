@@ -15,8 +15,6 @@ class PROJECTEAST_API UForgeStationWindow : public UCraftingWindowCore
 
 protected:
 	UPROPERTY(meta=(BindWidget))
-	UButton* ButtonClose;
-	UPROPERTY(meta=(BindWidget))
 	UPopupItemAdded* PopupItemAdded;
 	
 private:
@@ -26,6 +24,4 @@ private:
 	UFUNCTION()
 	void OnItemCrafted(FCraftingData& CraftingData, AActor* OwnningPlayer);
 	
-	UFUNCTION()
-	void CloseWidget();
 };

@@ -5,16 +5,16 @@
 #include "Blueprint/UserWidget.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/UI/Equipment/EquipmentPanel.h"
-#include "ProjectEast/Core/UI/PlayerInventory/UpperUIBar.h"
 #include "ProjectEast/Core/UI/PlayerInventory/GoldWeightBar.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
+#include "ProjectEast/Core/UI/Core/BaseWindow.h"
 #include "StorageWindow.generated.h"
 
 class UWidgetManager;
 class UPlayerInventoryWidget;
 
-UCLASS()
-class PROJECTEAST_API UStorageWindow : public UUserWidget
+UCLASS(Blueprintable, BlueprintType)
+class PROJECTEAST_API UStorageWindow : public UBaseWindow
 {
 	GENERATED_BODY()
 
@@ -35,8 +35,6 @@ protected:
 	UPlayerInventoryWidget* PlayerInventoryPanel;
 	UPROPERTY(meta=(BindWidget))
 	UStorageInventory* StoragePanel;
-	UPROPERTY(meta=(BindWidget))
-	UUpperUIBar* UpperUIPanel;
 	
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* AnimationConstruct;

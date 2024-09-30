@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ProjectEast/Core/UI/Core/BaseWindow.h"
 #include "CraftingWindowCore.generated.h"
 
 class UCraftingList;
@@ -9,8 +10,8 @@ class UCraftingBase;
 class UCraftingCore;
 class UPlayerCrafting;
 
-UCLASS()
-class PROJECTEAST_API UCraftingWindowCore : public UUserWidget
+UCLASS(Blueprintable, BlueprintType)
+class PROJECTEAST_API UCraftingWindowCore : public UBaseWindow
 {
 	GENERATED_BODY()
 

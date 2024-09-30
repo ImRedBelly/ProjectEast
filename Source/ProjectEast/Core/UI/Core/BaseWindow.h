@@ -3,26 +3,20 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
-#include "ProjectEast/Core/Utils/GameTypes.h"
-#include "UpperUIBar.generated.h"
+#include "BaseWindow.generated.h"
 
-
-UCLASS()
-class PROJECTEAST_API UUpperUIBar : public UUserWidget
+UCLASS(Abstract)
+class PROJECTEAST_API UBaseWindow : public UUserWidget
 {
 	GENERATED_BODY()
-
+	
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UButton* ButtonClose;
-	
-	UPROPERTY(EditAnywhere)
-	EWidgetType CloseWidgetType;
 
-
-private:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	
 	UFUNCTION()
-	void CloseWidget();
+	virtual void CloseWidget();
 };

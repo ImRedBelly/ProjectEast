@@ -2,6 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CanvasPanel.h"
+#include "Components/WidgetSwitcher.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "WindowSwitcher.generated.h"
 
 class USwitcherButton;
@@ -13,6 +16,14 @@ class PROJECTEAST_API UWindowSwitcher : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere)
+	EWidgetType ActiveWidget;
+	UPROPERTY(EditAnywhere)
+	EWidgetType ActiveTab;
+
+	UPROPERTY(meta=(BindWidget))
+	UWidgetSwitcher* SwitcherWidgetPanels;
+
 	UPROPERTY(meta=(BindWidget))
 	USwitcherButton* ButtonCrafting;
 	UPROPERTY(meta=(BindWidget))
@@ -24,12 +35,22 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	USwitcherButton* ButtonQuests;
 
+	UPROPERTY(meta=(BindWidget))
+	UCanvasPanel* MainPanel;
+	UPROPERTY(meta=(BindWidget))
+	UCanvasPanel* VendorPanel;
+	UPROPERTY(meta=(BindWidget))
+	UCanvasPanel* StoragePanel;
+	UPROPERTY(meta=(BindWidget))
+	UCanvasPanel* LoadGamePanel;
 
 private:
+	UPROPERTY()
+	UWidgetManager* WidgetManager;
+	
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 
-	UPROPERTY()
-	UWidgetManager* WidgetManager;
-
+	void SetWidgetButtonStyle() const;
+	UCanvasPanel* GetSwitcherPanel(EWidgetType Type) const;
 };

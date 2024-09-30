@@ -11,6 +11,8 @@ void UWindowSwitcher::NativeConstruct()
 	ButtonAbilities->InitializeButton(WidgetManager);
 	ButtonMap->InitializeButton(WidgetManager);
 	ButtonQuests->InitializeButton(WidgetManager);
+
+	SetWidgetButtonStyle();
 }
 
 void UWindowSwitcher::NativeDestruct()
@@ -18,4 +20,31 @@ void UWindowSwitcher::NativeDestruct()
 	Super::NativeDestruct();
 }
 
+void UWindowSwitcher::SetWidgetButtonStyle() const
+{
+	auto Canvas = GetSwitcherPanel(ActiveWidget);
+	if (IsValid(Canvas))
+	{
+		SwitcherWidgetPanels->SetActiveWidget(Canvas);
+	}
+}
 
+UCanvasPanel* UWindowSwitcher::GetSwitcherPanel(EWidgetType Type) const
+{
+	switch (Type)
+	{
+	case EWidgetType::Inventory:
+	case EWidgetType::PlayerCrafting:
+	case EWidgetType::StationCrafting:
+	case EWidgetType::Abilities:
+		return MainPanel;
+	case EWidgetType::Vendor:
+		return VendorPanel;
+	case EWidgetType::Storage:
+		return StoragePanel;
+	case EWidgetType::LoadGame:
+		return LoadGamePanel;
+	default:
+		return nullptr;
+	}
+}

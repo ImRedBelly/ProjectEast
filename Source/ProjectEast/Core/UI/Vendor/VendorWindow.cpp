@@ -1,7 +1,6 @@
 ﻿#include "VendorWindow.h"
 
 #include "VendorInventory.h"
-#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/UI/Equipment/EquipmentPanel.h"

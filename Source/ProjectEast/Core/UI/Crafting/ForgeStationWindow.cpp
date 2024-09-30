@@ -1,6 +1,5 @@
 ﻿#include "ForgeStationWindow.h"
 
-#include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/UI/Misc/Popups/PopupItemAdded.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
@@ -28,10 +27,4 @@ void UForgeStationWindow::OnItemCrafted(FCraftingData& CraftingData, AActor* Own
 	{
 		PopupItemAdded->InitializeWidget(CraftableData.Get<0>()[0]);
 	}
-}
-
-void UForgeStationWindow::CloseWidget()
-{
-	//TODO Remove Cast
-	Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager()->CloseActiveWidget();
 }
