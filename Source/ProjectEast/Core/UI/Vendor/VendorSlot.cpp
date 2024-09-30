@@ -1,33 +1,38 @@
-﻿#include "StorageSlot.h"
-#include "Components/Image.h"
-#include "Components/Button.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Blueprint/WidgetLayoutLibrary.h"
+﻿#include "VendorSlot.h"
+
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Components/TextBlock.h"
-#include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
-#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
-#include "ProjectEast/Core/Utils/InventoryUtility.h"
+#include "ProjectEast/Core/InputDetection/FIconButtonGameModule.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragAndDropPanel.h"
 #include "ProjectEast/Core/UI/Misc/DragAndDrop/ItemDataDragDropOperation.h"
 #include "ProjectEast/Core/UI/ToolTip/ToolTip.h"
+#include "ProjectEast/Core/UI/Vendor/VendorInventory.h"
+#include "ProjectEast/Core/Utils/InventoryUtility.h"
 
-void UStorageSlot::NativeConstruct()
+
+void UVendorSlot::InitializeSlot(UVendorInventory* InParentWidget, UInventoryCore* InActorInventory,
+                                 UInventoryCore* InPlayerInventory, UWidgetManager* InWidgetManager, int32 InSlotIndex)
 {
-	Super::NativeConstruct();
-	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
-	WidgetManager = CachedPlayerController->GetWidgetManager();
-	ButtonItem->OnClicked.AddDynamic(this, &UStorageSlot::OnItemClick);
-	ButtonItem->OnHovered.AddDynamic(this, &UStorageSlot::OnItemHovered);
-	ButtonItem->OnUnhovered.AddDynamic(this, &UStorageSlot::OnItemUnhovered);
+	ParentWidgetRef = InParentWidget;
+	ActorInventory = InActorInventory;
+	PlayerInventory = InPlayerInventory;
+	WidgetManager = InWidgetManager;
+	SlotIndex = InSlotIndex;
+	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
+	SetButtonStyle(CurrentItemData);
+
+	ButtonItem->OnClicked.AddDynamic(this, &UVendorSlot::OnClickedButton);
+	ButtonItem->OnHovered.AddDynamic(this, &UVendorSlot::OnHoveredButton);
+	ButtonItem->OnUnhovered.AddDynamic(this, &UVendorSlot::OnUnhoveredButton);
 }
 
-void UStorageSlot::NativeDestruct()
+void UVendorSlot::NativeDestruct()
 {
+	Super::NativeDestruct();
 	if (IsValid(CachedToolTip))
 	{
 		CachedToolTip->RemoveFromParent();
@@ -36,75 +41,68 @@ void UStorageSlot::NativeDestruct()
 
 	if (IsValid(ButtonItem))
 	{
-		ButtonItem->OnClicked.RemoveDynamic(this, &UStorageSlot::OnItemClick);
-		ButtonItem->OnHovered.RemoveDynamic(this, &UStorageSlot::OnItemHovered);
-		ButtonItem->OnUnhovered.RemoveDynamic(this, &UStorageSlot::OnItemUnhovered);
+		ButtonItem->OnClicked.RemoveDynamic(this, &UVendorSlot::OnClickedButton);
+		ButtonItem->OnHovered.RemoveDynamic(this, &UVendorSlot::OnHoveredButton);
+		ButtonItem->OnUnhovered.RemoveDynamic(this, &UVendorSlot::OnUnhoveredButton);
 	}
-
-	Super::NativeDestruct();
 }
 
-void UStorageSlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UVendorSlot::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	if (IsUsingGamepad())
-		if (IsValid(CachedToolTip))
-			SetToolTipPositionAndAlignment();
+	if (IconButtonGameModule->IsUsingGamepad() && IsValid(CachedToolTip))
+	{
+		SetToolTipPositionAndAlignment();
+	}
 }
 
-void UStorageSlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
+void UVendorSlot::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnAddedToFocusPath(InFocusEvent);
 	if (IsUsingGamepad())
 	{
 		StopAnimation(AnimationHighlight);
-		BorderObject->SetBrushColor(BorderHovered);
-
-		CachedParentWidget->AssignCurrentlyFocusedSlot(this);
-		CachedParentWidget->ScrollToSlot(this);
-
-		WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::Storage);
-
-		//TODO Delay 0.1f
-
+		BorderSlot->SetBrushColor(BorderHovered);
+		ParentWidgetRef->AssignCurrentlyFocusedSlot(this);
+		ParentWidgetRef->ScrollToSlot(this);
+		WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::Vendor);
 		RefreshGeometryCache();
 	}
 }
 
-void UStorageSlot::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
+void UVendorSlot::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
 {
 	Super::NativeOnRemovedFromFocusPath(InFocusEvent);
-	OnItemUnhovered();
+	OnUnhoveredButton();
 }
 
-void UStorageSlot::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+void UVendorSlot::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
-	if (auto Operation = Cast<UItemDataDragDropOperation>(InOperation))
+	if (UItemDataDragDropOperation* Operation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
 		Operation->ClearDraggableIcon();
-		BorderObject->SetBrushColor(BorderUnHovered);
+		BorderSlot->SetBrushColor(BorderUnHovered);
 	}
 }
 
-FReply UStorageSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
-	{
-		OnItemClick();
-		return FReply::Handled();
-	}
-
-	return FReply::Unhandled();
-}
-
-FReply UStorageSlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UVendorSlot::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 }
 
-void UStorageSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
-                                        UDragDropOperation*& OutOperation)
+FReply UVendorSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		OnRightClick();
+		return FReply::Handled();
+	}
+	return FReply::Unhandled();
+}
+
+void UVendorSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+                                       UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
@@ -122,13 +120,13 @@ void UStorageSlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPoin
 		Operation->ItemData = CurrentItemData;
 		Operation->Inventory = ActorInventory;
 		Operation->ItemDataDragAndDropPanel = DragAndDropPanel;
-		Operation->DraggerFrom = EItemDestination::StorageSlot;
+		Operation->DraggerFrom = EItemDestination::VendorSlot;
 		OutOperation = Operation;
 	}
 }
 
-bool UStorageSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-                                UDragDropOperation* InOperation)
+bool UVendorSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+                               UDragDropOperation* InOperation)
 {
 	if (UItemDataDragDropOperation* DragOperation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
@@ -147,8 +145,8 @@ bool UStorageSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 	return false;
 }
 
-bool UStorageSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-                                    UDragDropOperation* InOperation)
+bool UVendorSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+                                   UDragDropOperation* InOperation)
 {
 	if (auto Operation = Cast<UItemDataDragDropOperation>(InOperation))
 	{
@@ -162,13 +160,13 @@ bool UStorageSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDrop
 						InventoryUtility::AreItemsStackable(CurrentItemData, Operation->ItemData))
 					{
 						Operation->ShowIconWrongSlot();
-						BorderObject->SetBrushColor(FLinearColor(0.737911, 0.0f, 0.028426f));
+						BorderSlot->SetBrushColor(FLinearColor(0.737911, 0.0f, 0.028426f));
 						return true;
 					}
 					else
 					{
 						Operation->ShowIconDrop();
-						BorderObject->SetBrushColor(FLinearColor(0.116971f, 0.48515f, 0.08022f));
+						BorderSlot->SetBrushColor(FLinearColor(0.116971f, 0.48515f, 0.08022f));
 						return true;
 					}
 				}
@@ -176,7 +174,7 @@ bool UStorageSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDrop
 			case EItemDestination::StorageSlot:
 				{
 					Operation->ShowIconSwap();
-					BorderObject->SetBrushColor(FLinearColor(0.116971f, 0.48515f, 0.08022f));
+					BorderSlot->SetBrushColor(FLinearColor(0.116971f, 0.48515f, 0.08022f));
 					return true;
 				}
 			default: ;
@@ -185,7 +183,7 @@ bool UStorageSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDrop
 		else
 		{
 			Operation->ShowIconDrop();
-			BorderObject->SetBrushColor(FLinearColor(0.116971f, 0.48515f, 0.08022f));
+			BorderSlot->SetBrushColor(FLinearColor(0.116971f, 0.48515f, 0.08022f));
 			return true;
 		}
 	}
@@ -193,7 +191,7 @@ bool UStorageSlot::NativeOnDragOver(const FGeometry& InGeometry, const FDragDrop
 	return true;
 }
 
-FReply UStorageSlot::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
+FReply UVendorSlot::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
 	if (IsUsingGamepad())
 	{
@@ -204,7 +202,7 @@ FReply UStorageSlot::NativeOnFocusReceived(const FGeometry& InGeometry, const FF
 	return FReply::Unhandled();
 }
 
-FReply UStorageSlot::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+FReply UVendorSlot::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	if (InKeyEvent.GetKey() == EKeys::LeftShift || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Left)
 	{
@@ -214,7 +212,7 @@ FReply UStorageSlot::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEven
 	return FReply::Unhandled();
 }
 
-FReply UStorageSlot::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+FReply UVendorSlot::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
 	if (InKeyEvent.GetKey() == EKeys::LeftShift || InKeyEvent.GetKey() == EKeys::Gamepad_FaceButton_Left)
 	{
@@ -224,21 +222,12 @@ FReply UStorageSlot::NativeOnKeyUp(const FGeometry& InGeometry, const FKeyEvent&
 	return FReply::Unhandled();
 }
 
-void UStorageSlot::ShowItemComparison() const
+void UVendorSlot::OnRightClick()
 {
-	if (InventoryUtility::IsItemClassValid(CurrentItemData))
-		if (CurrentItemData->Class.GetDefaultObject()->Rarity != EItemRarity::Consumable)
-			if (IsValid(CachedToolTip))
-				CachedToolTip->ShowComparisonToolTip();
+	OnClickedButton();
 }
 
-void UStorageSlot::HideItemComparison() const
-{
-	if (IsValid(CachedToolTip))
-		CachedToolTip->HideComparisonToolTip();
-}
-
-void UStorageSlot::OnItemClick()
+void UVendorSlot::OnClickedButton()
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 	{
@@ -246,7 +235,7 @@ void UStorageSlot::OnItemClick()
 		{
 			if (WidgetManager)
 				WidgetManager->OpenSplitStackPopup(CurrentItemData, new FItemData(), ActorInventory, PlayerInventory,
-				                                   EInputMethodType::RightClick, EItemDestination::StorageSlot,
+				                                   EInputMethodType::RightClick, EItemDestination::VendorSlot,
 				                                   EItemDestination::InventorySlot, this);
 		}
 		else
@@ -259,7 +248,7 @@ void UStorageSlot::OnItemClick()
 	}
 }
 
-void UStorageSlot::OnItemHovered()
+void UVendorSlot::OnHoveredButton()
 {
 	if (!IsAnyPopupActive() && !IsUsingGamepad())
 	{
@@ -270,20 +259,20 @@ void UStorageSlot::OnItemHovered()
 			CachedToolTip = nullptr;
 		}
 
-		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
+		CachedToolTip = CreateWidget<UToolTip>(this, ToolTipClass);
 		CachedToolTip->InitializeToolTip(CurrentItemData, false);
 
 		ButtonItem->SetToolTip(CachedToolTip);
-		BorderObject->SetBrushColor(BorderHovered);
+		BorderSlot->SetBrushColor(BorderHovered);
 	}
 }
 
-void UStorageSlot::OnItemUnhovered()
+void UVendorSlot::OnUnhoveredButton()
 {
 	WidgetManager->SetCurrentlyFocusedWidget(EWidgetType::None);
 
 	ButtonItem->SetToolTip(nullptr);
-	BorderObject->SetBrushColor(BorderUnHovered);
+	BorderSlot->SetBrushColor(BorderUnHovered);
 	HideItemComparison();
 	if (IsValid(CachedToolTip))
 	{
@@ -292,7 +281,29 @@ void UStorageSlot::OnItemUnhovered()
 	}
 }
 
-FText UStorageSlot::GetQuantity() const
+void UVendorSlot::ShowItemComparison() const
+{
+	if (InventoryUtility::IsItemClassValid(CurrentItemData))
+	{
+		if (CurrentItemData->Class.GetDefaultObject()->Rarity == EItemRarity::Consumable)
+		{
+			if (IsValid(CachedToolTip))
+			{
+				CachedToolTip->ShowComparisonToolTip();
+			}
+		}
+	}
+}
+
+void UVendorSlot::HideItemComparison() const
+{
+	if (IsValid(CachedToolTip))
+	{
+		CachedToolTip->HideComparisonToolTip();
+	}
+}
+
+FText UVendorSlot::GetQuantity() const
 {
 	if (InventoryUtility::IsItemClassValid(CurrentItemData))
 
@@ -301,7 +312,7 @@ FText UStorageSlot::GetQuantity() const
 	return FText();
 }
 
-void UStorageSlot::SetButtonStyle(FItemData* ItemData) const
+void UVendorSlot::SetButtonStyle(FItemData* ItemData) const
 {
 	if (InventoryUtility::IsItemClassValid(ItemData))
 	{
@@ -319,7 +330,15 @@ void UStorageSlot::SetButtonStyle(FItemData* ItemData) const
 		ImageItem->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UStorageSlot::EmptySlot()
+void UVendorSlot::OverwriteSlot(FItemData* ItemData)
+{
+	CurrentItemData = ItemData;
+	TextQuantity->SetText(GetQuantity());
+	SetButtonStyle(CurrentItemData);
+	RefreshToolTip();
+}
+
+void UVendorSlot::EmptySlot()
 {
 	CurrentItemData = new FItemData();
 	CurrentItemData->Index = SlotIndex;
@@ -333,34 +352,15 @@ void UStorageSlot::EmptySlot()
 	}
 }
 
-void UStorageSlot::OverwriteSlot(FItemData* ItemData)
+void UVendorSlot::HighlightSlot()
 {
-	CurrentItemData = ItemData;
-	TextQuantity->SetText(GetQuantity());
-	SetButtonStyle(CurrentItemData);
-	RefreshToolTip();
+	if (!HasUserFocusedDescendants(GetOwningPlayer()) && IsHovered())
+	{
+		PlayAnimation(AnimationHighlight);
+	}
 }
 
-
-void UStorageSlot::InitializeSlot(FItemData* ItemData, UStorageInventory* ParentWidget, UInventoryCore* OwnerInv,
-                                  UPlayerInventory* PlayerInv, FIconButtonGameModule* GameModule, int IndexSlot)
-{
-	CachedParentWidget = ParentWidget;
-	ActorInventory = OwnerInv;
-	PlayerInventory = PlayerInv;
-	IconButtonGameModule = GameModule;
-	SlotIndex = IndexSlot;
-
-	OverwriteSlot(ItemData);
-}
-
-void UStorageSlot::HighlightSlot()
-{
-	if (!HasUserFocusedDescendants(GetOwningPlayer()) && !IsHovered())
-		PlayAnimation(AnimationHighlight, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f, false);
-}
-
-void UStorageSlot::RefreshToolTip()
+void UVendorSlot::RefreshToolTip()
 {
 	if (IsUsingGamepad())
 	{
@@ -374,7 +374,7 @@ void UStorageSlot::RefreshToolTip()
 				CachedToolTip = nullptr;
 			}
 
-			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
+			CachedToolTip = CreateWidget<UToolTip>(this, ToolTipClass);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
 			CachedToolTip->AddToViewport(1);
 			SetToolTipPositionAndAlignment();
@@ -392,14 +392,14 @@ void UStorageSlot::RefreshToolTip()
 				CachedToolTip = nullptr;
 			}
 
-			CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
+			CachedToolTip = CreateWidget<UToolTip>(this, ToolTipClass);
 			CachedToolTip->InitializeToolTip(CurrentItemData, false);
 			ButtonItem->SetToolTip(CachedToolTip);
 		}
 	}
 }
 
-void UStorageSlot::RefreshGeometryCache()
+void UVendorSlot::RefreshGeometryCache()
 {
 	if (ButtonItem->HasKeyboardFocus())
 	{
@@ -408,18 +408,13 @@ void UStorageSlot::RefreshGeometryCache()
 			CachedToolTip->RemoveFromParent();
 			CachedToolTip = nullptr;
 		}
-		CachedToolTip = CreateWidget<UToolTip>(this, DefaultToolTip);
+		CachedToolTip = CreateWidget<UToolTip>(this, ToolTipClass);
 		CachedToolTip->AddToViewport();
 		SetToolTipPositionAndAlignment();
 	}
 }
 
-bool UStorageSlot::IsUsingGamepad() const
-{
-	return IconButtonGameModule->IsUsingGamepad();
-}
-
-void UStorageSlot::SetToolTipPositionAndAlignment() const
+void UVendorSlot::SetToolTipPositionAndAlignment() const
 {
 	FVector2D HorizontalFirstPixelPosition;
 	FVector2D HorizontalFirstViewportPosition;
@@ -467,7 +462,12 @@ void UStorageSlot::SetToolTipPositionAndAlignment() const
 	CachedToolTip->SetDesiredSizeInViewport(CachedToolTip->GetDesiredSize());
 }
 
-bool UStorageSlot::IsAnyPopupActive() const
+bool UVendorSlot::IsUsingGamepad() const
+{
+	return IconButtonGameModule->IsUsingGamepad();
+}
+
+bool UVendorSlot::IsAnyPopupActive() const
 {
 	if (IsValid(WidgetManager))
 		return WidgetManager->GetCurrentPopupType() != EWidgetType::None;
@@ -475,7 +475,7 @@ bool UStorageSlot::IsAnyPopupActive() const
 	return false;
 }
 
-void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, FItemData* ItemData) const
+void UVendorSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, FItemData* ItemData) const
 {
 	if (!InventoryUtility::IsItemClassValid(ItemData) || (InventoryUtility::AreItemsTheSame(
 			Operation->ItemData, ItemData) &&
@@ -491,7 +491,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 						WidgetManager->OpenSplitStackPopup(Operation->ItemData, ItemData, PlayerInventory,
 						                                   ActorInventory,
 						                                   EInputMethodType::DragAndDrop, Operation->DraggerFrom,
-						                                   EItemDestination::StorageSlot, nullptr);
+						                                   EItemDestination::VendorSlot, nullptr);
 				}
 				else
 				{
@@ -503,12 +503,12 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 			break;
 		case EItemRemoveType::OnConfirmation:
 			{
-				BorderObject->SetBrushColor(BorderUnHovered);
+				BorderSlot->SetBrushColor(BorderUnHovered);
 				if (WidgetManager)
 					WidgetManager->OpenConfirmationPopup("Are you sure you want to remove?", Operation->ItemData,
 					                                     ItemData,
 					                                     PlayerInventory, ActorInventory, EInputMethodType::DragAndDrop,
-					                                     Operation->DraggerFrom, EItemDestination::StorageSlot,
+					                                     Operation->DraggerFrom, EItemDestination::VendorSlot,
 					                                     nullptr);
 			}
 			break;
@@ -522,7 +522,7 @@ void UStorageSlot::DraggedFromInventory(UItemDataDragDropOperation* Operation, F
 	}
 }
 
-void UStorageSlot::DraggedFromOtherInventory(UItemDataDragDropOperation* Operation, FItemData* ItemData) const
+void UVendorSlot::DraggedFromOtherInventory(UItemDataDragDropOperation* Operation, FItemData* ItemData) const
 {
 	if (Operation->ItemData->Index != ItemData->Index)
 		PlayerInventory->ServerMoveItemToSlot(ActorInventory, EInventoryPanels::P1, Operation->ItemData->Index,

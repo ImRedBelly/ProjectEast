@@ -5,6 +5,7 @@
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "WidgetManager.generated.h"
 
+class UVendorWindow;
 class UPopupMessage;
 class UInventoryCore;
 class UPlayerInventory;
@@ -91,6 +92,8 @@ protected:
 	TSubclassOf<UPlayerCraftingWindow> PlayerCraftingWindow;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<UForgeStationWindow> StationCraftingWindow;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
+	TSubclassOf<UVendorWindow> VendorWindowClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Popups")
 	TSubclassOf<UPopupMessage> PopupMessageClass;
 
@@ -115,6 +118,8 @@ private:
 	AMainPlayerController* CachedPlayerController;
 	UPROPERTY()
 	UCraftingWindowCore* CachedPlayerCraftingWindow;
+	UPROPERTY()
+	UVendorWindow* CachedVendorWindow;
 	UPROPERTY()
 	UCraftingWindowCore* CachedStationCraftingWindow;
 

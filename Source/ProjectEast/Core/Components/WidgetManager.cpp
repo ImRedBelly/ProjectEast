@@ -12,6 +12,7 @@
 #include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
 #include "ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.h"
 #include "ProjectEast/Core/UI/Storage/StorageWindow.h"
+#include "ProjectEast/Core/UI/Vendor/VendorWindow.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UWidgetManager::InitializeWidgetManager()
@@ -102,7 +103,21 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 		CachedPlayerInventory->OpenStorageWidget();
 		break;
 	case EWidgetType::Vendor:
-		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "OPEN VENDOR WIDGET");
+		{
+			InventoryUtility::PlaySoundOnOpeningWidget();
+			SetActiveTab(EWidgetType::Vendor);
+			StartPlayerCapture();
+
+			CachedVendorWindow = CreateWidget<UVendorWindow>(CachedPlayerController, VendorWindowClass);
+
+			if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
+				CachedVendorWindow->AddToViewport(1);
+			else
+				CachedVendorWindow->AddToPlayerScreen(1);
+
+			CachedVendorWindow->InitializeWindow(CachedPlayerController->GetPlayerInventory(), this);
+			InputMode.SetWidgetToFocus(CachedVendorWindow->TakeWidget());
+		}
 		break;
 	case EWidgetType::PlayerCrafting:
 		{
@@ -110,7 +125,8 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 			SetActiveTab(EWidgetType::PlayerCrafting);
 			StartPlayerCapture();
 
-			CachedPlayerCraftingWindow = CreateWidget<UCraftingWindowCore>(CachedPlayerController, PlayerCraftingWindow);
+			CachedPlayerCraftingWindow = CreateWidget<
+				UCraftingWindowCore>(CachedPlayerController, PlayerCraftingWindow);
 
 			if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 				CachedPlayerCraftingWindow->AddToViewport(1);
@@ -127,7 +143,8 @@ void UWidgetManager::OpenNewWidget(EWidgetType WidgetType)
 			SetActiveTab(EWidgetType::StationCrafting);
 			StartPlayerCapture();
 
-			CachedStationCraftingWindow = CreateWidget<UCraftingWindowCore>(CachedPlayerController, StationCraftingWindow);
+			CachedStationCraftingWindow = CreateWidget<UCraftingWindowCore>(
+				CachedPlayerController, StationCraftingWindow);
 
 			if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 				CachedStationCraftingWindow->AddToViewport(1);
@@ -207,6 +224,19 @@ void UWidgetManager::CloseActiveWidget()
 
 			if (IsValid(CachedPlayerCraftingWindow))
 				CachedPlayerCraftingWindow->RemoveFromParent();
+		}
+		break;
+	case EWidgetType::Vendor:
+		{
+			SetActiveWidget(EWidgetType::None);
+			SetActiveTab(EWidgetType::None);
+			StopPlayerCapture();
+
+			if (IsValid(CachedVendorWindow))
+			{
+				CachedVendorWindow->RemoveFromParent();
+				CachedVendorWindow = nullptr;
+			}
 		}
 		break;
 	case EWidgetType::StationCrafting:
@@ -307,17 +337,16 @@ void UWidgetManager::OpenConfirmationPopup(const FString Str, FItemData* ItemDat
 
 void UWidgetManager::OpenTextDocumentPopup(FItemData* ItemData, UUserWidget* ParentWidget)
 {
-	
 	CachedSplitStackPopup = CreateWidget<USplitStackPopup>(CachedPlayerController, DefaultSplitStackPopup);
 }
 
 void UWidgetManager::DisplayMessage(const FString Message)
 {
-	if(!Message.IsEmpty())
+	if (!Message.IsEmpty())
 	{
 		auto NewPopupMessage = CreateWidget<UPopupMessage>(CachedPlayerController, PopupMessageClass);
 		NewPopupMessage->DisplayMessage(FText::FromString(Message));
-		
+
 		if (!UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 			NewPopupMessage->AddToViewport(1);
 		else
@@ -333,7 +362,7 @@ void UWidgetManager::InitializeCraftingStation(UCraftingCore* CraftingCore)
 void UWidgetManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwner());
 	CachedPlayerInventory = CachedPlayerController->GetPlayerInventory();
 	InitializeWidgetManager();

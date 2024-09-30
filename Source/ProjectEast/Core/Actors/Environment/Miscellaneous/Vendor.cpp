@@ -15,13 +15,13 @@ void AVendor::ClientStartInteraction(AActor* Interactor)
 {
 	if (IsValid(Interactor))
 	{
-		//InteractableComponent->ToggleInteractionWidget(false);
-		//if (auto Controller = Cast<APlayerController>(Interactor))
-			//Controller->SetIgnoreMoveInput(true);
-		GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "OPEN VENDOR WIDGET");
-		
-		//if (auto WidgetManager = Cast<AMainPlayerController>(Interactor)->GetWidgetManager())
-		//	WidgetManager->SwitchWidgetTo(EWidgetType::Vendor);
+		//GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, "OPEN VENDOR WIDGET");
+		InteractableComponent->ToggleInteractionWidget(false);
+		if (auto Controller = Cast<APlayerController>(Interactor))
+			Controller->SetIgnoreMoveInput(true);
+
+		if (auto WidgetManager = Cast<AMainPlayerController>(Interactor)->GetWidgetManager())
+			WidgetManager->SwitchWidgetTo(EWidgetType::Vendor);
 	}
 }
 
