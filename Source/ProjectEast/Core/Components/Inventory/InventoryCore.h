@@ -16,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedActivePanel, EInventoryPa
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedOwnerGold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedCurrentWeight);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedMaxWeight);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangedMaximumWeight);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -32,7 +32,7 @@ public:
 	FOnSwitchedActivePanel OnSwitchedActivePanel;
 	FOnChangedOwnerGold OnChangedOwnerGold;
 	FOnChangedCurrentWeight OnChangedCurrentWeight;
-	FOnChangedMaxWeight OnChangedMaxWeight;
+	FOnChangedMaximumWeight OnChangedMaximumWeight;
 
 	virtual void InitializeInventory(APlayerController* PlayerController);
 	virtual void BeginPlay() override;
@@ -97,9 +97,12 @@ public:
 
 	int32 GetAmountOfEmptySlots(EInventoryPanels Panels);
 	float GetOwnerGold() const { return OwnerGold; }
+	float GetCurrentWeight() const { return CurrentInventoryWeight; }
+	float GetMaximumWeight() const { return MaxInventoryWeight; }
 	bool CheckOwnerGold() const { return bIsCheckOwnerGold; }
 	bool IsRefreshOnClosingWidget() const { return bIsRefreshOnClosingWidget; }
 	void SwitchActivePanel(EInventoryPanels Panel);
+	bool IsInventoryOverweight() const;
 	TTuple<bool, int32> GetEmptyInventorySlot(FItemData* ItemData);
 	TTuple<FItemData*, bool> GetItemByData(FItemData* ItemData);
 	TTuple<FItemData*, bool> GetItemByID(FString ID, EInventoryPanels InSpecifiedPanel);
@@ -133,6 +136,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsUseInventorySize = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float OwnerGold = 1000;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString MessageNotEnoughGold = "Not enough gold.";
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString MessageInventoryFull = "Inventory is full.";
@@ -164,7 +169,6 @@ protected:
 	                                                      UInventoryCore* Sender, AActor* OwningPlayer);
 	virtual void SwapItemsInInventory(FItemData* FirstItem, FItemData* SecondItem);
 	bool HasEnoughGold(FItemData* ItemData) const;
-	bool IsInventoryOverweight() const;
 	FItemData* GetItemBySlot(EInventoryPanels Panel, int32 SlitIndex);
 	TArray<FItemData*> GetCombinedInventories() const;
 	TArray<FItemData*> GetItemsOfSpecifiedType(EItemsType ItemsType) const;
@@ -194,7 +198,6 @@ protected:
 	void UpdateViewItem(FItemData* ItemData, bool IsRemove);
 
 private:
-	float OwnerGold = 100;
 	float CurrentInventoryWeight;
 
 	void LocalSwapItemsInInventory(FItemData* LocalFirstItem, FItemData* LocalSecondItem);

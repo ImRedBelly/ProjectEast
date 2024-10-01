@@ -559,7 +559,7 @@ void UInventoryCore::SwapItemsInInventory(FItemData* FirstItem, FItemData* Secon
 bool UInventoryCore::HasEnoughGold(FItemData* ItemData) const
 {
 	if (bIsCheckOwnerGold)
-		return OwnerGold > InventoryUtility::CalculateStackedItemValue(ItemData);
+		return OwnerGold >= InventoryUtility::CalculateStackedItemValue(ItemData);
 	return true;
 }
 
@@ -570,6 +570,8 @@ void UInventoryCore::RemoveGoldFromOwner(float Gold)
 		OwnerGold -= Gold;
 		OwnerGold = FMathf::Clamp(OwnerGold, 0, OwnerGold);
 		MulticastSetOwnerGold(OwnerGold);
+		if (OnChangedOwnerGold.IsBound())
+			OnChangedOwnerGold.Broadcast();
 	}
 }
 
@@ -580,6 +582,8 @@ void UInventoryCore::AddGoldToOwner(float Gold)
 		OwnerGold += Gold;
 		OwnerGold = FMathf::Clamp(OwnerGold, 0, OwnerGold);
 		MulticastSetOwnerGold(OwnerGold);
+		if (OnChangedOwnerGold.IsBound())
+			OnChangedOwnerGold.Broadcast();
 	}
 }
 
@@ -852,6 +856,8 @@ void UInventoryCore::AddWeightToInventory(float Weight)
 		CurrentInventoryWeight += Weight;
 		CurrentInventoryWeight = FMathf::Clamp(CurrentInventoryWeight, 0, CurrentInventoryWeight);
 		MulticastSetCurrentWeight(CurrentInventoryWeight);
+		if (OnChangedCurrentWeight.IsBound())
+			OnChangedCurrentWeight.Broadcast();
 	}
 }
 
@@ -862,6 +868,8 @@ void UInventoryCore::RemoveWeightFromInventory(float Weight)
 		CurrentInventoryWeight -= Weight;
 		CurrentInventoryWeight = FMathf::Clamp(CurrentInventoryWeight, 0, CurrentInventoryWeight);
 		MulticastSetCurrentWeight(CurrentInventoryWeight);
+		if (OnChangedCurrentWeight.IsBound())
+			OnChangedCurrentWeight.Broadcast();
 	}
 }
 

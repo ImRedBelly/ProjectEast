@@ -725,7 +725,8 @@ void UPlayerInventorySlot::OpenVendorStorageWindow() const
 	case EItemRemoveType::Default:
 		if (InventoryUtility::IsStackableAndHaveStacks(CurrentItemData, 1))
 		{
-			WidgetManager->OpenSplitStackPopup(CurrentItemData, nullptr, CachedPlayerInventory,
+			auto a = InventoryUtility::CopyItemData(CurrentItemData);
+			WidgetManager->OpenSplitStackPopup(a, nullptr, CachedPlayerInventory,
 			                                   CachedReceiverInventory,
 			                                   EInputMethodType::RightClick, EItemDestination::InventorySlot,
 			                                   EItemDestination::VendorSlot,

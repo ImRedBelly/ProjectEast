@@ -19,7 +19,8 @@ void UPlayerInventory::BeginPlay()
 
 void UPlayerInventory::ClientTransferItemReturnValue(bool Success, FText FailureMessage)
 {
-	Super::ClientTransferItemReturnValue(Success, FailureMessage);
+	if (!Success)
+		CashedPlayerController->GetWidgetManager()->DisplayMessage(FailureMessage.ToString());
 }
 
 void UPlayerInventory::InitializeInventory(APlayerController* PlayerController)
@@ -73,7 +74,7 @@ void UPlayerInventory::ServerModifyItemDurability(FItemData* ItemData, uint32 Am
 
 void UPlayerInventory::ClientItemLooted(FItemData* ItemData)
 {
-	if(OnItemLooted.IsBound())
+	if (OnItemLooted.IsBound())
 		OnItemLooted.Broadcast(*ItemData);
 }
 
@@ -224,7 +225,7 @@ void UPlayerInventory::TakeItem(FItemData* ItemData, UInventoryCore* Sender, AAc
 }
 
 void UPlayerInventory::TakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer)
-	{
+{
 	if (IsValid(Sender))
 	{
 		bool bReturnValue = true;
@@ -234,9 +235,9 @@ void UPlayerInventory::TakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer
 		for (auto ItemData : InventoryData.Get<0>())
 		{
 			if (InventoryUtility::IsItemClassValid(ItemData))
-			{				
+			{
 				auto TransferData = TransferItemFromInventory(ItemData, nullptr, EInputMethodType::RightClick, Sender,
-															  OwningPlayer);
+				                                              OwningPlayer);
 
 				if (TransferData.Get<0>())
 				{
@@ -251,9 +252,9 @@ void UPlayerInventory::TakeAllItems(UInventoryCore* Sender, AActor* OwningPlayer
 				}
 			}
 		}
-		
+
 		bool IsFirstElementNotValid = !Sender->GetInventoryAndSize(EInventoryPanels::P1).Get<0>().IsValidIndex(0);
-		ClientTakeItemReturnValue(bReturnValue, FailureMessage,IsFirstElementNotValid);
+		ClientTakeItemReturnValue(bReturnValue, FailureMessage, IsFirstElementNotValid);
 	}
 }
 
