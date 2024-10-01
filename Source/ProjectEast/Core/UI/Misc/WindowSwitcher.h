@@ -23,20 +23,30 @@ protected:
 
 	UPROPERTY(meta=(BindWidget))
 	UWidgetSwitcher* SwitcherWidgetPanels;
+	
+	UPROPERTY(meta=(BindWidget))
+	USwitcherButton* InventoryButtonCrafting;
+	UPROPERTY(meta=(BindWidget))
+	USwitcherButton* InventoryButtonInventory;
+	UPROPERTY(meta=(BindWidget))
+	USwitcherButton* InventoryButtonAbilities;
+	UPROPERTY(meta=(BindWidget))
+	USwitcherButton* InventoryButtonMap;
+	UPROPERTY(meta=(BindWidget))
+	USwitcherButton* InventoryButtonQuests;
 
 	UPROPERTY(meta=(BindWidget))
-	USwitcherButton* ButtonCrafting;
+	USwitcherButton* VendorButtonVendor;
 	UPROPERTY(meta=(BindWidget))
-	USwitcherButton* ButtonInventory;
-	UPROPERTY(meta=(BindWidget))
-	USwitcherButton* ButtonAbilities;
-	UPROPERTY(meta=(BindWidget))
-	USwitcherButton* ButtonMap;
-	UPROPERTY(meta=(BindWidget))
-	USwitcherButton* ButtonQuests;
+	USwitcherButton* VendorButtonEquipment;
 
 	UPROPERTY(meta=(BindWidget))
-	UCanvasPanel* MainPanel;
+	USwitcherButton* StorageButtonStorage;
+	UPROPERTY(meta=(BindWidget))
+	USwitcherButton* StorageButtonEquipment;
+
+	UPROPERTY(meta=(BindWidget))
+	UCanvasPanel* InventoryPanel;
 	UPROPERTY(meta=(BindWidget))
 	UCanvasPanel* VendorPanel;
 	UPROPERTY(meta=(BindWidget))
@@ -47,10 +57,11 @@ protected:
 private:
 	UPROPERTY()
 	UWidgetManager* WidgetManager;
-	
+
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 
 	void SetWidgetButtonStyle() const;
-	UCanvasPanel* GetSwitcherPanel(EWidgetType Type) const;
+	void InitializeButtons() const;
+	UCanvasPanel* GetSwitcherPanel() const;
 };

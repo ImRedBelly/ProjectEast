@@ -89,14 +89,18 @@ FReply UStorageWindow::NativeOnMouseMove(const FGeometry& InGeometry, const FPoi
 
 void UStorageWindow::BindEventDispatchers()
 {
-	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer()))
-		PlayerController->OnSwitchedTab.AddDynamic(this, &UStorageWindow::SwitchTab);
+	if (IsValid(WidgetManager))
+		WidgetManager->OnSwitchTab.AddDynamic(this, &UStorageWindow::SwitchTab);
+	if (IsValid(CachedPlayerController))
+		CachedPlayerController->OnSwitchedTab.AddDynamic(this, &UStorageWindow::SwitchTab);
 }
 
 void UStorageWindow::UnbindEventDispatchers()
 {
-	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(GetOwningPlayer()))
-		PlayerController->OnSwitchedTab.RemoveDynamic(this, &UStorageWindow::SwitchTab);
+	if (IsValid(WidgetManager))
+		WidgetManager->OnSwitchTab.RemoveDynamic(this, &UStorageWindow::SwitchTab);
+	if (IsValid(CachedPlayerController))
+		CachedPlayerController->OnSwitchedTab.RemoveDynamic(this, &UStorageWindow::SwitchTab);
 }
 
 void UStorageWindow::SwitchTab(EWidgetType WidgetType)

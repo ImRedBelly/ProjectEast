@@ -2,42 +2,70 @@
 #include "SwitcherButton.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 
+void UWindowSwitcher::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+	SetWidgetButtonStyle();
+}
+
 void UWindowSwitcher::NativeConstruct()
 {
 	Super::NativeConstruct();
 	WidgetManager = Cast<AMainPlayerController>(GetOwningPlayer())->GetWidgetManager();
-	ButtonCrafting->InitializeButton(WidgetManager);
-	ButtonInventory->InitializeButton(WidgetManager);
-	ButtonAbilities->InitializeButton(WidgetManager);
-	ButtonMap->InitializeButton(WidgetManager);
-	ButtonQuests->InitializeButton(WidgetManager);
 
+	InitializeButtons();
 	SetWidgetButtonStyle();
-}
-
-void UWindowSwitcher::NativeDestruct()
-{
-	Super::NativeDestruct();
 }
 
 void UWindowSwitcher::SetWidgetButtonStyle() const
 {
-	auto Canvas = GetSwitcherPanel(ActiveWidget);
+	auto Canvas = GetSwitcherPanel();
 	if (IsValid(Canvas))
-	{
 		SwitcherWidgetPanels->SetActiveWidget(Canvas);
-	}
 }
 
-UCanvasPanel* UWindowSwitcher::GetSwitcherPanel(EWidgetType Type) const
+void UWindowSwitcher::InitializeButtons() const
 {
-	switch (Type)
+	switch (ActiveWidget)
 	{
 	case EWidgetType::Inventory:
 	case EWidgetType::PlayerCrafting:
 	case EWidgetType::StationCrafting:
 	case EWidgetType::Abilities:
-		return MainPanel;
+		{
+			InventoryButtonCrafting->InitializeButton(WidgetManager);
+			InventoryButtonInventory->InitializeButton(WidgetManager);
+			InventoryButtonAbilities->InitializeButton(WidgetManager);
+			InventoryButtonMap->InitializeButton(WidgetManager);
+			InventoryButtonQuests->InitializeButton(WidgetManager);
+		}
+		break;
+	case EWidgetType::Vendor:
+		{
+			VendorButtonVendor->InitializeButton(WidgetManager);
+			VendorButtonEquipment->InitializeButton(WidgetManager);
+		}
+		break;
+	case EWidgetType::Storage:
+		{
+			StorageButtonStorage->InitializeButton(WidgetManager);
+			StorageButtonEquipment->InitializeButton(WidgetManager);
+		}
+		break;
+	default:
+		;
+	}
+}
+
+UCanvasPanel* UWindowSwitcher::GetSwitcherPanel() const
+{
+	switch (ActiveWidget)
+	{
+	case EWidgetType::Inventory:
+	case EWidgetType::PlayerCrafting:
+	case EWidgetType::StationCrafting:
+	case EWidgetType::Abilities:
+		return InventoryPanel;
 	case EWidgetType::Vendor:
 		return VendorPanel;
 	case EWidgetType::Storage:
@@ -48,3 +76,4 @@ UCanvasPanel* UWindowSwitcher::GetSwitcherPanel(EWidgetType Type) const
 		return nullptr;
 	}
 }
+
