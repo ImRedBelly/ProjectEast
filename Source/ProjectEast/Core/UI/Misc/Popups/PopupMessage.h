@@ -19,5 +19,6 @@ protected:
 
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* ShowAnimation;
+	
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
 };

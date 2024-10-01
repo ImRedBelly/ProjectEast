@@ -3,6 +3,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
+#include "ProjectEast/Core/UI/Misc/Popups/LootReceived/PopupLootReceived.h"
 
 
 void UMainWindow::NativeConstruct()
@@ -10,7 +11,7 @@ void UMainWindow::NativeConstruct()
 	Super::NativeConstruct();
 	CachedPlayerController = Cast<AMainPlayerController>(GetOwningPlayer());
 	IconButtonGameModule = &FModuleManager::GetModuleChecked<FIconButtonGameModule>(ProjectEast);
-	
+	PopupLootReceived->InitializePopup(CachedPlayerController->GetPlayerInventory());
 }
 
 void UMainWindow::ShowLootBar() const
