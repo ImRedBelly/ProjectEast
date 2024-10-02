@@ -5,6 +5,7 @@
 #include "ProjectEast/Core/UI/LootBar/LootBar.h"
 #include "MainWindow.generated.h"
 
+class UPopupGreaterLoot;
 class UPopupLootReceived;
 class AMainPlayerController;
 
@@ -22,6 +23,8 @@ public:
 	UCanvasPanel* InitMousePosition;
 	UPROPERTY(meta=(BindWidget))
 	UPopupLootReceived* PopupLootReceived;
+	UPROPERTY(meta=(BindWidget))
+	UPopupGreaterLoot* PopupGreaterLoot;
 
 	virtual void NativeConstruct() override;
 	void ShowLootBar() const;

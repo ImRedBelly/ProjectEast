@@ -891,19 +891,17 @@
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/Pistol/Pistol_skelmesh_Skeleton.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_Ladder_30cm.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_WindowFrame.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/LootReceivedSlot.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/LootReceivedSlot.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/PopupLootReceived.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/PopupLootReceived.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/PopupGreaterLoot.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/PopupGreaterLoot.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Environment/Interactable/Vendors/BP_Vendor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Environment/Interactable/Vendors/BP_Vendor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Consumables/BP_Bread.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Consumables/BP_Bread.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Weapons/BP_Axe01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Weapons/BP_Axe01.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ProjectEast/UI/HUD/WBP_MainWindow.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/UI/HUD/WBP_MainWindow.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/MainWindow.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/MainWindow.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/MainWindow.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/MainWindow.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/PopupMessage.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/PopupMessage.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1394,7 +1392,9 @@
       <workItem from="1727718738705" duration="56000" />
       <workItem from="1727756076637" duration="412000" />
       <workItem from="1727756516758" duration="13612000" />
-      <workItem from="1727793302481" duration="1937000" />
+      <workItem from="1727793302481" duration="2014000" />
+      <workItem from="1727842773435" duration="3246000" />
+      <workItem from="1727879452653" duration="1850000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />
@@ -1436,7 +1436,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727773065838</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="feat: add PopupLootReceived">
+      <option name="closed" value="true" />
+      <created>1727795679057</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1727795679057</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1462,6 +1470,7 @@
     <MESSAGE value="fix: WindowSwitcher" />
     <MESSAGE value="fix: view gold/weight var" />
     <MESSAGE value="fix: items effect" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: items effect" />
+    <MESSAGE value="feat: add PopupLootReceived" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add PopupLootReceived" />
   </component>
 </project>

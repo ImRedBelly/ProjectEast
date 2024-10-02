@@ -10,6 +10,8 @@
 #include "GameFramework/InputDeviceSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetInputLibrary.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 #include "ProjectEast/Core/Components/Movement/WallRunComponent.h"
 #include "ProjectEast/Core/Components/Movement/PlayerMovementComponent.h"
 
