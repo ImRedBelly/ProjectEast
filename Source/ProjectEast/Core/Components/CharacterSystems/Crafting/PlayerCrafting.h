@@ -5,6 +5,7 @@
 #include "PlayerCrafting.generated.h"
 
 
+class UPlayerInventory;
 class UWidgetManager;
 class AMainPlayerController;
 
@@ -19,15 +20,18 @@ public:
 	FOnNewItemSelected OnNewItemSelected;
 
 	virtual void BeginPlay() override;
-	void InitializeCrafting(AMainPlayerController* PlayerController);
-	void ClientInitializeCrafting(AMainPlayerController* PlayerController);
+	virtual void BeginDestroy() override;
+	
+	void InitializeCrafting(AMainPlayerController* PlayerController, UPlayerInventory* InPlayerInventory);
+	void ClientInitializeCrafting(AMainPlayerController* PlayerController, UPlayerInventory* InPlayerInventory);
 
 	void AssignCraftableData(FCraftingData* CraftingData);
 
 	void OpenCraftingWidget(UCraftingCore* CraftingCore, EWidgetType WidgetType);
 	void CloseCraftingWidget();
 
-	void OnItemUsed(FItemData* ItemData);
+	UFUNCTION()
+	void OnItemUsed(FItemData& ItemData);
 	void FocusSelectedItem(FCraftingData* CraftingData);
 	void SetCurrentCraftingStation(UCraftingCore* StationComponent);
 	void AttachNewItemToPlayerPreview(FCraftingData* CraftingData);
@@ -72,6 +76,8 @@ private:
 	UCraftingCore* CurrentStationComponent;
 	UPROPERTY()
 	AMainPlayerController* PlayerController;
+	UPROPERTY()
+	UPlayerInventory* PlayerInventory;
 	UPROPERTY()
 	UWidgetManager* WidgetManager;
 

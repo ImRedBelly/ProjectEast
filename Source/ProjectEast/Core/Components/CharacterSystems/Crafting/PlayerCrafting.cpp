@@ -30,7 +30,7 @@ void UPlayerCrafting::OpenCraftingWidget(UCraftingCore* CraftingCore, EWidgetTyp
 void UPlayerCrafting::CloseCraftingWidget()
 {
 	UPlayerEquipment* PlayerEquipment = PlayerController->GetPlayerEquipment();
-		if (IsValid(PlayerEquipment))
+	if (IsValid(PlayerEquipment))
 	{
 		PlayerEquipment->CallOnItemDetach(*PreviewItemData);
 		PlayerEquipment->CallOnItemAttach(*StoredPreviewData);
@@ -41,9 +41,9 @@ void UPlayerCrafting::CloseCraftingWidget()
 			CurrentStationComponent->ClearCraftingQueue(PlayerController);
 			CurrentStationComponent->StopCraftingProcess(GetFirstItemFromQueue(), PlayerController);
 		}
-		
+
 		CurrentStationComponent = nullptr;
-		
+
 		PreviewItemData = &EmptyItemData;
 		StoredPreviewData = &EmptyItemData;
 		bIsCraftingWidgetOpen = false;
@@ -52,28 +52,33 @@ void UPlayerCrafting::CloseCraftingWidget()
 	WidgetManager->CloseActiveWidget();
 }
 
-void UPlayerCrafting::OnItemUsed(FItemData* ItemData)
+void UPlayerCrafting::OnItemUsed(FItemData& ItemData)
 {
-	if (InventoryUtility::IsItemClassValid(ItemData))
+	if (InventoryUtility::IsItemClassValid(&ItemData))
 	{
-		if (ItemData->Class.GetDefaultObject()->UseType == EItemUseType::CraftingRecipe)
+		if (ItemData.Class.GetDefaultObject()->UseType == EItemUseType::CraftingRecipe)
 		{
-			ClientUnlockCraftingRecipe(ItemData->Class.GetDefaultObject()->CraftingIDToUnlock);
+			ClientUnlockCraftingRecipe(ItemData.Class.GetDefaultObject()->CraftingIDToUnlock);
 		}
 	}
 }
 
-void UPlayerCrafting::InitializeCrafting(AMainPlayerController* InPlayerController)
+void UPlayerCrafting::InitializeCrafting(AMainPlayerController* InPlayerController, UPlayerInventory* InPlayerInventory)
 {
-	ClientInitializeCrafting(InPlayerController);
+	ClientInitializeCrafting(InPlayerController, InPlayerInventory);
 	if (InventoryUtility::SwitchHasOwnerAuthority(this))
 		CreateCraftingList();
 }
 
-void UPlayerCrafting::ClientInitializeCrafting(AMainPlayerController* InPlayerController)
+void UPlayerCrafting::ClientInitializeCrafting(AMainPlayerController* InPlayerController, UPlayerInventory* InPlayerInventory)
 {
 	PlayerController = InPlayerController;
+	PlayerInventory = InPlayerInventory;
 	WidgetManager = PlayerController->GetWidgetManager();
+
+	if (IsValid(PlayerInventory))
+		PlayerInventory->OnItemUsed.AddDynamic(this, &UPlayerCrafting::OnItemUsed);
+	
 	CreateCraftingList();
 }
 
@@ -112,7 +117,6 @@ void UPlayerCrafting::ReturnSecuredCraftingCost(FCraftingData* CraftingData, UCr
 {
 	if (IsValid(Station) && Station->GetCraftingCostMultiplier() > 0)
 	{
-		UPlayerInventory* PlayerInventory = PlayerController->GetPlayerInventory();
 		if (IsValid(PlayerInventory))
 		{
 			PlayerInventory->AddGoldToOwner(
@@ -156,7 +160,6 @@ void UPlayerCrafting::AttachNewItemToPlayerPreview(FCraftingData* CraftingData)
 
 int32 UPlayerCrafting::FindItemQuantity(FItemData* ItemData, APlayerController* Controller)
 {
-	auto PlayerInventory = PlayerController->GetPlayerInventory();
 	if (IsValid(PlayerInventory))
 	{
 		auto Data = PlayerInventory->GetItemByData(ItemData);
@@ -275,12 +278,19 @@ void UPlayerCrafting::BeginPlay()
 	//TODO Do Not Remove this Event
 }
 
+
+void UPlayerCrafting::BeginDestroy()
+{
+	if (IsValid(PlayerInventory))
+		PlayerInventory->OnItemUsed.RemoveDynamic(this, &UPlayerCrafting::OnItemUsed);
+	Super::BeginDestroy();
+}
+
 TTuple<bool, TArray<FItemData*>> UPlayerCrafting::SecureMaterialItems(TArray<FSingleDTItem> Materials,
                                                                       int32 AmountToCraft, AActor* OwningPlayer)
 {
 	if (AmountToCraft > 0)
 	{
-		UPlayerInventory* PlayerInventory = PlayerController->GetPlayerInventory();
 		if (IsValid(PlayerInventory))
 		{
 			bool bCanBeRemoved = false;
@@ -328,7 +338,6 @@ TTuple<bool, FText> UPlayerCrafting::TryToCraftItem(FCraftingData* CraftingData,
 {
 	if (InventoryUtility::IsCraftingDataValid(CraftingData))
 	{
-		UPlayerInventory* PlayerInventory = PlayerController->GetPlayerInventory();
 		if (IsValid(PlayerInventory))
 		{
 			auto CraftableData = InventoryUtility::GetCraftableData(CraftingData);
@@ -393,7 +402,6 @@ void UPlayerCrafting::SecureCraftingCost(FCraftingData* CraftingData, int32 Amou
 {
 	if (IsValid(Station) && Station->GetCraftingCostMultiplier() > 0)
 	{
-		UPlayerInventory* PlayerInventory = PlayerController->GetPlayerInventory();
 		if (IsValid(PlayerInventory))
 		{
 			PlayerInventory->RemoveGoldFromOwner(
@@ -404,7 +412,6 @@ void UPlayerCrafting::SecureCraftingCost(FCraftingData* CraftingData, int32 Amou
 
 void UPlayerCrafting::ReturnSecuredMaterials(FCraftingData* CraftingData, AActor* OwningPlayer)
 {
-	UPlayerInventory* PlayerInventory = PlayerController->GetPlayerInventory();
 	auto CraftableData = InventoryUtility::GetCraftableData(CraftingData);
 	for (auto RowName : CraftableData.Get<1>())
 	{
@@ -436,7 +443,6 @@ bool UPlayerCrafting::CanBeAddedToInventory(TArray<FItemData*> CraftableItems, A
 {
 	if (!Station->GetSpawnCraftedItem())
 	{
-		UPlayerInventory* PlayerInventory = PlayerController->GetPlayerInventory();
 		if (IsValid(PlayerInventory))
 		{
 			bool bCanBeAdded = false;

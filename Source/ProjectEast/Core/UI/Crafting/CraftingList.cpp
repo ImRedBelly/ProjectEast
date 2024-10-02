@@ -2,6 +2,8 @@
 #include "CraftingListBox.h"
 #include "CraftingListSlot.h"
 #include "CraftingListSwitchButton.h"
+#include "ProjectEast/Core/Components/CharacterSystems/Crafting/CraftingCore.h"
+#include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UCraftingList::InitializeList(UPlayerCrafting* InPlayerCraftingCore, UCraftingCore* InCraftingCore)
@@ -236,8 +238,9 @@ bool UCraftingList::CanDisplayCraftable(FCraftingData* InCraftingData) const
 
 	if (InventoryUtility::IsItemClassValid(CraftableData.Get<0>()[0]))
 	{
-		if (CachedCraftingCore->GetIsShowLockedItems() ||
-			!CachedPlayerCrafting->IsCraftingRecipeLocked(InCraftingData))
+		if (CachedCraftingCore->GetIsShowLockedItems())
+			return true;
+		if (!CachedPlayerCrafting->IsCraftingRecipeLocked(InCraftingData))
 			return true;
 	}
 	return false;

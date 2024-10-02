@@ -57,7 +57,7 @@ void AMainPlayerController::InitializeComponents()
 {
 	PlayerInventory->InitializeInventory(this);
 	PlayerEquipment->InitializeEquipment();
-	PlayerCrafting->InitializeCrafting(this);
+	PlayerCrafting->InitializeCrafting(this, PlayerInventory);
 	InteractionComponent->InitializeInteraction(this);
 }
 

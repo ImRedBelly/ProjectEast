@@ -15,7 +15,7 @@ class AMainPlayerController;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeItem);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeAllItems);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemLooted, FItemData&, ItemData);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemUsed, FItemData, ItemData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemUsed, FItemData&, ItemData);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
