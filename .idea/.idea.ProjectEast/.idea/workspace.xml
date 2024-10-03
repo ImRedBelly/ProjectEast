@@ -10,7 +10,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a56fe0a0-f2d9-4475-81d2-e176ec248c14" name="Changes" comment="">
+    <list default="true" id="a56fe0a0-f2d9-4475-81d2-e176ec248c14" name="Changes" comment="feat: add currency item">
       <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Actor/BP_Child_CantPushActor.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Actor/BP_Child_SnappableActor.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Actor/BP_Master_Grab.uasset" afterDir="false" />
@@ -893,6 +893,9 @@
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_WindowFrame.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/DataTable/Crafting/DT_CraftingListArmor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/DataTable/Crafting/DT_CraftingListArmor.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/LootReceivedSlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/LootReceivedSlot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/PopupLootReceived.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/PopupLootReceived.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -952,13 +955,28 @@
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.generated.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/MainPlayerController.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/PlayerCharacter.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/InputDetection/FIconButtonGameModule.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/ConsumableBarSlot.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -974,26 +992,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C++ Project.ProjectEast.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C++ Project.ProjectEast.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\Dimchik\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\Dimchik\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\Dimchik\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\Dimchik\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\Dimchik\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\Dimchik\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="C++ Project.ProjectEast">
     <configuration name="ProjectEast" type="CppProject" factoryName="C++ Project">
       <configuration_1>
@@ -1143,6 +1161,7 @@
       <workItem from="1727793302481" duration="2014000" />
       <workItem from="1727842773435" duration="3246000" />
       <workItem from="1727879452653" duration="6519000" />
+      <workItem from="1727928895720" duration="4110000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />
@@ -1208,7 +1227,31 @@
       <option name="project" value="LOCAL" />
       <updated>1727887674914</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="feat: add crafting ingredients">
+      <option name="closed" value="true" />
+      <created>1727930579878</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1727930579878</updated>
+    </task>
+    <task id="LOCAL-00010" summary="feat: add consumable items">
+      <option name="closed" value="true" />
+      <created>1727932456245</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1727932456245</updated>
+    </task>
+    <task id="LOCAL-00011" summary="feat: add currency item">
+      <option name="closed" value="true" />
+      <created>1727933707894</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1727933707894</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1237,6 +1280,20 @@
     <MESSAGE value="feat: add PopupLootReceived" />
     <MESSAGE value="feat: add PopupGreaterLoot" />
     <MESSAGE value="fix: unlock recipes" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: unlock recipes" />
+    <MESSAGE value="feat: add crafting ingredients" />
+    <MESSAGE value="feat: add consumable items" />
+    <MESSAGE value="feat: add currency item" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add currency item" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/ProjectEast/Core/UI/Misc/Popups/LootReceived/PopupLootReceived.cpp</url>
+          <line>50</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

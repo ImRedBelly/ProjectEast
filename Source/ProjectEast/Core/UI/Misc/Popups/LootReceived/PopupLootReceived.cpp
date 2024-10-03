@@ -3,6 +3,7 @@
 #include "LootReceivedSlot.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
+#include "ProjectEast/Core/Utils/InventoryUtility.h"
 
 void UPopupLootReceived::InitializePopup(UPlayerInventory* InPlayerInventory)
 {
@@ -40,7 +41,7 @@ void UPopupLootReceived::NativeDestruct()
 
 void UPopupLootReceived::AddToLooted(FItemData& ItemData)
 {
-	LootedItems.Add(&ItemData);
+	LootedItems.Add(InventoryUtility::CopyItemData(ItemData));
 	DisplayNewSlots();
 }
 
@@ -50,11 +51,13 @@ void UPopupLootReceived::DisplayNewSlots()
 	{
 		if (VerticalBoxLoot->GetChildrenCount() > MaxSlots)
 			break;
-		ULootReceivedSlot* NewSlot = CreateWidget<ULootReceivedSlot>(this, LootReceivedSlotClass);
-		NewSlot->InitializeSlot(this, LootedItems[i]->Class.GetDefaultObject()->NameItem,
-								LootedItems[i]->Quantity);
-		VerticalBoxLoot->AddChildToVerticalBox(NewSlot);
+		if (InventoryUtility::IsItemClassValid(LootedItems[i]))
+		{
+			ULootReceivedSlot* NewSlot = CreateWidget<ULootReceivedSlot>(this, LootReceivedSlotClass);
+			NewSlot->InitializeSlot(this, LootedItems[i]->Class.GetDefaultObject()->NameItem,
+			                        LootedItems[i]->Quantity);
+			VerticalBoxLoot->AddChildToVerticalBox(NewSlot);
+		}
 		LootedItems.RemoveAt(i);
 	}
-
 }

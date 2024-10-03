@@ -15,6 +15,6 @@ void ULootReceivedSlot::InitializeSlot(UPopupLootReceived* InParentWidget, FText
 
 void ULootReceivedSlot::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
-	ParentWidget->RemoveLootedItem(this);
 	Super::OnAnimationFinished_Implementation(Animation);
+	ParentWidget->RemoveLootedItem(this);
 }
