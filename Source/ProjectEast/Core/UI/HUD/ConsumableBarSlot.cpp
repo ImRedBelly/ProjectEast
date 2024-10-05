@@ -1,5 +1,7 @@
 ﻿#include "ConsumableBarSlot.h"
 
+#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
+#include "ProjectEast/Core/Components/Equipment/PlayerEquipment.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/InputDetection/Public/IconButton.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"

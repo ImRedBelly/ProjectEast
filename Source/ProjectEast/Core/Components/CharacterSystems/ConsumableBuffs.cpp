@@ -1,7 +1,7 @@
 ﻿#include "ConsumableBuffs.h"
 #include "Kismet/GameplayStatics.h"
 #include "ProjectEast/Core/Actors/Inventory/ItemConsumable.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Equipment/PlayerEquipment.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 

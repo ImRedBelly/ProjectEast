@@ -5,7 +5,7 @@
 #include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Equipment/PlayerEquipment.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 

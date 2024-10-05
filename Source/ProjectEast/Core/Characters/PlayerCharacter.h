@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+class UEquipmentMeshUpdater;
 class AInteractiveActor;
 enum class EDirectionType : uint8;
 class UWallRunComponent;
@@ -63,16 +64,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* SlidingAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractionAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* OpenInventoryAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* PauseAction;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* UsePocket1Action;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
@@ -83,8 +84,9 @@ protected:
 	UInputAction* UsePocket4Action;
 
 	UInputMappingContext* CurrentMappingContext;
-	
+
 #pragma endregion InputActions
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Chatacter | Camera")
 	UCameraComponent* CameraComponent;
@@ -96,7 +98,7 @@ public:
 	void SetGeneralMappingContext();
 	void SetUIMappingContext();
 	void SetMappingContext(UInputMappingContext* MappingContext);
-	
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
@@ -187,9 +189,27 @@ private:
 #pragma region Ledge
 
 protected:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character|Movement")
 	UWallRunComponent* WallRunComponent;
+
+#pragma endregion Ledge
+
+#pragma region EquipmentMesh
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character|Equipment")
+	UEquipmentMeshUpdater* EquipmentMeshUpdater;
+
+	UPROPERTY(VisibleAnywhere, Category="Character|Equipment")
+	USkeletalMeshComponent* SkeletalMeshHead;
+	UPROPERTY(VisibleAnywhere, Category="Character|Equipment")
+	USkeletalMeshComponent* SkeletalMeshGloves;
+	UPROPERTY(VisibleAnywhere, Category="Character|Equipment")
+	USkeletalMeshComponent* SkeletalMeshChest;
+	UPROPERTY(VisibleAnywhere, Category="Character|Equipment")
+	USkeletalMeshComponent* SkeletalMeshLegs;
+	UPROPERTY(VisibleAnywhere, Category="Character|Equipment")
+	USkeletalMeshComponent* SkeletalMeshBoots;
 
 #pragma endregion Ledge
 
@@ -248,5 +268,4 @@ private:
 	float CalculateIKPelvisOffset() const;
 	float CalculateIKParametersForSocketName(const FName& SocketName) const;
 #pragma endregion IKSetting
-
 };

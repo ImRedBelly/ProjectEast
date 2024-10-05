@@ -1,5 +1,7 @@
 ﻿#include "MainPlayerController.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "ProjectEast/Core/Actors/Other/PlayerCapture.h"
 #include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Components/CharacterSystems/CharacterStatsComponent.h"
@@ -7,7 +9,7 @@
 #include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
 #include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Equipment/PlayerEquipment.h"
 #include "ProjectEast/Core/Components/Interactive/InteractionComponent.h"
 #include "ProjectEast/Core/Components/Interactive/InteractableComponent.h"
 
@@ -59,6 +61,16 @@ void AMainPlayerController::InitializeComponents()
 	PlayerEquipment->InitializeEquipment();
 	PlayerCrafting->InitializeCrafting(this, PlayerInventory);
 	InteractionComponent->InitializeInteraction(this);
+
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCapture::StaticClass(), FoundActors);
+	if (FoundActors.Num() > 0)
+	{
+		APlayerCapture* PlayerCapture = Cast<APlayerCapture>(FoundActors[0]);
+		PlayerCapture->InitializePlayerCapture(GetPlayerEquipment());
+		WidgetManager->InitializeWidgetManager(this, PlayerCapture);
+	}
 }
 
 void AMainPlayerController::InitializeInteractionWithObject(UInteractableComponent* InteractableComponent)

@@ -1,7 +1,7 @@
 ﻿#include "EquipmentPanel.h"
 #include "EquipmentSlot.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Equipment/PlayerEquipment.h"
 
 void UEquipmentPanel::NativeConstruct()
 {

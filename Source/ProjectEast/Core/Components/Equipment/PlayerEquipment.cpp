@@ -1,11 +1,12 @@
 ﻿#include "PlayerEquipment.h"
 
-#include "PlayerInventory.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Actors/Inventory/BaseEquippable.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/Inventory/InventoryCore.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
@@ -558,7 +559,7 @@ TTuple<bool, FText> UPlayerEquipment::TransferItemFromInventoryToEquipment(
 		{
 			Inventory->RemoveItemFromInventoryArray(ItemData);
 			AddItemToEquipmentArray(ItemData, InSlotItemData->EquipmentSlot);
-			//AttachItemToEquipment(ItemData);
+			AttachItemToEquipment(ItemData);
 			TryToUnequipAssociatedSlot(ItemData, Inventory);
 			return MakeTuple(true, FText());
 		}

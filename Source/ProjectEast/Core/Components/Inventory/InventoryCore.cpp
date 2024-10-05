@@ -1,9 +1,9 @@
 ﻿#include "InventoryCore.h"
-#include "PlayerEquipment.h"
 #include "PlayerInventory.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ProjectEast/Core/Components/Equipment/PlayerEquipment.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 

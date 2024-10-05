@@ -891,13 +891,61 @@
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/Pistol/Pistol_skelmesh_Skeleton.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_Ladder_30cm.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_WindowFrame.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Equipment/EquipmentMeshUpdater.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Equipment/EquipmentMeshUpdater.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_MainPlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_MainPlayerController.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/DataTable/Crafting/DT_CraftingListArmor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/DataTable/Crafting/DT_CraftingListArmor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/DataTable/Items/DT_Armor.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/DataTable/Items/DT_Armor.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/UI/Crafting/WBP_CraftingBar.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/UI/Crafting/WBP_CraftingBar.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_Player.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_Player.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Boots01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Boots01.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate01A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate01A.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate01B.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate01B.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate01B_V2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate01B_V2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate01C.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate01C.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate02.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Chestplate02.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Gloves01_Gold.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Gloves01_Gold.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Gloves01_Silver.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Gloves01_Silver.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Helm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Helm.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Legs01_Bronze.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Legs01_Bronze.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Legs01_Silver.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Legs01_Silver.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Necklace01_Red.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Items/Armor/BP_Necklace01_Red.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Mannequins/Mannequin_UE4/Meshes/SK_Mannequin_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Mannequins/Mannequin_UE4/Meshes/SK_Mannequin_Skeleton.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Boots01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Boots01.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Chestplate01A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Chestplate01A.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Chestplate01B.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Chestplate01B.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Chestplate01C.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Chestplate01C.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Chestplate02.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Chestplate02.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Gloves01_Gold.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Gloves01_Gold.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Gloves01_Silver.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Gloves01_Silver.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Helm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Helm.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Legs01_Bronze.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Legs01_Bronze.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Legs01_Silver.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Meshes/Skeletal/Armor/SK_Legs01_Silver.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/OtherActors/PlayerCapture/BP_PlayerCapture.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/OtherActors/PlayerCapture/BP_PlayerCapture.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Other/PlayerCapture.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Other/PlayerCapture.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Other/PlayerCapture.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Actors/Other/PlayerCapture.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/MainPlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/MainPlayerController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Inventory/InventoryCore.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Inventory/InventoryCore.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Inventory/PlayerEquipment.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Equipment/PlayerEquipment.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Inventory/PlayerEquipment.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Equipment/PlayerEquipment.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Inventory/PlayerInventory.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Inventory/PlayerInventory.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/WidgetManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/WidgetManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/WidgetManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/WidgetManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Crafting/CraftingBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Crafting/CraftingBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Crafting/CraftingBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Crafting/CraftingBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Equipment/EquipmentPanel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Equipment/EquipmentPanel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Equipment/EquipmentPanel.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Equipment/EquipmentPanel.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Equipment/EquipmentSlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/Equipment/EquipmentSlot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/ConsumableBarSlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/ConsumableBarSlot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/ConsumableBarSlot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/HUD/ConsumableBarSlot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/PlayerInventory/PlayerInventorySlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/PlayerInventory/PlayerInventorySlot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/ToolTip/ToolTip.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/ToolTip/ToolTip.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/InventoryUtility.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/InventoryUtility.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1026,6 +1074,8 @@
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.generated.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/InputDetection/FIconButtonGameModule.h" root0="SKIP_HIGHLIGHTING" />
@@ -1045,7 +1095,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "C++ Project.ProjectEast.executor": "Debug",
+    "C++ Project.ProjectEast.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
@@ -1214,7 +1264,8 @@
       <workItem from="1727879452653" duration="6519000" />
       <workItem from="1727928895720" duration="4482000" />
       <workItem from="1727966150465" duration="2411000" />
-      <workItem from="1728016845727" duration="370000" />
+      <workItem from="1728016845727" duration="3310000" />
+      <workItem from="1728101907397" duration="11150000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />
@@ -1320,7 +1371,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727969301810</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="feat: add crafting recipes">
+      <option name="closed" value="true" />
+      <created>1728018059842</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1728018059842</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1354,6 +1413,18 @@
     <MESSAGE value="feat: add currency item" />
     <MESSAGE value="fix: show loot items" />
     <MESSAGE value="feat: add weapons/armors" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add weapons/armors" />
+    <MESSAGE value="feat: add crafting recipes" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add crafting recipes" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.h</url>
+          <line>215</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

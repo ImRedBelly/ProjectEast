@@ -3,6 +3,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/UI/Misc/ValueView.h"
 #include "ProjectEast/Core/UI/Misc/WeightView.h"

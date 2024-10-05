@@ -12,6 +12,7 @@
 #include "Kismet/KismetInputLibrary.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
+#include "ProjectEast/Core/Components/Equipment/EquipmentMeshUpdater.h"
 #include "ProjectEast/Core/Components/Movement/WallRunComponent.h"
 #include "ProjectEast/Core/Components/Movement/PlayerMovementComponent.h"
 
@@ -44,6 +45,18 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
 	CameraComponent->bUsePawnControlRotation = false;
 
 	WallRunComponent = CreateDefaultSubobject<UWallRunComponent>(TEXT("WallRun"));
+		
+	EquipmentMeshUpdater = CreateDefaultSubobject<UEquipmentMeshUpdater>(TEXT("EquipmentMeshUpdater"));
+	SkeletalMeshHead = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshHead"));
+	SkeletalMeshHead->SetupAttachment(GetMesh());
+	SkeletalMeshGloves = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshGloves"));
+	SkeletalMeshGloves->SetupAttachment(GetMesh());
+	SkeletalMeshChest = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshChest"));
+	SkeletalMeshChest->SetupAttachment(GetMesh());
+	SkeletalMeshLegs = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshLegs"));
+	SkeletalMeshLegs->SetupAttachment(GetMesh());
+	SkeletalMeshBoots = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshBoots"));
+	SkeletalMeshBoots->SetupAttachment(GetMesh());
 }
 
 FRotator APlayerCharacter::GetAimOffset() const
@@ -89,6 +102,8 @@ void APlayerCharacter::SetMappingContext(UInputMappingContext* MappingContext)
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	EquipmentMeshUpdater->InitializeMeshUpdater(this, SkeletalMeshHead, SkeletalMeshGloves,
+		SkeletalMeshChest, SkeletalMeshLegs, SkeletalMeshBoots);
 	SetGeneralMappingContext();
 }
 

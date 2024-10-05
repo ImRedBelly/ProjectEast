@@ -34,7 +34,7 @@ public:
 	FOnSwitchWidget OnSwitchWidget;
 	FOnSwitchTab OnSwitchTab;
 
-	void InitializeWidgetManager();
+	void InitializeWidgetManager(AMainPlayerController* InPlayerController, APlayerCapture* InPlayerCapture);
 	void SetActiveWidget(EWidgetType WidgetType);
 	EWidgetType GetActiveWidget();
 
@@ -96,8 +96,6 @@ protected:
 	TSubclassOf<UVendorWindow> VendorWindowClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Popups")
 	TSubclassOf<UPopupMessage> PopupMessageClass;
-
-	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY()

@@ -8,7 +8,6 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Components/WidgetSwitcher.h"
-#include "ProjectEast/Core/Components/CharacterSystems/Crafting/CraftingCore.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "CraftingBase.generated.h"
 

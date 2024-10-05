@@ -7,7 +7,7 @@
 #include "Kismet/KismetTextLibrary.h"
 #include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Components/CharacterSystems/Crafting/PlayerCrafting.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Equipment/PlayerEquipment.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/UI/Misc/ValueView.h"
 #include "ProjectEast/Core/UI/Misc/WeightView.h"

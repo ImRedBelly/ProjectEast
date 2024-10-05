@@ -6,10 +6,11 @@
 #include "Components/TextBlock.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
-#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ConsumableBarSlot.generated.h"
 
+class UPlayerEquipment;
+class UConsumableBuffs;
 class UIconButton;
 
 UCLASS()

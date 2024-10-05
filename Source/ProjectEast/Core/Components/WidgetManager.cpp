@@ -15,18 +15,20 @@
 #include "ProjectEast/Core/UI/Vendor/VendorWindow.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
 
-void UWidgetManager::InitializeWidgetManager()
+void UWidgetManager::InitializeWidgetManager(AMainPlayerController* InPlayerController, APlayerCapture* InPlayerCapture)
 {
-	CachedMainWindow = CreateWidget<UMainWindow>(CachedPlayerController, DefaultMainWindow);
+	CachedMainWindow = CreateWidget<UMainWindow>(InPlayerController, DefaultMainWindow);
 	if (UKismetSystemLibrary::HasMultipleLocalPlayers(GetWorld()))
 		CachedMainWindow->AddToPlayerScreen();
 	else
 		CachedMainWindow->AddToViewport();
 
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCapture::StaticClass(), FoundActors);
-	if (FoundActors.Num() > 0)
-		CachedPlayerCapture = Cast<APlayerCapture>(FoundActors[0]);
+	
+	CachedPlayerController = InPlayerController;
+	CachedPlayerCapture = InPlayerCapture;
+	CachedPlayerInventory = InPlayerController->GetPlayerInventory();
+	
+
 }
 
 void UWidgetManager::SetActiveWidget(EWidgetType WidgetType)
@@ -357,15 +359,6 @@ void UWidgetManager::DisplayMessage(const FString Message)
 void UWidgetManager::InitializeCraftingStation(UCraftingCore* CraftingCore)
 {
 	CraftingStation = CraftingCore;
-}
-
-void UWidgetManager::BeginPlay()
-{
-	Super::BeginPlay();
-
-	CachedPlayerController = Cast<AMainPlayerController>(GetOwner());
-	CachedPlayerInventory = CachedPlayerController->GetPlayerInventory();
-	InitializeWidgetManager();
 }
 
 bool UWidgetManager::IsAnyMainWidgetOpen() const

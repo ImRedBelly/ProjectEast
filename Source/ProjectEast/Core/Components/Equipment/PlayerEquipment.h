@@ -1,10 +1,11 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "InventoryCore.h"
 #include "Components/ActorComponent.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "PlayerEquipment.generated.h"
 
+class UInventoryCore;
 class UPlayerLeveling;
 class ABaseEquippable;
 class UPlayerInventory;

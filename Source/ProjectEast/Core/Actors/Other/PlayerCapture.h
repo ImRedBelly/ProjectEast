@@ -3,8 +3,10 @@
 #include "CoreMinimal.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Actor.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Utils/GameTypes.h"
 #include "PlayerCapture.generated.h"
+
+class UPlayerEquipment;
 
 UCLASS()
 class PROJECTEAST_API APlayerCapture : public AActor
@@ -14,6 +16,7 @@ class PROJECTEAST_API APlayerCapture : public AActor
 public:
 	APlayerCapture();
 	void AddCaptureRotation(float RotationZ) const;
+	void InitializePlayerCapture(UPlayerEquipment* PlayerEquipment);
 	void StartCapture();
 	void EndCapture();
 
@@ -38,14 +41,13 @@ protected:
 	UPROPERTY(EditInstanceOnly)
 	UWindDirectionalSourceComponent* WindDirectionalSourceComponent;
 
-	virtual void BeginPlay() override;
-
-	void InitializePlayerCapture(UPlayerEquipment* PlayerEquipment);
 	void BindEventDispatchers();
 	void UnbindEventDispatchers();
 
-	void AttachItem();
-	void DetachItem();
+	UFUNCTION()
+	void AttachItem(FItemData& ItemData);
+	UFUNCTION()
+	void DetachItem(FItemData& ItemData);
 	void SpawnWindComponent(float Strength, float Speed);
 
 private:

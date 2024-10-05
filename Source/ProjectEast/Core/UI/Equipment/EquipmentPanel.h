@@ -6,6 +6,7 @@
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "EquipmentPanel.generated.h"
 
+class UPlayerInventory;
 class UEquipmentSlot;
 
 UCLASS()

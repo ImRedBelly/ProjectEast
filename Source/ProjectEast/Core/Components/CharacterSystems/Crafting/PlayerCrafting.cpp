@@ -2,7 +2,7 @@
 
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
-#include "ProjectEast/Core/Components/Inventory/PlayerEquipment.h"
+#include "ProjectEast/Core/Components/Equipment/PlayerEquipment.h"
 #include "ProjectEast/Core/Components/Inventory/PlayerInventory.h"
 #include "ProjectEast/Core/Data/Inventory/MainItemData.h"
 #include "ProjectEast/Core/Utils/InventoryUtility.h"
