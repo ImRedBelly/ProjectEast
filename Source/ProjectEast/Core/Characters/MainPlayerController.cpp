@@ -2,6 +2,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "ProjectEast/Core/Actors/Other/PlayerCapture.h"
+#include "ProjectEast/Core/Camera/BasePlayerCameraManager.h"
 #include "ProjectEast/Core/Components/PlayerLeveling.h"
 #include "ProjectEast/Core/Components/WidgetManager.h"
 #include "ProjectEast/Core/Components/CharacterSystems/CharacterStatsComponent.h"
@@ -42,6 +43,9 @@ void AMainPlayerController::OnPossess(APawn* InPawn)
 	Super::OnPossess(InPawn);
 	InitializeComponents();
 	InteractionComponent->Activate(true);
+
+	if(auto CameraManager = Cast<ABasePlayerCameraManager>(PlayerCameraManager))
+		CameraManager->OnPossess(InPawn);
 }
 
 void AMainPlayerController::OnUnPossess()

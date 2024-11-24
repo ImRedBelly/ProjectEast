@@ -2,6 +2,7 @@
 #include "GameTypes.generated.h"
 
 #define ECC_Interactable ECC_GameTraceChannel1
+#define ECC_Climbable ECC_GameTraceChannel2
 
 class UMainItemData;
 const FName ProjectEast = FName("ProjectEast");
@@ -9,8 +10,89 @@ const FName CollisionProfilePawn = FName("Pawn");
 const FName CollisionProfilePawnInteractionVolume = FName("PawnInteractionVolume");
 
 
+const FName SocketFPCamera = FName("FPCamera");
+
 const FName DebugCategoryLedgeDetection = FName("LedgeDetection");
 
+
+UENUM(BlueprintType)
+enum class EMovementState : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Grounded UMETA(DisplayName = "Grounded"),
+	InAir UMETA(DisplayName = "InAir"),
+	Mantling UMETA(DisplayName = "Mantling"),
+	Ragdoll UMETA(DisplayName = "Ragdoll"),
+};
+UENUM(BlueprintType)
+enum class EMovementAction : uint8
+{
+	None UMETA(DisplayName = "None"),
+	LowMantle UMETA(DisplayName = "LowMantle"),
+	HighMantle UMETA(DisplayName = "HighMantle"),
+	Rolling UMETA(DisplayName = "Rolling"),
+	GettingUp UMETA(DisplayName = "GettingUp"),
+};
+
+
+UENUM(BlueprintType)
+enum class EGait : uint8
+{
+	Walking UMETA(DisplayName = "Walking"),
+	Running UMETA(DisplayName = "Running"),
+	Sprinting UMETA(DisplayName = "Sprinting"),
+};
+
+UENUM(BlueprintType)
+enum class ERotationMode : uint8
+{
+	VelocityDirection UMETA(DisplayName = "VelocityDirection"),
+	LookingDirection UMETA(DisplayName = "LookingDirection"),
+	Aiming UMETA(DisplayName = "Aiming"),
+};
+
+UENUM(BlueprintType)
+enum class EViewMode : uint8
+{
+	ThirdPerson UMETA(DisplayName = "ThirdPerson"),
+	FirstPerson UMETA(DisplayName = "FirstPerson"),
+};
+
+
+UENUM(BlueprintType)
+enum class EOverlayState : uint8
+{
+	Default UMETA(DisplayName = "Default"),
+	Masculine UMETA(DisplayName = "Masculine"),
+	Feminine UMETA(DisplayName = "Feminine"),
+	Injured UMETA(DisplayName = "Injured"),
+	HandsTied UMETA(DisplayName = "HandsTied"),
+	Rifle UMETA(DisplayName = "Rifle"),
+	Pistol1H UMETA(DisplayName = "Pistol 1H"),
+	Pistol2H UMETA(DisplayName = "Pistol 2H"),
+	Bow UMETA(DisplayName = "Bow"),
+	Torch UMETA(DisplayName = "Torch"),
+	Binoculars UMETA(DisplayName = "Binoculars"),
+	Box UMETA(DisplayName = "Box"),
+	Barrel UMETA(DisplayName = "Barrel"),
+};
+
+
+UENUM(BlueprintType)
+enum class EStance : uint8
+{
+	Standing UMETA(DisplayName = "Standing"),
+	Crouching UMETA(DisplayName = "Crouching"),
+};
+
+
+UENUM(BlueprintType)
+enum class EMantleType : uint8
+{
+	HighMantle UMETA(DisplayName = "HighMantle"),
+	LowMantle UMETA(DisplayName = "LowMantle"),
+	FallingCatch UMETA(DisplayName = "FallingCatch"),
+};
 
 UENUM(BlueprintType)
 enum class EItemSlot : uint8
@@ -246,6 +328,34 @@ enum class ECraftingStation : uint8
 {
 	None UMETA(DisplayName = "None"),
 	Forge UMETA(DisplayName = "Forge"),
+};
+
+
+UENUM(BlueprintType)
+enum class EGroundedEntryState : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Roll UMETA(DisplayName = "Roll"),
+};
+
+UENUM(BlueprintType)
+enum class EMovementDirection : uint8
+{
+	Forward UMETA(DisplayName = "Forward"),
+	Right UMETA(DisplayName = "Right"),
+	Left UMETA(DisplayName = "Left"),
+	Backward UMETA(DisplayName = "Backward"),
+};
+
+UENUM(BlueprintType)
+enum class ETrackedHipsDirection : uint8
+{
+	F UMETA(DisplayName = "F"),
+	B UMETA(DisplayName = "B"),
+	RF UMETA(DisplayName = "RF"),
+	RB UMETA(DisplayName = "RB"),
+	LF UMETA(DisplayName = "LF"),
+	LB UMETA(DisplayName = "LB"),
 };
 
 USTRUCT(BlueprintType)

@@ -45,8 +45,10 @@ void UInteractionComponent::UpdateInteraction()
 
 			FVector StartLocation = CachedPawn->GetActorLocation() + FVector(0, 0, 110);
 
-			UCameraComponent* CameraComponent = Cast<UCameraComponent>(
-				CachedPawn->GetComponentByClass(UCameraComponent::StaticClass()));
+			UCameraComponent* CameraComponent = Cast<UCameraComponent>(CachedPawn->GetComponentByClass(UCameraComponent::StaticClass()));
+			if(!IsValid(CameraComponent))
+				return;
+			
 			FVector EndLocation = StartLocation + (CameraComponent->GetForwardVector() * CameraTraceLength);
 
 			FHitResult Result;
