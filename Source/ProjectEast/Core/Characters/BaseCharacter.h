@@ -11,6 +11,8 @@
 #include "ProjectEast/Core/Utils/Structurs.h"
 #include "BaseCharacter.generated.h"
 
+class UBaseCharacterMovementComponent;
+class UDebugComponent;
 class UInputMappingContext;
 //class UCameraComponent;
 class USpringArmComponent;
@@ -19,6 +21,34 @@ UCLASS()
 class PROJECTEAST_API ABaseCharacter : public ACharacter, public ICameraParameters, public ICharacterInfo
 {
 	GENERATED_BODY()
+
+public:
+
+	
+	bool HasMovementInput() const { return bHasMovementInput; }
+	bool IsMoving() const { return bIsMoving; }
+
+	float GetAimYawRate() const { return AimYawRate; }
+	float GetSpeed() const { return Speed; }
+	float GetMovementInputAmount() const { return MovementInputAmount; }
+	
+	FVector GetAcceleration() const { return Acceleration; }
+	FRotator GetAimingRotation() const { return AimingRotation; }
+
+	
+	FVector GetMovementInput() const;
+	
+	
+	EViewMode GetViewMode() const { return ViewMode; }
+	EMovementState GetPrevMovementState() const { return PreviousMovementState; }
+	int32  GetOverlayOverrideState() const { return OverlayOverrideState ; }
+	EMovementState GetMovementState() const { return MovementState; }
+	EMovementAction GetMovementAction() const { return MovementAction; }
+	EStance GetStance() const { return Stance; }
+	ERotationMode GetRotationMode() const { return RotationMode; }
+	EGait  GetGait() const { return Gait; }
+	EOverlayState GetOverlayState() const { return OverlayState; }
+	EGroundedEntryState GetGroundedEntryState() const { return GroundedEntryState; }
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -82,6 +112,10 @@ protected:
 private:
 	UPROPERTY()
 	UAnimInstance* MainAnimInstance;
+	UPROPERTY()
+	UDebugComponent* DebugComponent;
+	UPROPERTY()
+	UBaseCharacterMovementComponent* BaseCharacterMovementComponent;
 
 	EGait AllowedGait = EGait::Walking;
 	EGait ActualGait = EGait::Walking;
@@ -106,40 +140,51 @@ private:
 
 	EStance Stance = EStance::Standing;
 	EStance PreviousStance = EStance::Standing;
+	
+	EGroundedEntryState GroundedEntryState = EGroundedEntryState::None;
 
-	bool IsMoving;
-	bool HasMovementInput;
+	bool bIsMoving;
+	bool bHasMovementInput;
 
-	//Movement System
 	FMovementSettingsState* MovementData;
 	FMovementSettings CurrentMovementSettings;
-	//Movement System
+
 
 	FVector Acceleration;
 	FVector PreviousVelocity;
 	FVector LastPlayerMovementInput;
+	FVector ReplicatedCurrentAcceleration = FVector::ZeroVector;
+
 	FRotator LastVelocityRotation;
 	FRotator LastGetPlayerMovementInput;
 	FRotator LastMovementInputRotation;
-
+	FRotator AimingRotation = FRotator::ZeroRotator;
+	FRotator ReplicatedControlRotation = FRotator::ZeroRotator;
+	
 	float Speed;
 	float LocalWalkSpeed;
 	float LocalRunSpeed;
 	float LocalSprintSpeed;
+	float EasedMaxAcceleration = 0.0f;
 
 	float MovementInputAmount;
 
 	float AimYawRate;
 	float PreviousAimYaw;
 
+	int32 OverlayOverrideState = 0;
+	
+	
+	ABaseCharacter(const FObjectInitializer& ObjectInitializer);
 
-	ABaseCharacter();
-
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
+	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode = 0) override;
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void Jump() override;
@@ -147,6 +192,7 @@ private:
 
 #pragma region Input
 	void OnBeginPlay();
+	void ForceUpdateCharacterState();
 
 	void OnMovementStateChanged(EMovementState NewMovementState);
 	void OnMovementActionChanged(EMovementAction NewMovementAction);
@@ -155,6 +201,10 @@ private:
 	void OnViewModeChanged(EViewMode NewViewMode);
 	void OnOverlayStateChanged(EOverlayState NewOverlayState);
 	void OnStanceChanged(EStance NewStance);
+	
+	void SetOverlayOverrideState(int32 NewState);
+	void SetGroundedEntryState(EGroundedEntryState NewState);
+
 #pragma endregion Initialize
 
 #pragma region Input
@@ -186,15 +236,17 @@ private:
 #pragma endregion MovementSystem
 
 #pragma region SetNewStates
-	void SetMovementState(EMovementState NewMovementState);
-	void SetMovementAction(EMovementAction NewMovementAction);
-	void SetRotationMode(ERotationMode NewRotationMode);
-	void SetGait(EGait NewGait);
-	void SetViewMode(EViewMode NewViewMode);
-	void SetOverlayState(EOverlayState NewOverlayState);
+	void SetMovementState(const EMovementState NewState, bool bForce = false);
+	void SetMovementAction(const EMovementAction NewAction, bool bForce = false);
+	void SetRotationMode(const ERotationMode NewRotation, bool bForce = false);
+	void SetStance(const EStance NewStance, bool bForce = false);
+	void SetGait(const EGait NewGait, bool bForce = false);
+	void SetViewMode(const EViewMode NewViewMode, bool bForce = false);
+	void SetOverlayState(const EOverlayState NewOverlayState, bool bForce = false);
 #pragma endregion SetNewStates
 
 #pragma region RotationSystem
+
 private:
 	FRotator TargetRotation;
 	FRotator InAirRotation;
@@ -205,9 +257,11 @@ private:
 	void SmoothCharacterRotation(FRotator Target, float TargetInterpSpeed, float ActorInterpSpeed);
 	void AddToCharacterRotation(FRotator DeltaRotation);
 	void LimitRotation(float AimYawMin, float AimYawMax, float InterpSpeed);
-	TTuple<FHitResult*, bool> CustomSetActorLocationAndRotation(FVector NewLocation, FRotator NewRotation, bool bSweep, bool bTeleport);
+	TTuple<FHitResult*, bool> SetActorLocationAndTargetRotation(FVector NewLocation, FRotator NewRotation,
+	                                                            bool bSweep, bool bTeleport);
 	float CalculateGroundedRotationRate() const;
 	bool CanUpdateMovingRotation() const;
+
 #pragma endregion RotationSystem
 
 #pragma region MantleSystem
@@ -234,15 +288,23 @@ protected:
 #pragma endregion MantleSystem
 
 #pragma region RagdollSystem
-	bool RagdollOnGround;
-	bool RagdollFaceUp;
-	FVector LastRagdollVelocity;
 
-	//bool RagdollStart();
-	//bool RagdollEnd();
-	//bool RagdollUpdate();
-	//bool SetActorLocationDuringRagdoll();
-	//UAnimMontage* GetGetUpAnimation(bool RagdollFaceUp);
+	bool bReversedPelvis = false;
+	bool bRagdollOnGround;
+	bool bRagdollFaceUp;
+	FVector LastRagdollVelocity;
+	FVector TargetRagdollLocation;
+
+
+	virtual void RagdollStart();
+	virtual void RagdollEnd();
+	virtual void RagdollUpdate();
+
+	void SetActorLocationDuringRagdoll();
+	UAnimMontage* GetGetUpAnimation(bool bRagdollFaceUpState);
+
+	UFUNCTION(Server, Unreliable)
+	void Server_SetMeshLocationDuringRagdoll(FVector MeshLocation);
 
 #pragma endregion RagdollSystem
 
@@ -279,7 +341,6 @@ private:
 
 #pragma region EssentialInformation
 	void SetEssentialValues(float DeltaTime);
-	void CacheValues();
 #pragma endregion EssentialInformation
 
 #pragma region Utility

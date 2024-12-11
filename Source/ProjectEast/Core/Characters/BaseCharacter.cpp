@@ -1,41 +1,65 @@
 ﻿#include "BaseCharacter.h"
-
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
-#include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-
+#include "Net/UnrealNetwork.h"
+#include "ProjectEast/Core/Components/Debug/DebugComponent.h"
+#include "ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.h"
 
 class UEnhancedInputLocalPlayerSubsystem;
 
-ABaseCharacter::ABaseCharacter()
+
+const FName NAME_Pelvis(TEXT("Pelvis"));
+const FName NAME_RagdollPose(TEXT("RagdollPose"));
+const FName NAME_root(TEXT("root"));
+
+FVector ABaseCharacter::GetMovementInput() const
+{
+	return ReplicatedCurrentAcceleration;
+}
+
+ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UBaseCharacterMovementComponent>(CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bUseControllerRotationYaw = 0;
+	bReplicates = true;
+	SetReplicatingMovement(true);
+}
 
-
-	// SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	// SpringArmComponent->SetupAttachment(RootComponent);
-	// SpringArmComponent->bUsePawnControlRotation = true;
-	//
-	// CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	// CameraComponent->SetupAttachment(SpringArmComponent);
-	// CameraComponent->bUsePawnControlRotation = false;
+void ABaseCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	BaseCharacterMovementComponent = Cast<UBaseCharacterMovementComponent>(Super::GetMovementComponent());
 }
 
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	OnBeginPlay();
+
+	GetMesh()->AddTickPrerequisiteActor(this);
+	SetMovementModel();
+	ForceUpdateCharacterState();
+
+	TargetRotation = GetActorRotation();
+	LastVelocityRotation = TargetRotation;
+	LastMovementInputRotation = TargetRotation;
+
+	if (GetMesh()->GetAnimInstance() && GetLocalRole() == ROLE_SimulatedProxy)
+	{
+		GetMesh()->GetAnimInstance()->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
+	}
+
+	BaseCharacterMovementComponent->SetMovementSettings(GetTargetMovementSettings());
+	DebugComponent = FindComponentByClass<UDebugComponent>();
 }
 
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	SetEssentialValues(DeltaTime);
-	CacheValues();
 	DrawDebugShapes();
 
 	switch (MovementState)
@@ -49,15 +73,35 @@ void ABaseCharacter::Tick(float DeltaTime)
 	case EMovementState::InAir:
 		{
 			UpdateInAirRotation();
-			if (HasMovementInput)
+			if (bHasMovementInput)
 				MantleCheck(FallingTraceSettings, EDrawDebugTrace::Type::ForDuration);
 		}
 		break;
 	case EMovementState::Ragdoll:
-		//RagdollUpdate();
-		break;
+		{
+			RagdollUpdate();
+			break;
+		}
 	default: ;
 	}
+}
+
+void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// DOREPLIFETIME(ABaseCharacter, TargetRagdollLocation);
+	// DOREPLIFETIME_CONDITION(ABaseCharacter, ReplicatedCurrentAcceleration, COND_SkipOwner);
+	// DOREPLIFETIME_CONDITION(ABaseCharacter, ReplicatedControlRotation, COND_SkipOwner);
+	//
+	// DOREPLIFETIME(ABaseCharacter, DesiredGait);
+	// DOREPLIFETIME_CONDITION(ABaseCharacter, DesiredStance, COND_SkipOwner);
+	// DOREPLIFETIME_CONDITION(ABaseCharacter, DesiredRotationMode, COND_SkipOwner);
+	//
+	// DOREPLIFETIME_CONDITION(ABaseCharacter, RotationMode, COND_SkipOwner);
+	// DOREPLIFETIME_CONDITION(ABaseCharacter, OverlayState, COND_SkipOwner);
+	// DOREPLIFETIME_CONDITION(ABaseCharacter, ViewMode, COND_SkipOwner);
+	//DOREPLIFETIME_CONDITION(ABaseCharacter, VisibleMesh, COND_SkipOwner);
 }
 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -226,7 +270,7 @@ void ABaseCharacter::Jump()
 		{
 		case EMovementState::Grounded:
 			{
-				if (HasMovementInput && MantleCheck(GroundedTraceSettings, EDrawDebugTrace::Type::ForDuration))
+				if (bHasMovementInput && MantleCheck(GroundedTraceSettings, EDrawDebugTrace::Type::ForDuration))
 					return;
 
 				switch (Stance)
@@ -255,8 +299,14 @@ void ABaseCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
 
-	EMovementMode NewMovementMode = GetCharacterMovement()->MovementMode;
-	OnCharacterMovementModeChanged(NewMovementMode);
+	if (GetCharacterMovement()->MovementMode == MOVE_Walking || GetCharacterMovement()->MovementMode == MOVE_NavWalking)
+	{
+		SetMovementState(EMovementState::Grounded);
+	}
+	else if (GetCharacterMovement()->MovementMode == MOVE_Falling)
+	{
+		SetMovementState(EMovementState::InAir);
+	}
 }
 
 void ABaseCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
@@ -273,24 +323,23 @@ void ABaseCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightA
 
 void ABaseCharacter::OnBeginPlay()
 {
-	GetMesh()->AddTickPrerequisiteActor(this);
-	if (IsValid(GetMesh()->GetAnimInstance()))
-		MainAnimInstance = GetMesh()->GetAnimInstance();
-	SetMovementModel();
-	OnGaitChanged(DesiredGait);
-	OnRotationModeChanged(DesiredRotationMode);
-	OnViewModeChanged(DesiredEViewMode);
-	OnOverlayStateChanged(DesiredOverlayState);
-	OnStanceChanged(DesiredStance);
+}
 
-	TargetRotation = GetActorRotation();
-	LastVelocityRotation = GetActorRotation();
-	LastMovementInputRotation = GetActorRotation();
+void ABaseCharacter::ForceUpdateCharacterState()
+{
+	SetGait(DesiredGait, true);
+	SetStance(DesiredStance, true);
+	SetRotationMode(DesiredRotationMode, true);
+	SetViewMode(ViewMode, true);
+	SetOverlayState(OverlayState, true);
+	SetMovementState(MovementState, true);
+	SetMovementAction(MovementAction, true);
 }
 
 void ABaseCharacter::SetMovementModel()
 {
-	MovementData = MovementModel.DataTable->FindRow<FMovementSettingsState>(MovementModel.RowName,TEXT(""));
+	MovementData = MovementModel.DataTable->FindRow<FMovementSettingsState>(MovementModel.RowName,
+	                                                                        TEXT(""));
 }
 
 void ABaseCharacter::UpdateCharacterMovement()
@@ -441,6 +490,16 @@ void ABaseCharacter::OnStanceChanged(EStance NewStance)
 	Stance = NewStance;
 }
 
+void ABaseCharacter::SetOverlayOverrideState(int32 NewState)
+{
+	OverlayOverrideState = NewState;
+}
+
+void ABaseCharacter::SetGroundedEntryState(EGroundedEntryState NewState)
+{
+	GroundedEntryState = NewState;
+}
+
 void ABaseCharacter::OnCharacterMovementModeChanged(EMovementMode NewMovementMode)
 {
 	if (NewMovementMode == MOVE_Walking || NewMovementMode == MOVE_NavWalking)
@@ -502,7 +561,7 @@ EGait ABaseCharacter::GetActualGait(EGait InAllowedGait)
 
 bool ABaseCharacter::CanSprint() const
 {
-	if (HasMovementInput)
+	if (bHasMovementInput)
 	{
 		const float MinMovementInputThreshold = 0.9f;
 		switch (RotationMode)
@@ -513,7 +572,7 @@ bool ABaseCharacter::CanSprint() const
 			{
 				const float MaxYawDifferenceThreshold = 50.0f;
 
-				FRotator AccelerationRotation = GetCharacterMovement()->GetCurrentAcceleration().Rotation();
+				const FRotator AccelerationRotation = ReplicatedCurrentAcceleration.ToOrientationRotator();
 				FRotator ControlRotation = GetControlRotation();
 				FRotator DeltaRotation = AccelerationRotation - ControlRotation;
 				DeltaRotation.Normalize();
@@ -544,39 +603,45 @@ float ABaseCharacter::GetMappedSpeed() const
 }
 
 #pragma region SetNewStates
-void ABaseCharacter::SetMovementState(EMovementState NewMovementState)
+void ABaseCharacter::SetMovementState(const EMovementState NewState, bool bForce)
 {
-	if (NewMovementState != MovementState)
-		OnMovementStateChanged(NewMovementState);
+	if (bForce || MovementState != NewState)
+		OnMovementStateChanged(NewState);
 }
 
-void ABaseCharacter::SetMovementAction(EMovementAction NewMovementAction)
+void ABaseCharacter::SetMovementAction(const EMovementAction NewAction, bool bForce)
 {
-	if (NewMovementAction != MovementAction)
-		OnMovementActionChanged(NewMovementAction);
+	if (bForce || MovementAction != NewAction)
+		OnMovementActionChanged(NewAction);
 }
 
-void ABaseCharacter::SetRotationMode(ERotationMode NewRotationMode)
+void ABaseCharacter::SetRotationMode(const ERotationMode NewRotation, bool bForce)
 {
-	if (NewRotationMode != RotationMode)
-		OnRotationModeChanged(NewRotationMode);
+	if (bForce || RotationMode != NewRotation)
+		OnRotationModeChanged(NewRotation);
 }
 
-void ABaseCharacter::SetGait(EGait NewGait)
+void ABaseCharacter::SetStance(const EStance NewStance, bool bForce)
 {
-	if (NewGait != Gait)
+	if (bForce || Stance != NewStance)
+		OnStanceChanged(NewStance);
+}
+
+void ABaseCharacter::SetGait(const EGait NewGait, bool bForce)
+{
+	if (bForce || Gait != NewGait)
 		OnGaitChanged(NewGait);
 }
 
-void ABaseCharacter::SetViewMode(EViewMode NewViewMode)
+void ABaseCharacter::SetViewMode(const EViewMode NewViewMode, bool bForce)
 {
-	if (NewViewMode != ViewMode)
+	if (bForce || ViewMode != NewViewMode)
 		OnViewModeChanged(NewViewMode);
 }
 
-void ABaseCharacter::SetOverlayState(EOverlayState NewOverlayState)
+void ABaseCharacter::SetOverlayState(const EOverlayState NewOverlayState, bool bForce)
 {
-	if (NewOverlayState != OverlayState)
+	if (bForce || OverlayState != NewOverlayState)
 		OnOverlayStateChanged(NewOverlayState);
 }
 
@@ -638,7 +703,7 @@ void ABaseCharacter::UpdateGroundedRotation()
 		break;
 	case EMovementAction::Rolling:
 		{
-			if (HasMovementInput)
+			if (bHasMovementInput)
 			{
 				SmoothCharacterRotation(FRotator(0, LastMovementInputRotation.Yaw, 0), 0, 2);
 			}
@@ -699,14 +764,16 @@ void ABaseCharacter::LimitRotation(float AimYawMin, float AimYawMax, float Inter
 	}
 }
 
-TTuple<FHitResult*, bool> ABaseCharacter::CustomSetActorLocationAndRotation(FVector NewLocation, FRotator NewRotation,
-	bool bSweep, bool bTeleport)
+TTuple<FHitResult*, bool> ABaseCharacter::SetActorLocationAndTargetRotation(
+	FVector NewLocation, FRotator NewRotation, bool bSweep, bool bTeleport)
 {
 	FHitResult* Result = nullptr;
 	TargetRotation = NewRotation;
-	auto isSetActor = SetActorLocationAndRotation(NewLocation, TargetRotation, bSweep, Result, bTeleport ? ETeleportType::ResetPhysics : ETeleportType::None);
+	auto isSetActor = SetActorLocationAndRotation(NewLocation, TargetRotation, bSweep, Result,
+	                                              bTeleport ? ETeleportType::ResetPhysics : ETeleportType::None);
 	return MakeTuple(Result, isSetActor);
 }
+
 
 float ABaseCharacter::CalculateGroundedRotationRate() const
 {
@@ -716,7 +783,7 @@ float ABaseCharacter::CalculateGroundedRotationRate() const
 
 bool ABaseCharacter::CanUpdateMovingRotation() const
 {
-	return ((IsMoving && HasMovementInput) || Speed > 150) && !HasAnyRootMotion();
+	return ((bIsMoving && bHasMovementInput) || Speed > 150) && !HasAnyRootMotion();
 }
 
 #pragma endregion SetNewStates
@@ -773,6 +840,124 @@ bool ABaseCharacter::MantleCheck(FMantleTraceSettings TraceSettings, EDrawDebugT
 	return false;
 }
 
+UAnimMontage* ABaseCharacter::GetGetUpAnimation(bool bRagdollFaceUpState)
+{
+	return nullptr;
+}
+
+void ABaseCharacter::RagdollStart()
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+	SetMovementState(EMovementState::Ragdoll);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionObjectType(ECC_PhysicsBody);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetAllBodiesBelowSimulatePhysics(NAME_Pelvis, true, true);
+
+	if (GetMesh()->GetAnimInstance())
+		GetMesh()->GetAnimInstance()->Montage_Stop(0.2f);
+}
+
+void ABaseCharacter::RagdollEnd()
+{
+	if (GetMesh()->GetAnimInstance())
+		GetMesh()->GetAnimInstance()->SavePoseSnapshot(NAME_RagdollPose);
+
+	if (bRagdollOnGround)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		if (GetMesh()->GetAnimInstance())
+		{
+			GetMesh()->GetAnimInstance()->Montage_Play(GetGetUpAnimation(bRagdollFaceUp), 1.0f,
+			                                           EMontagePlayReturnType::MontageLength, 0.0f, true);
+		}
+	}
+	else
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		GetCharacterMovement()->Velocity = LastRagdollVelocity;
+	}
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetCollisionObjectType(ECC_Pawn);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	GetMesh()->SetAllBodiesSimulatePhysics(false);
+}
+
+void ABaseCharacter::RagdollUpdate()
+{
+	GetMesh()->bOnlyAllowAutonomousTickPose = false;
+
+	LastRagdollVelocity = GetMesh()->GetPhysicsLinearVelocity(NAME_root);
+
+	const float SpringValue = FMath::GetMappedRangeValueClamped<float, float>(
+		{0.0f, 1000.0f}, {0.0f, 25000.0f}, LastRagdollVelocity.Size());
+	GetMesh()->SetAllMotorsAngularDriveParams(SpringValue, 0.0f, 0.0f, false);
+
+	const bool bEnableGrav = LastRagdollVelocity.Z > -4000.0f;
+	GetMesh()->SetEnableGravity(bEnableGrav);
+
+	SetActorLocationDuringRagdoll();
+}
+
+
+void ABaseCharacter::SetActorLocationDuringRagdoll()
+{
+	const FRotator PelvisRot = GetMesh()->GetSocketRotation(NAME_Pelvis);
+
+	if (bReversedPelvis)
+	{
+		bRagdollFaceUp = PelvisRot.Roll > 0.0f;
+	}
+	else
+	{
+		bRagdollFaceUp = PelvisRot.Roll < 0.0f;
+	}
+
+	const FRotator TargetRagdollRotation(0.0f, bRagdollFaceUp ? PelvisRot.Yaw - 180.0f : PelvisRot.Yaw, 0.0f);
+
+	const FVector TraceVect(TargetRagdollLocation.X, TargetRagdollLocation.Y,
+	                        TargetRagdollLocation.Z - GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	FHitResult HitResult;
+	const bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TargetRagdollLocation, TraceVect,
+	                                                       ECC_Visibility, Params);
+
+	if (DebugComponent && DebugComponent->GetShowTraces())
+	{
+		UDebugComponent::DrawDebugLineTraceSingle(GetWorld(),
+		                                          TargetRagdollLocation,
+		                                          TraceVect,
+		                                          EDrawDebugTrace::Type::ForOneFrame,
+		                                          bHit,
+		                                          HitResult,
+		                                          FLinearColor::Red,
+		                                          FLinearColor::Green,
+		                                          1.0f);
+	}
+
+	bRagdollOnGround = HitResult.IsValidBlockingHit();
+	FVector NewRagdollLoc = TargetRagdollLocation;
+
+	if (bRagdollOnGround)
+	{
+		const float ImpactDistZ = FMath::Abs(HitResult.ImpactPoint.Z - HitResult.TraceStart.Z);
+		NewRagdollLoc.Z += GetCapsuleComponent()->GetScaledCapsuleHalfHeight() - ImpactDistZ + 2.0f;
+	}
+
+	SetActorLocationAndTargetRotation(bRagdollOnGround ? NewRagdollLoc : TargetRagdollLocation, TargetRagdollRotation,
+	                                  false, false);
+}
+
+void ABaseCharacter::Server_SetMeshLocationDuringRagdoll_Implementation(FVector MeshLocation)
+{
+	TargetRagdollLocation = MeshLocation;
+}
+
 FCameraViewParameters ABaseCharacter::GetCameraParameters()
 {
 	return FCameraViewParameters(ThirdPersonFOV, FirstPersonFOV, RightShoulder);
@@ -812,8 +997,8 @@ FEssentialValues ABaseCharacter::GetEssentialValues()
 	EssentialValues.Velocity = GetVelocity();
 	EssentialValues.Acceleration = Acceleration;
 	EssentialValues.MovementInput = GetCharacterMovement()->GetCurrentAcceleration();
-	EssentialValues.IsMoving = IsMoving;
-	EssentialValues.HasMovementInput = HasMovementInput;
+	EssentialValues.IsMoving = bIsMoving;
+	EssentialValues.HasMovementInput = bHasMovementInput;
 	EssentialValues.Speed = Speed;
 	EssentialValues.MovementInputAmount = MovementInputAmount;
 	EssentialValues.AimingRotation = GetControlRotation();
@@ -823,30 +1008,42 @@ FEssentialValues ABaseCharacter::GetEssentialValues()
 
 void ABaseCharacter::SetEssentialValues(float DeltaTime)
 {
-	const FVector LocalCurrentVelocity = GetVelocity();
+	if (GetLocalRole() != ROLE_SimulatedProxy)
+	{
+		ReplicatedCurrentAcceleration = GetCharacterMovement()->GetCurrentAcceleration();
+		ReplicatedControlRotation = GetControlRotation();
+		EasedMaxAcceleration = GetCharacterMovement()->GetMaxAcceleration();
+	}
+	else
+	{
+		EasedMaxAcceleration = GetCharacterMovement()->GetMaxAcceleration() != 0
+			                       ? GetCharacterMovement()->GetMaxAcceleration()
+			                       : EasedMaxAcceleration / 2;
+	}
 
-	Acceleration = (LocalCurrentVelocity - PreviousVelocity) / DeltaTime;
-	Speed = LocalCurrentVelocity.Size2D();
-	IsMoving = Speed > 1.0f;
-	if (IsMoving)
-		LastVelocityRotation = LocalCurrentVelocity.ToOrientationRotator();
 
-	FVector LocalCurrentAcceleration = GetCharacterMovement()->GetCurrentAcceleration();
-	MovementInputAmount = LocalCurrentAcceleration.Length() / GetCharacterMovement()->GetMaxAcceleration();
-	HasMovementInput = MovementInputAmount > 0.0f;
+	AimingRotation = FMath::RInterpTo(AimingRotation, ReplicatedControlRotation, DeltaTime, 30);
 
-	if (HasMovementInput)
-		LastMovementInputRotation = LocalCurrentAcceleration.ToOrientationRotator();
+	const FVector CurrentVel = GetVelocity();
 
-	AimYawRate = FMath::Abs((Controller->GetControlRotation().Yaw - PreviousAimYaw) / DeltaTime);
+	const FVector NewAcceleration = (CurrentVel - PreviousVelocity) / DeltaTime;
+	Acceleration = NewAcceleration.IsNearlyZero() || IsLocallyControlled() ? NewAcceleration : Acceleration / 2;
+
+	Speed = CurrentVel.Size2D();
+	bIsMoving = Speed > 1.0f;
+	if (bIsMoving)
+	{
+		LastVelocityRotation = CurrentVel.ToOrientationRotator();
+	}
+
+	MovementInputAmount = ReplicatedCurrentAcceleration.Size() / EasedMaxAcceleration;
+	bHasMovementInput = MovementInputAmount > 0.0f;
+	if (bHasMovementInput)
+	{
+		LastMovementInputRotation = ReplicatedCurrentAcceleration.ToOrientationRotator();
+	}
+	AimYawRate = FMath::Abs((AimingRotation.Yaw - PreviousAimYaw) / DeltaTime);
 }
-
-void ABaseCharacter::CacheValues()
-{
-	PreviousVelocity = GetVelocity();
-	PreviousAimYaw = Controller->GetControlRotation().Yaw;
-}
-
 
 TTuple<FVector, FVector> ABaseCharacter::GetControlForwardRightVector() const
 {

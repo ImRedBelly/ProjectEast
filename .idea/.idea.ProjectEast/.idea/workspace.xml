@@ -11,137 +11,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a56fe0a0-f2d9-4475-81d2-e176ec248c14" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Actor/BP_Child_ExampleChair.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Actor/BP_Child_ExampleCnaSnapCone.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Actor/BP_Child_ExampleSnappableCube.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Actor/BP_Child_ExampleWallModePicture.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Actor/BP_Child_SkeletalMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Actor/BP_Master_Building.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/ActorComponent/AC_BuildingSystem.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Enum/E_Mode.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Enum/E_SupportedSizes.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/HudClass/BP_Building_HUD.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Interface/BI_BuildingSystem.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Blueprint/Structure/F_BuildingSystem.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Geometry/Meshes/M_CubeMaterial.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Geometry/Meshes/SM_1M_Cube.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Geometry/Meshes/SM_1M_Cube_Chamfer.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Geometry/Meshes/SM_TemplateFloor.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Input/Actions/IA_Move.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Input/IMC_Default.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPersonIdle.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPersonJump_End.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPersonJump_Loop.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPersonJump_Start.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPersonRun.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPersonWalk.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPerson_AnimBP.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPerson_IdleRun_2D.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Animations/ThirdPerson_Jump.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MI_Female_Body.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/M_Male_Body.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/M_UE4Man_ChestLogo.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MaterialLayers/ML_GlossyBlack_Latex_UE4.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MaterialLayers/ML_Plastic_Shiny_Beige.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MaterialLayers/ML_Plastic_Shiny_Beige_LOGO.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MaterialLayers/ML_SoftMetal_UE4.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MaterialLayers/T_ML_Aluminum01.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MaterialLayers/T_ML_Aluminum01_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MaterialLayers/T_ML_Rubber_Blue_01_D.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Materials/MaterialLayers/T_ML_Rubber_Blue_01_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Mesh/SK_Mannequin.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Mesh/SK_Mannequin_Female.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Mesh/SK_Mannequin_Female_PhysicsAsset.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Mesh/SK_Mannequin_PhysicsAsset.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Textures/T_Female_Mask.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Textures/T_Female_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Textures/T_Male_Mask.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Textures/T_Male_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Textures/T_UE4Logo_Mask.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/Mannequin/Character/Textures/T_UE4Logo_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPerson/Meshes/Bump_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPerson/Meshes/LeftArm_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPerson/Meshes/Linear_Stair_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPerson/Meshes/RampMaterial.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPerson/Meshes/Ramp_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPerson/Meshes/RightArm_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPersonBP/Blueprints/BP_ThirdPersonCharacter.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPersonBP/Blueprints/BP_ThirdPersonGameMode.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Demo/ThirdPersonBP/ThirdPersonOverview.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Map/ThirdPersonExampleMap.umap" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Material/MI_Blue.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Material/MI_Red.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Material/MI_White.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Material/MI_Yellow.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Material/M_Color.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Material/M_Green.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Material/M_Opacity.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Material/M_Red.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Sound/WAV_Wrong.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Texture/T_InteractIcon.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BuildingSystem/Texture/T_NonInteractIcon.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Actor/BP_Child_CantPushActor.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Actor/BP_Child_SnappableActor.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Actor/BP_Master_Grab.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/ActorComponent/AC_GrabSystem.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/HudClass/BP_Grab_HUD.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Interface/BI_GrabSystem.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Interface/BI_GrabSystemCharacter.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Structure/F_AutoRotation.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Structure/F_DisabledRotaitonAxes.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Blueprint/Structure/F_SpawnActorInfos.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Geometry/Meshes/M_CubeMaterial.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Geometry/Meshes/SM_1M_Cube.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Geometry/Meshes/SM_1M_Cube_Chamfer.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Geometry/Meshes/SM_TemplateFloor.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Input/Actions/IA_Move.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Input/IMC_Default.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPersonIdle.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPersonJump_End.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPersonJump_Loop.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPersonJump_Start.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPersonRun.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPersonWalk.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPerson_AnimBP.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPerson_IdleRun_2D.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Animations/ThirdPerson_Jump.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MI_Female_Body.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/M_Male_Body.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/M_UE4Man_ChestLogo.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MaterialLayers/ML_GlossyBlack_Latex_UE4.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MaterialLayers/ML_Plastic_Shiny_Beige.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MaterialLayers/ML_Plastic_Shiny_Beige_LOGO.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MaterialLayers/ML_SoftMetal_UE4.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MaterialLayers/T_ML_Aluminum01.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MaterialLayers/T_ML_Aluminum01_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MaterialLayers/T_ML_Rubber_Blue_01_D.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Materials/MaterialLayers/T_ML_Rubber_Blue_01_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Mesh/SK_Mannequin.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Mesh/SK_Mannequin_Female.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Mesh/SK_Mannequin_Female_PhysicsAsset.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Mesh/SK_Mannequin_PhysicsAsset.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Mesh/UE4_Mannequin_Skeleton.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Textures/T_Female_Mask.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Textures/T_Female_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Textures/T_Male_Mask.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Textures/T_Male_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Textures/T_UE4Logo_Mask.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/Mannequin/Character/Textures/T_UE4Logo_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPerson/Meshes/Bump_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPerson/Meshes/LeftArm_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPerson/Meshes/Linear_Stair_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPerson/Meshes/RampMaterial.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPerson/Meshes/Ramp_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPerson/Meshes/RightArm_StaticMesh.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPersonBP/Blueprints/BP_ThirdPersonCharacter.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPersonBP/Blueprints/BP_ThirdPersonGameMode.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Demo/ThirdPersonBP/ThirdPersonOverview.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Map/ThirdPersonExampleMap.umap" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Material/M_Gray.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Material/M_Opacity.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Texture/T_InteractIcon.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/GrabSystem/Texture/T_NonInteractIcon.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Blueprints/SM_Bucket_2_Blueprint.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Blueprints/SM_CandleStick_Blueprint.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Blueprints/SM_Chandelier_1_Blueprint.uasset" afterDir="false" />
@@ -358,186 +227,6 @@
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Weapons/Meshes/WP_Sword_1.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Weapons/Meshes/WP_Sword_8.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Weapons/Textures/T_Texture_Atlas.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CameraSystem/ABP_PlayerCameraAnimInstance.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CameraSystem/BP_PlayerCameraManager.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CameraSystem/Camera.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CameraSystem/Camera_Skeleton.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnim.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Back.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Back_Montage_2H.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Back_Montage_Default.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Back_Montage_LH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Back_Montage_RH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Front.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Front_Montage_2H.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Front_Montage_Default.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Front_Montage_LH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_CLF_GetUp_Front_Montage_RH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_LandRoll_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_LandRoll_F_Montage_2H.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_LandRoll_F_Montage_Default.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_LandRoll_F_Montage_LH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_LandRoll_F_Montage_RH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_1m_LH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_1m_Montage_2H.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_1m_Montage_Box.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_1m_Montage_Default.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_1m_Montage_LH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_1m_Montage_RH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_1m_RH.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_2m.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_Mantle_2m_Montage_Default.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/AimOffsets/ALS_N_Look.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/AimOffsets/ALS_N_Look_D_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/AimOffsets/ALS_N_Look_F_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/AimOffsets/ALS_N_Look_U_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/BasePoses/ALS_CLF_Pose.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/BasePoses/ALS_N_Pose.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_Flail.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_FallLoop.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_FallLoop_Fast.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_JumpLoop.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_JumpRun_LF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_JumpRun_RF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_JumpWalk_LF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_JumpWalk_RF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_Land_Heavy.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_Land_Heavy_Additive.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_Land_Light.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/ALS_N_Land_Light_Additive.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/Detail/ALS_N_Falling_LeanPose_0.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/Detail/ALS_N_Falling_LeanPose_B.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/Detail/ALS_N_Falling_LeanPose_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/Detail/ALS_N_Falling_LeanPose_L.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/Detail/ALS_N_Falling_LeanPose_R.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/InAir/Detail/ALS_N_Lean_Falling.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CLF_WalkPose.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CLF_Walk_B.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CLF_Walk_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CLF_Walk_L.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CLF_Walk_R.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CRF_WalkPose.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CRF_Walk_B.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CRF_Walk_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CRF_Walk_L.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_CRF_Walk_R.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_RunPose_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_RunPose_L.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_RunPose_R.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_B.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_LB.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_LF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_RB.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_RF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Sprint_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Sprint_F_Impulse.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkPose_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkPose_L.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkPose_R.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_B.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_BL.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_BR.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_FL.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_FR.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_B.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_LB.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_LF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_RB.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_RF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_Lean.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LeanPose_0.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LeanPose_B.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LeanPose_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LeanPose_L.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LeanPose_R.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LocoDetail_Accel_B.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LocoDetail_Accel_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LocoDetail_Accel_L.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_LocoDetail_Accel_R.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/Detail/ALS_N_Run_BasePose.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Transitions/ALS_CLF_to_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Transitions/ALS_N_Stop_L_Down.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Transitions/ALS_N_Stop_R_Down.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Transitions/ALS_N_Transition_L.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Transitions/ALS_N_Transition_R.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Transitions/ALS_N_to_CLF.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_CLF_Rotate_L90.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_CLF_Rotate_R90.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_CLF_TurnIP_L180.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_CLF_TurnIP_L90.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_CLF_TurnIP_R180.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_CLF_TurnIP_R90.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_Rotate_L90.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_Rotate_R90.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_TurnIP_L180.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_TurnIP_L90.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_TurnIP_R180.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_TurnIP_R90.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Barrel/ALS_Props_Barrel_Poses.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Binoculars/ALS_Props_Binoculars_Aim_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Binoculars/ALS_Props_Binoculars_Aim_Sweep_Crouched.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Binoculars/ALS_Props_Binoculars_Poses.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Binoculars/ALS_Props_Binoculars_Poses_NoCurves.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Bow/ALS_Props_Bow_Aim_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Bow/ALS_Props_Bow_Aim_Sweep_Crouched.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Bow/ALS_Props_Bow_Poses.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Bow/ALS_Props_Bow_Poses_NoCurves.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Box/ALS_Props_Box_Poses.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Aim_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Aim_Sweep_Crouched.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Poses.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Poses_NoCurves.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Run_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Run_F_Arms.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Sprint_F.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Sprint_F_Arms.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Sprint_F_Impulse.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/M4A1/ALS_Props_M4A1_Sprint_F_Impulse_Arms.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Pistol/ALS_Props_Pistol_1H_Aim_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Pistol/ALS_Props_Pistol_1H_Aim_Sweep_Crouched.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Pistol/ALS_Props_Pistol_1H_Poses.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Pistol/ALS_Props_Pistol_1H_Poses_NoCurves.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Pistol/ALS_Props_Pistol_2H_Aim_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Pistol/ALS_Props_Pistol_2H_Aim_Sweep_Crouched.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Pistol/ALS_Props_Pistol_2H_Poses.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Pistol/ALS_Props_Pistol_2H_Poses_NoCurves.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Shared/ALS_N_SecondaryMotion.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/StanceVariations/ALS_StanceVariation_Feminine.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/StanceVariations/ALS_StanceVariation_HandsTied.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/StanceVariations/ALS_StanceVariation_Injured.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/StanceVariations/ALS_StanceVariation_Masculine.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/StanceVariations/ALS_StanceVariation_Normal.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Torch/ALS_Props_Torch_Aim_Sweep.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Torch/ALS_Props_Torch_Aim_Sweep_Crouched.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Torch/ALS_Props_Torch_Poses.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Overlay/Torch/ALS_Props_Torch_Poses_NoCurves.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/MannequinSkeleton/Materials/M_Mannequin_Body.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/MannequinSkeleton/Materials/M_Mannequin_Logo.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/MannequinSkeleton/Meshes/Mannequin.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/MannequinSkeleton/PhysicsAssets/Mannequin_PhysicsAsset.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/MannequinSkeleton/Textures/UE4Man_Logo_N.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/MannequinSkeleton/Textures/UE4_LOGO_CARD.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/MannequinSkeleton/Textures/UE4_Mannequin_MAT_MASKA.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/MannequinSkeleton/Textures/UE4_Mannequin__normals.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/AnimationBlendCurves/LookIn.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/AnimationBlendCurves/LookOut.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CameraBlendCurves/CameraLerp_1.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CameraBlendCurves/CameraLerp_2.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CameraBlendCurves/CameraLerp_3.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CharacterMovementCurves/NormalMovement.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CharacterMovementCurves/NormalRotation.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CharacterMovementCurves/ResponsiveMovement.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CharacterMovementCurves/ResponsiveRotation.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CharacterMovementCurves/SluggishMovement.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/Curves/CharacterMovementCurves/SluggishRotation.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Data/DT_MovementModel.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Inputs/GeneralActions/IA_Sprint.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Inputs/GeneralActions/IA_Walk.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/ProjectEast/Maps/NewScene.umap" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/AnimSeq/InPlace_Version/AnimSeq_Traversal_BalanceBeam_Back_End.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/AnimSeq/InPlace_Version/AnimSeq_Traversal_BalanceBeam_Back_Loop.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/AnimSeq/InPlace_Version/AnimSeq_Traversal_BalanceBeam_Back_LoopFast.uasset" afterDir="false" />
@@ -1141,41 +830,18 @@
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/Pistol/Pistol_skelmesh_Skeleton.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_Ladder_30cm.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_WindowFrame.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Camera/BasePlayerCameraManager.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Camera/BasePlayerCameraManager.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Camera/PlayerCameraAnimInstance.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Camera/PlayerCameraAnimInstance.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CharacterInfo.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CharacterInfo.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Library/ALSAnimationStructLibrary.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Library/ALSCharacterStructLibrary.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Library/MathLibrary.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Library/MathLibrary.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/Structurs.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Debug/DebugComponent.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Debug/DebugComponent.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_MainPlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_MainPlayerController.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_Player.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_Player.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/GameModes/GM_ProjectEast.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/GameModes/GM_ProjectEast.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Inputs/GeneralActions/IA_Move.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Inputs/GeneralActions/IA_Move.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Inputs/GeneralActions/IA_Run.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Inputs/GeneralActions/IA_Sliding.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Inputs/GeneralActions/IA_Sliding.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Inputs/IMC_GeneralInputs.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Inputs/IMC_GeneralInputs.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Materials/M_ObjectOutline.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Materials/M_ObjectOutline.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectEast.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectEast.uproject" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/MainPlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/MainPlayerController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/PlayerCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Interactive/InteractionComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Interactive/InteractionComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/GameTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Utils/GameTypes.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1219,6 +885,7 @@
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.generated.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealGame/Inc/ProjectEast/UHT/InteractableComponent.gen.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/ProjectEast.uproject" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CharacterInfo.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -1440,7 +1107,11 @@
       <workItem from="1730780521925" duration="1129000" />
       <workItem from="1732163715951" duration="1065000" />
       <workItem from="1732374549608" duration="1425000" />
-      <workItem from="1732452021477" duration="363000" />
+      <workItem from="1732452021477" duration="3171000" />
+      <workItem from="1732597341090" duration="372000" />
+      <workItem from="1732765596667" duration="446000" />
+      <workItem from="1733718885514" duration="5031000" />
+      <workItem from="1733891588259" duration="2936000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />
@@ -1562,7 +1233,39 @@
       <option name="project" value="LOCAL" />
       <updated>1728118387625</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="feat: add als animations">
+      <option name="closed" value="true" />
+      <created>1732453012454</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1732453012454</updated>
+    </task>
+    <task id="LOCAL-00017" summary="reimport animations">
+      <option name="closed" value="true" />
+      <created>1732456900894</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1732456900894</updated>
+    </task>
+    <task id="LOCAL-00018" summary="feat: update character anim instance">
+      <option name="closed" value="true" />
+      <created>1732597398518</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1732597398518</updated>
+    </task>
+    <task id="LOCAL-00019" summary="fix: character anim instance">
+      <option name="closed" value="true" />
+      <created>1732597711416</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1732597711416</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1598,6 +1301,10 @@
     <MESSAGE value="feat: add weapons/armors" />
     <MESSAGE value="feat: add crafting recipes" />
     <MESSAGE value="feat: add attach/detach items" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add attach/detach items" />
+    <MESSAGE value="feat: add als animations" />
+    <MESSAGE value="reimport animations" />
+    <MESSAGE value="feat: update character anim instance" />
+    <MESSAGE value="fix: character anim instance" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: character anim instance" />
   </component>
 </project>

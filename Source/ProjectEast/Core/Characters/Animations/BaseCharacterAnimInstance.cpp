@@ -55,6 +55,92 @@ void UBaseCharacterAnimInstance::NativeInitializeAnimation()
 void UBaseCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	if (!Character || DeltaSeconds == 0.0f)
+	{
+		return;
+	}
+
+	// Update rest of character information. Others are reflected into anim bp when they're set inside character class
+	CharacterInformation.MovementInputAmount = Character->GetMovementInputAmount();
+	CharacterInformation.bHasMovementInput = Character->HasMovementInput();
+	CharacterInformation.bIsMoving = Character->IsMoving();
+	CharacterInformation.Acceleration = Character->GetAcceleration();
+	CharacterInformation.AimYawRate = Character->GetAimYawRate();
+	CharacterInformation.Speed = Character->GetSpeed();
+	CharacterInformation.Velocity = Character->GetCharacterMovement()->Velocity;
+	CharacterInformation.MovementInput = Character->GetMovementInput();
+	CharacterInformation.AimingRotation = Character->GetAimingRotation();
+	CharacterInformation.CharacterActorRotation = Character->GetActorRotation();
+	CharacterInformation.ViewMode = Character->GetViewMode();
+	CharacterInformation.PrevMovementState = Character->GetPrevMovementState();
+	LayerBlendingValues.OverlayOverrideState = Character->GetOverlayOverrideState();
+	MovementState = Character->GetMovementState();
+	MovementAction = Character->GetMovementAction();
+	Stance = Character->GetStance();
+	RotationMode = Character->GetRotationMode();
+	Gait = Character->GetGait();
+	OverlayState = Character->GetOverlayState();
+	GroundedEntryState = Character->GetGroundedEntryState();
+
+	UpdateAimingValues(DeltaSeconds);
+	UpdateLayerValues();
+	UpdateFootIK(DeltaSeconds);
+
+	if (MovementState == EMovementState::Grounded)
+	{
+		// Check If Moving Or Not & Enable Movement Animations if IsMoving and HasMovementInput, or if the Speed is greater than 150.
+		const bool bPrevShouldMove = Grounded.bShouldMove;
+		Grounded.bShouldMove = ShouldMoveCheck();
+
+		if (bPrevShouldMove == false && Grounded.bShouldMove)
+		{
+			// Do When Starting To Move
+			TurnInPlaceValues.ElapsedDelayTime = 0.0f;
+			Grounded.bRotateL = false;
+			Grounded.bRotateR = false;
+		}
+
+		if (Grounded.bShouldMove)
+		{
+			// Do While Moving
+			UpdateMovementValues();
+			UpdateRotationValues();
+		}
+		else
+		{
+			// Do While Not Moving
+			if (CanRotateInPlace())
+			{
+				RotateInPlaceCheck();
+			}
+			else
+			{
+				Grounded.bRotateL = false;
+				Grounded.bRotateR = false;
+			}
+			if (CanTurnInPlace())
+			{
+				TurnInPlaceCheck();
+			}
+			else
+			{
+				TurnInPlaceValues.ElapsedDelayTime = 0.0f;
+			}
+			if (CanDynamicTransition())
+			{
+				DynamicTransitionCheck();
+			}
+		}
+	}
+	else if (MovementState == EMovementState::InAir)
+	{
+		UpdateInAirValues();
+	}
+	else if (MovementState == EMovementState::Ragdoll)
+	{
+		UpdateRagdollValues();
+	}
 }
 
 void UBaseCharacterAnimInstance::PlayTransition(const FALSDynamicMontageParams& Parameters)
