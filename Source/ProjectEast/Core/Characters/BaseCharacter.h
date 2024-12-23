@@ -188,6 +188,7 @@ private:
 	virtual void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	virtual void Jump() override;
+	virtual void OnJumped_Implementation() override;
 
 
 #pragma region Input
@@ -219,7 +220,6 @@ private:
 #pragma endregion Input
 
 #pragma region MovementSystem
-	void OnCharacterMovementModeChanged(EMovementMode NewMovementMode);
 	void SetMovementModel();
 	void UpdateCharacterMovement();
 	void UpdateDynamicMovementSettings(EGait InAllowedGait);

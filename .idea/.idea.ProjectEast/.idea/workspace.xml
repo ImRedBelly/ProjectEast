@@ -830,16 +830,19 @@
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/Pistol/Pistol_skelmesh_Skeleton.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_Ladder_30cm.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_WindowFrame.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Debug/DebugComponent.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Debug/DebugComponent.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectEast.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectEast.uproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/AimOffsets/ALS_N_Look.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/AimOffsets/ALS_N_Look.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_F.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_F.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_F.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_F.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_F.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_F.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_Rotate_L90.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_Rotate_L90.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" afterDir="false" />
     </list>
@@ -886,6 +889,7 @@
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.generated.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealGame/Inc/ProjectEast/UHT/InteractableComponent.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/ProjectEast.uproject" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CharacterInfo.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -1111,7 +1115,14 @@
       <workItem from="1732597341090" duration="372000" />
       <workItem from="1732765596667" duration="446000" />
       <workItem from="1733718885514" duration="5031000" />
-      <workItem from="1733891588259" duration="2936000" />
+      <workItem from="1733891588259" duration="3792000" />
+      <workItem from="1733928132757" duration="4277000" />
+      <workItem from="1733978210420" duration="1478000" />
+      <workItem from="1734072322584" duration="796000" />
+      <workItem from="1734178515881" duration="6257000" />
+      <workItem from="1734237643690" duration="3802000" />
+      <workItem from="1734861238912" duration="8435000" />
+      <workItem from="1734927958579" duration="884000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />
@@ -1265,7 +1276,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732597711416</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="fix: base character">
+      <option name="closed" value="true" />
+      <created>1733895209436</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1733895209436</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1305,6 +1324,7 @@
     <MESSAGE value="reimport animations" />
     <MESSAGE value="feat: update character anim instance" />
     <MESSAGE value="fix: character anim instance" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: character anim instance" />
+    <MESSAGE value="fix: base character" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: base character" />
   </component>
 </project>

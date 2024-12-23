@@ -2,9 +2,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Animations/BaseCharacterAnimInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 #include "ProjectEast/Core/Components/Debug/DebugComponent.h"
 #include "ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.h"
 
@@ -42,14 +43,14 @@ void ABaseCharacter::BeginPlay()
 	GetMesh()->AddTickPrerequisiteActor(this);
 	SetMovementModel();
 	ForceUpdateCharacterState();
-
+	MainAnimInstance = GetMesh()->GetAnimInstance();
 	TargetRotation = GetActorRotation();
 	LastVelocityRotation = TargetRotation;
 	LastMovementInputRotation = TargetRotation;
 
-	if (GetMesh()->GetAnimInstance() && GetLocalRole() == ROLE_SimulatedProxy)
+	if (MainAnimInstance && GetLocalRole() == ROLE_SimulatedProxy)
 	{
-		GetMesh()->GetAnimInstance()->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
+		MainAnimInstance->SetRootMotionMode(ERootMotionMode::IgnoreRootMotion);
 	}
 
 	BaseCharacterMovementComponent->SetMovementSettings(GetTargetMovementSettings());
@@ -84,6 +85,9 @@ void ABaseCharacter::Tick(float DeltaTime)
 		}
 	default: ;
 	}
+
+	PreviousVelocity = GetVelocity();
+	PreviousAimYaw = AimingRotation.Yaw;
 }
 
 void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -151,7 +155,9 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		                                   this, &ABaseCharacter::PlayerCrouchInput);
 		// AimAction
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started,
-		                                   this, &ABaseCharacter::PlayerCrouchInput);
+		                                   this, &ABaseCharacter::PlayerStartAimInput);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed,
+		                                   this, &ABaseCharacter::PlayerStopAimInput);
 	}
 }
 
@@ -293,6 +299,16 @@ void ABaseCharacter::Jump()
 		default: ;
 		}
 	}
+}
+
+void ABaseCharacter::OnJumped_Implementation()
+{
+	Super::OnJumped_Implementation();
+	InAirRotation = Speed > 100 ? GetActorRotation() : LastVelocityRotation;
+	if(IsValid(MainAnimInstance))
+		Cast<UBaseCharacterAnimInstance>(MainAnimInstance)->OnJumped();
+
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "OnJumped");
 }
 
 void ABaseCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
@@ -500,15 +516,6 @@ void ABaseCharacter::SetGroundedEntryState(EGroundedEntryState NewState)
 	GroundedEntryState = NewState;
 }
 
-void ABaseCharacter::OnCharacterMovementModeChanged(EMovementMode NewMovementMode)
-{
-	if (NewMovementMode == MOVE_Walking || NewMovementMode == MOVE_NavWalking)
-		SetMovementState(EMovementState::Grounded);
-	if (NewMovementMode == MOVE_Falling)
-		SetMovementState(EMovementState::InAir);
-}
-
-
 EGait ABaseCharacter::GetAllowedGait() const
 {
 	if (Stance == EStance::Crouching || (Stance == EStance::Standing && RotationMode == ERotationMode::Aiming))
@@ -690,7 +697,6 @@ void ABaseCharacter::UpdateGroundedRotation()
 				{
 					LimitRotation(-100, 100, 20);
 				}
-
 				float RotationAmount = GetAnimCurveValue("RotationAmount");
 				if (FMath::Abs(RotationAmount) > 0.001f)
 				{
@@ -855,22 +861,22 @@ void ABaseCharacter::RagdollStart()
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetAllBodiesBelowSimulatePhysics(NAME_Pelvis, true, true);
 
-	if (GetMesh()->GetAnimInstance())
-		GetMesh()->GetAnimInstance()->Montage_Stop(0.2f);
+	if (IsValid(MainAnimInstance))
+		MainAnimInstance->Montage_Stop(0.2f);
 }
 
 void ABaseCharacter::RagdollEnd()
 {
-	if (GetMesh()->GetAnimInstance())
-		GetMesh()->GetAnimInstance()->SavePoseSnapshot(NAME_RagdollPose);
+	if (IsValid(MainAnimInstance))
+		MainAnimInstance->SavePoseSnapshot(NAME_RagdollPose);
 
 	if (bRagdollOnGround)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-		if (GetMesh()->GetAnimInstance())
+		if (IsValid(MainAnimInstance))
 		{
-			GetMesh()->GetAnimInstance()->Montage_Play(GetGetUpAnimation(bRagdollFaceUp), 1.0f,
-			                                           EMontagePlayReturnType::MontageLength, 0.0f, true);
+			MainAnimInstance->Montage_Play(GetGetUpAnimation(bRagdollFaceUp), 1.0f,
+			                               EMontagePlayReturnType::MontageLength, 0.0f, true);
 		}
 	}
 	else
@@ -1066,7 +1072,9 @@ FVector ABaseCharacter::GetCapsuleBaseLocation(float ZOffset) const
 float ABaseCharacter::GetAnimCurveValue(FName CurveName) const
 {
 	if (IsValid(MainAnimInstance))
+	{
 		return MainAnimInstance->GetCurveValue(CurveName);
+	}
 	return 0.0f;
 }
 

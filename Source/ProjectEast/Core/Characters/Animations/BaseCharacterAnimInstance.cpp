@@ -32,7 +32,7 @@ static const FName NAME_Mask_LandPrediction(TEXT("Mask_LandPrediction"));
 static const FName NAME__ALSCharacterAnimInstance__RotationAmount(TEXT("RotationAmount"));
 static const FName NAME_VB___foot_target_l(TEXT("VB foot_target_l"));
 static const FName NAME_VB___foot_target_r(TEXT("VB foot_target_r"));
-static const FName NAME_W_Gait(TEXT("W_Gait"));
+static const FName NAME_Weight_Gait(TEXT("Weight_Gait"));
 static const FName NAME__ALSCharacterAnimInstance__root(TEXT("root"));
 
 
@@ -55,7 +55,7 @@ void UBaseCharacterAnimInstance::NativeInitializeAnimation()
 void UBaseCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-
+	DeltaTimeX = DeltaSeconds;
 	if (!Character || DeltaSeconds == 0.0f)
 	{
 		return;
@@ -73,9 +73,18 @@ void UBaseCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	CharacterInformation.AimingRotation = Character->GetAimingRotation();
 	CharacterInformation.CharacterActorRotation = Character->GetActorRotation();
 	CharacterInformation.ViewMode = Character->GetViewMode();
+	CharacterInformation.ViewMode = Character->GetViewMode();
 	CharacterInformation.PrevMovementState = Character->GetPrevMovementState();
 	LayerBlendingValues.OverlayOverrideState = Character->GetOverlayOverrideState();
 	MovementState = Character->GetMovementState();
+
+
+	// auto a =  IsValid(Character);
+	// auto b =  UEnum::GetDisplayValueAsText(Character->GetMovementState());
+	// GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, b.ToString());
+	//
+
+
 	MovementAction = Character->GetMovementAction();
 	Stance = Character->GetStance();
 	RotationMode = Character->GetRotationMode();
@@ -104,7 +113,7 @@ void UBaseCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		if (Grounded.bShouldMove)
 		{
 			// Do While Moving
-			UpdateMovementValues();
+			UpdateMovementValues(DeltaSeconds);
 			UpdateRotationValues();
 		}
 		else
@@ -191,37 +200,36 @@ void UBaseCharacterAnimInstance::OnPivot()
 	                                       &UBaseCharacterAnimInstance::OnPivotDelay, 0.1f, false);
 }
 
-void UBaseCharacterAnimInstance::UpdateCharacterInfo()
-{
-	auto EssentialValues = CharacterInfo->GetEssentialValues();
-	auto CurrentStates = CharacterInfo->GetCurrentStates();
-
-	CharacterInformation.Velocity = EssentialValues.Velocity;
-	CharacterInformation.Acceleration = EssentialValues.Acceleration;
-	CharacterInformation.MovementInput = EssentialValues.MovementInput;
-	CharacterInformation.bIsMoving = EssentialValues.IsMoving;
-	CharacterInformation.bHasMovementInput = EssentialValues.HasMovementInput;
-	CharacterInformation.Speed = EssentialValues.Speed;
-	CharacterInformation.MovementInputAmount = EssentialValues.MovementInputAmount;
-	CharacterInformation.AimYawRate = EssentialValues.AimYawRate;
-	CharacterInformation.AimingRotation = EssentialValues.AimingRotation;
-
-	MovementState = CurrentStates.MovementState;
-	PrevMovementState = CurrentStates.PrevMovementState;
-	MovementAction = CurrentStates.MovementAction;
-	RotationMode = CurrentStates.RotationMode;
-	Gait = CurrentStates.ActualGait;
-	Stance = CurrentStates.ActualStance;
-	ViewMode = CurrentStates.ViewMode;
-	OverlayState = CurrentStates.OverlayState;
-}
+// void UBaseCharacterAnimInstance::UpdateCharacterInfo()
+// {
+// 	auto EssentialValues = CharacterInfo->GetEssentialValues();
+// 	auto CurrentStates = CharacterInfo->GetCurrentStates();
+//
+// 	CharacterInformation.Velocity = EssentialValues.Velocity;
+// 	CharacterInformation.Acceleration = EssentialValues.Acceleration;
+// 	CharacterInformation.MovementInput = EssentialValues.MovementInput;
+// 	CharacterInformation.bIsMoving = EssentialValues.IsMoving;
+// 	CharacterInformation.bHasMovementInput = EssentialValues.HasMovementInput;
+// 	CharacterInformation.Speed = EssentialValues.Speed;
+// 	CharacterInformation.MovementInputAmount = EssentialValues.MovementInputAmount;
+// 	CharacterInformation.AimYawRate = EssentialValues.AimYawRate;
+// 	CharacterInformation.AimingRotation = EssentialValues.AimingRotation;
+//
+// 	MovementState = CurrentStates.MovementState;
+// 	PrevMovementState = CurrentStates.PrevMovementState;
+// 	MovementAction = CurrentStates.MovementAction;
+// 	RotationMode = CurrentStates.RotationMode;
+// 	Gait = CurrentStates.ActualGait;
+// 	Stance = CurrentStates.ActualStance;
+// 	ViewMode = CurrentStates.ViewMode;
+// 	OverlayState = CurrentStates.OverlayState;
+// }
 
 void UBaseCharacterAnimInstance::UpdateAimingValues(float DeltaSeconds)
 {
 	AimingValues.SmoothedAimingRotation = FMath::RInterpTo(AimingValues.SmoothedAimingRotation,
 	                                                       CharacterInformation.AimingRotation, DeltaSeconds,
 	                                                       Config.SmoothedAimingRotationInterpSpeed);
-
 
 	FRotator Delta = CharacterInformation.AimingRotation - CharacterInformation.CharacterActorRotation;
 	Delta.Normalize();
@@ -242,15 +250,18 @@ void UBaseCharacterAnimInstance::UpdateAimingValues(float DeltaSeconds)
 		AimingValues.SpineRotation.Pitch = 0.0f;
 		AimingValues.SpineRotation.Yaw = AimingValues.AimingAngle.X / 4.0f;
 	}
-	else if (CharacterInformation.bHasMovementInput)
+	else
 	{
-		Delta = CharacterInformation.MovementInput.ToOrientationRotator() - CharacterInformation.CharacterActorRotation;
-		Delta.Normalize();
-		const float InterpTarget = FMath::GetMappedRangeValueClamped<float, float>(
-			{-180.0f, 180.0f}, {0.0f, 1.0f}, Delta.Yaw);
+		if (CharacterInformation.bHasMovementInput)
+		{
+			Delta = CharacterInformation.MovementInput.ToOrientationRotator() - CharacterInformation.CharacterActorRotation;
+			Delta.Normalize();
+			const float InterpTarget = FMath::GetMappedRangeValueClamped<float, float>(
+				{-180.0f, 180.0f}, {0.0f, 1.0f}, Delta.Yaw);
 
-		AimingValues.InputYawOffsetTime = FMath::FInterpTo(AimingValues.InputYawOffsetTime, InterpTarget,
-		                                                   DeltaSeconds, Config.InputYawOffsetInterpSpeed);
+			AimingValues.InputYawOffsetTime = FMath::FInterpTo(AimingValues.InputYawOffsetTime, InterpTarget,
+			                                                   DeltaSeconds, Config.InputYawOffsetInterpSpeed);
+		}
 	}
 
 	AimingValues.LeftYawTime = FMath::GetMappedRangeValueClamped<float, float>({0.0f, 180.0f}, {0.5f, 0.0f},
@@ -313,16 +324,15 @@ void UBaseCharacterAnimInstance::UpdateFootIK(float DeltaSeconds)
 	}
 }
 
-void UBaseCharacterAnimInstance::UpdateMovementValues()
+void UBaseCharacterAnimInstance::UpdateMovementValues(float DeltaSeconds)
 {
-	VelocityBlend = InterpVelocityBlend(VelocityBlend, CalculateVelocityBlend(), Config.VelocityBlendInterpSpeed,
-	                                    DeltaTimeX);
+	InterpVelocityBlend(CalculateVelocityBlend(), Config.VelocityBlendInterpSpeed, DeltaSeconds);
 
 	Grounded.DiagonalScaleAmount = CalculateDiagonalScaleAmount();
 	RelativeAccelerationAmount = CalculateRelativeAccelerationAmount();
 
 	FALSLeanAmount TargetLeanAmount = FALSLeanAmount(RelativeAccelerationAmount.Y, RelativeAccelerationAmount.X);
-	LeanAmount = InterpLeanAmount(LeanAmount, TargetLeanAmount, Config.GroundedLeanInterpSpeed, DeltaTimeX);
+	LeanAmount = InterpLeanAmount(LeanAmount, TargetLeanAmount, Config.GroundedLeanInterpSpeed, DeltaSeconds);
 
 	Grounded.WalkRunBlend = CalculateWalkRunBlend();
 	Grounded.StrideBlend = CalculateStrideBlend();
@@ -367,20 +377,18 @@ bool UBaseCharacterAnimInstance::ShouldMoveCheck() const
 
 bool UBaseCharacterAnimInstance::CanTurnInPlace() const
 {
-	return RotationMode == ERotationMode::LookingDirection &&
-		ViewMode == EViewMode::ThirdPerson &&
-		GetCurveValue(NAME_Enable_Transition) > 0.99f;
+	return RotationMode == ERotationMode::LookingDirection && ViewMode == EViewMode::ThirdPerson &&
+		GetCurveValue("Enable_Transition") > 0.99f;
 }
 
 bool UBaseCharacterAnimInstance::CanRotateInPlace() const
 {
-	return RotationMode == ERotationMode::Aiming ||
-		ViewMode == EViewMode::FirstPerson;
+	return RotationMode == ERotationMode::Aiming || ViewMode == EViewMode::FirstPerson;
 }
 
 bool UBaseCharacterAnimInstance::CanDynamicTransition() const
 {
-	return GetCurveValue(NAME_Enable_Transition) == 1.0f;
+	return GetCurveValue("Enable_Transition") == 1.0f;
 }
 
 bool UBaseCharacterAnimInstance::CanOverlayTransition() const
@@ -538,7 +546,7 @@ float UBaseCharacterAnimInstance::CalculateWalkRunBlend() const
 float UBaseCharacterAnimInstance::CalculateStrideBlend() const
 {
 	const float CurveTime = CharacterInformation.Speed / GetOwningComponent()->GetComponentScale().Z;
-	const float ClampedGait = GetAnimCurveClamped(NAME_W_Gait, -1.0, 0.0f, 1.0f);
+	const float ClampedGait = GetAnimCurveClamped(FName("Weight_Gait"), -1.0, 0.0f, 1.0f);
 	const float LerpedStrideBlend = FMath::Lerp(StrideBlend_N_Walk->GetFloatValue(CurveTime),
 	                                            StrideBlend_N_Run->GetFloatValue(CurveTime),
 	                                            ClampedGait);
@@ -550,10 +558,10 @@ float UBaseCharacterAnimInstance::CalculateStandingPlayRate() const
 {
 	const float LerpedSpeed = FMath::Lerp(CharacterInformation.Speed / Config.AnimatedWalkSpeed,
 	                                      CharacterInformation.Speed / Config.AnimatedRunSpeed,
-	                                      GetAnimCurveClamped(NAME_W_Gait, -1.0f, 0.0f, 1.0f));
+	                                      GetAnimCurveClamped(FName("Weight_Gait"), -1.0f, 0.0f, 1.0f));
 
 	const float SprintAffectedSpeed = FMath::Lerp(LerpedSpeed, CharacterInformation.Speed / Config.AnimatedSprintSpeed,
-	                                              GetAnimCurveClamped(NAME_W_Gait, -2.0f, 0.0f, 1.0f));
+	                                              GetAnimCurveClamped(FName("Weight_Gait"), -2.0f, 0.0f, 1.0f));
 
 	return FMath::Clamp((SprintAffectedSpeed / Grounded.StrideBlend) / GetOwningComponent()->GetComponentScale().Z,
 	                    0.0f, 3.0f);
@@ -800,14 +808,15 @@ EMovementDirection UBaseCharacterAnimInstance::CalculateMovementDirection() cons
 }
 
 
-FALSVelocityBlend UBaseCharacterAnimInstance::InterpVelocityBlend(FALSVelocityBlend Current, FALSVelocityBlend Target,
-                                                                  float InterpSpeed, float DeltaTime)
+FALSVelocityBlend UBaseCharacterAnimInstance::InterpVelocityBlend(FALSVelocityBlend Target, float InterpSpeed,
+                                                                  float DeltaTime)
 {
-	float LocalF = FMath::FInterpTo(Current.F, Target.F, DeltaTime, InterpSpeed);
-	float LocalB = FMath::FInterpTo(Current.B, Target.B, DeltaTime, InterpSpeed);
-	float LocalL = FMath::FInterpTo(Current.L, Target.L, DeltaTime, InterpSpeed);
-	float LocalR = FMath::FInterpTo(Current.R, Target.R, DeltaTime, InterpSpeed);
-	return FALSVelocityBlend(LocalF, LocalB, LocalL, LocalR);
+	VelocityBlend.F = FMath::FInterpTo(VelocityBlend.F, Target.F, DeltaTime, Config.VelocityBlendInterpSpeed);
+	VelocityBlend.B = FMath::FInterpTo(VelocityBlend.B, Target.B, DeltaTime, Config.VelocityBlendInterpSpeed);
+	VelocityBlend.L = FMath::FInterpTo(VelocityBlend.L, Target.L, DeltaTime, Config.VelocityBlendInterpSpeed);
+	VelocityBlend.R = FMath::FInterpTo(VelocityBlend.R, Target.R, DeltaTime, Config.VelocityBlendInterpSpeed);
+
+	return VelocityBlend;
 }
 
 FALSLeanAmount UBaseCharacterAnimInstance::InterpLeanAmount(FALSLeanAmount Current, FALSLeanAmount Target,

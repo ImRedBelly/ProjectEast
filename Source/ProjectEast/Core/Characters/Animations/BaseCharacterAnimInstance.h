@@ -61,10 +61,10 @@ protected:
 #pragma region CharacterInformation
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Read Only Data|Character Information")
-	EMovementState MovementState = EMovementState::None;
+	EMovementState MovementState;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Read Only Data|Character Information")
-	EMovementState PrevMovementState = EMovementState::None;
+	EMovementState PrevMovementState;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Read Only Data|Character Information")
 	EMovementAction MovementAction = EMovementAction::None;
@@ -121,8 +121,7 @@ protected:
 
 #pragma region Anim Graph - Aiming Values
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Read Only Data|Anim Graph - Aiming Values", Meta = (
-		ShowOnlyInnerProperties))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Read Only Data|Anim Graph - Aiming Values")
 	FALSAnimGraphAimingValues AimingValues;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Read Only Data|Anim Graph - Aiming Values")
@@ -194,9 +193,10 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "ALS|Animation")
 	void PlayDynamicTransition(float ReTriggerDelay, FALSDynamicMontageParams Parameters);
 
+public://TODO
 	UFUNCTION(BlueprintCallable, Category = "ALS|Event")
 	void OnJumped();
-
+private:
 	UFUNCTION(BlueprintCallable, Category = "ALS|Event")
 	void OnPivot();
 
@@ -215,11 +215,11 @@ protected:
 
 #pragma region Update Values
 
-	void UpdateCharacterInfo();
+	//void UpdateCharacterInfo();
 	void UpdateAimingValues(float DeltaSeconds);
 	void UpdateLayerValues();
 	void UpdateFootIK(float DeltaSeconds);
-	void UpdateMovementValues();
+	void UpdateMovementValues(float DeltaSeconds);
 	void UpdateRotationValues();
 	void UpdateInAirValues();
 	void UpdateRagdollValues();
@@ -280,8 +280,7 @@ protected:
 #pragma endregion Rotation
 
 #pragma region Interpolation
-	FALSVelocityBlend InterpVelocityBlend(FALSVelocityBlend Current, FALSVelocityBlend Target, float InterpSpeed,
-	                                      float DeltaTime);
+	FALSVelocityBlend InterpVelocityBlend(FALSVelocityBlend Target, float InterpSpeed, float DeltaTime);
 	FALSLeanAmount InterpLeanAmount(FALSLeanAmount Current, FALSLeanAmount Target, float InterpSpeed, float DeltaTime);
 #pragma endregion Interpolation
 
