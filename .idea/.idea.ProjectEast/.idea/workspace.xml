@@ -834,17 +834,8 @@
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/AimOffsets/ALS_N_Look.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/AimOffsets/ALS_N_Look.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_F.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Run_F.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_F.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_WalkRun_F.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_F.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/Locomotion/ALS_N_Walk_F.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_Rotate_L90.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Base/TurnInPlace/ALS_N_Rotate_L90.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -888,8 +879,9 @@
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.generated.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealGame/Inc/ProjectEast/UHT/InteractableComponent.gen.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/ProjectEast.uproject" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/BaseCharacter.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CharacterInfo.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -1122,7 +1114,8 @@
       <workItem from="1734178515881" duration="6257000" />
       <workItem from="1734237643690" duration="3802000" />
       <workItem from="1734861238912" duration="8435000" />
-      <workItem from="1734927958579" duration="884000" />
+      <workItem from="1734927958579" duration="1359000" />
+      <workItem from="1735106694903" duration="1695000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />
@@ -1284,7 +1277,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733895209436</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="fix: rotation animations">
+      <option name="closed" value="true" />
+      <created>1734929323323</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1734929323323</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1325,6 +1326,7 @@
     <MESSAGE value="feat: update character anim instance" />
     <MESSAGE value="fix: character anim instance" />
     <MESSAGE value="fix: base character" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: base character" />
+    <MESSAGE value="fix: rotation animations" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: rotation animations" />
   </component>
 </project>

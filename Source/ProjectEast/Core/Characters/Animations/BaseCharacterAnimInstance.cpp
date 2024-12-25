@@ -254,7 +254,8 @@ void UBaseCharacterAnimInstance::UpdateAimingValues(float DeltaSeconds)
 	{
 		if (CharacterInformation.bHasMovementInput)
 		{
-			Delta = CharacterInformation.MovementInput.ToOrientationRotator() - CharacterInformation.CharacterActorRotation;
+			Delta = CharacterInformation.MovementInput.ToOrientationRotator() - CharacterInformation.
+				CharacterActorRotation;
 			Delta.Normalize();
 			const float InterpTarget = FMath::GetMappedRangeValueClamped<float, float>(
 				{-180.0f, 180.0f}, {0.0f, 1.0f}, Delta.Yaw);
@@ -326,7 +327,7 @@ void UBaseCharacterAnimInstance::UpdateFootIK(float DeltaSeconds)
 
 void UBaseCharacterAnimInstance::UpdateMovementValues(float DeltaSeconds)
 {
-	InterpVelocityBlend(CalculateVelocityBlend(), Config.VelocityBlendInterpSpeed, DeltaSeconds);
+	InterpVelocityBlend(CalculateVelocityBlend(), DeltaSeconds);
 
 	Grounded.DiagonalScaleAmount = CalculateDiagonalScaleAmount();
 	RelativeAccelerationAmount = CalculateRelativeAccelerationAmount();
@@ -507,8 +508,7 @@ FALSVelocityBlend UBaseCharacterAnimInstance::CalculateVelocityBlend() const
 {
 	FVector LocRelativeVelocityDir = CharacterInformation.CharacterActorRotation.UnrotateVector(
 		CharacterInformation.Velocity.GetSafeNormal(0.1f));
-	float Sum = FMath::Abs(LocRelativeVelocityDir.X) + FMath::Abs(LocRelativeVelocityDir.Z) + FMath::Abs(
-		LocRelativeVelocityDir.Z);
+	float Sum =FMath::Abs(LocRelativeVelocityDir.X) + FMath::Abs(LocRelativeVelocityDir.Y) + FMath::Abs(LocRelativeVelocityDir.Z);
 
 	const FVector RelativeDirection = LocRelativeVelocityDir / Sum;
 
@@ -808,8 +808,7 @@ EMovementDirection UBaseCharacterAnimInstance::CalculateMovementDirection() cons
 }
 
 
-FALSVelocityBlend UBaseCharacterAnimInstance::InterpVelocityBlend(FALSVelocityBlend Target, float InterpSpeed,
-                                                                  float DeltaTime)
+FALSVelocityBlend UBaseCharacterAnimInstance::InterpVelocityBlend(FALSVelocityBlend Target, float DeltaTime)
 {
 	VelocityBlend.F = FMath::FInterpTo(VelocityBlend.F, Target.F, DeltaTime, Config.VelocityBlendInterpSpeed);
 	VelocityBlend.B = FMath::FInterpTo(VelocityBlend.B, Target.B, DeltaTime, Config.VelocityBlendInterpSpeed);

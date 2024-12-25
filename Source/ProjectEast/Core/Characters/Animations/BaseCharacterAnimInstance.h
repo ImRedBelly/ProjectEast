@@ -280,7 +280,7 @@ private:
 #pragma endregion Rotation
 
 #pragma region Interpolation
-	FALSVelocityBlend InterpVelocityBlend(FALSVelocityBlend Target, float InterpSpeed, float DeltaTime);
+	FALSVelocityBlend InterpVelocityBlend(FALSVelocityBlend Target, float DeltaTime);
 	FALSLeanAmount InterpLeanAmount(FALSLeanAmount Current, FALSLeanAmount Target, float InterpSpeed, float DeltaTime);
 #pragma endregion Interpolation
 
