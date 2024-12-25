@@ -304,11 +304,9 @@ void ABaseCharacter::Jump()
 void ABaseCharacter::OnJumped_Implementation()
 {
 	Super::OnJumped_Implementation();
-	InAirRotation = Speed > 100 ? GetActorRotation() : LastVelocityRotation;
+	InAirRotation = Speed > 100 ? LastVelocityRotation : GetActorRotation();
 	if(IsValid(MainAnimInstance))
 		Cast<UBaseCharacterAnimInstance>(MainAnimInstance)->OnJumped();
-
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "OnJumped");
 }
 
 void ABaseCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)

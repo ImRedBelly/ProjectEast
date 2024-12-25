@@ -833,9 +833,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -880,8 +878,10 @@
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.generated.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealGame/Inc/ProjectEast/UHT/InteractableComponent.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/Animations/BaseCharacterAnimInstance.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/BaseCharacter.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CharacterInfo.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -1115,7 +1115,7 @@
       <workItem from="1734237643690" duration="3802000" />
       <workItem from="1734861238912" duration="8435000" />
       <workItem from="1734927958579" duration="1359000" />
-      <workItem from="1735106694903" duration="1695000" />
+      <workItem from="1735106694903" duration="3837000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />
@@ -1285,7 +1285,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734929323323</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="fix: move direction">
+      <option name="closed" value="true" />
+      <created>1735109597163</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1735109597163</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1327,6 +1335,7 @@
     <MESSAGE value="fix: character anim instance" />
     <MESSAGE value="fix: base character" />
     <MESSAGE value="fix: rotation animations" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: rotation animations" />
+    <MESSAGE value="fix: move direction" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: move direction" />
   </component>
 </project>
