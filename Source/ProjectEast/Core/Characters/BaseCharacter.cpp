@@ -143,7 +143,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		                                   this, &ACharacter::StopJumping);
 
 		// Walk
-		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Started,
+		EnhancedInputComponent->BindAction(WalkAction, ETriggerEvent::Completed,
 		                                   this, &ABaseCharacter::PlayerWalkInput);
 
 		// Sprint
@@ -684,7 +684,6 @@ void ABaseCharacter::UpdateGroundedRotation(float DeltaTime)
 			else if (RotationMode == ERotationMode::Aiming)
 			{
 				const float ControlYaw = AimingRotation.Yaw;
-				GEngine->AddOnScreenDebugMessage(-1,.001f, FColor::Red, FString::SanitizeFloat(ControlYaw));
 				SmoothCharacterRotation({0.0f, ControlYaw, 0.0f}, 1000.0f, 20.0f);
 			}
 		}
