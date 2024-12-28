@@ -252,7 +252,7 @@ private:
 	FRotator InAirRotation;
 	float YawOffset;
 
-	void UpdateGroundedRotation();
+	void UpdateGroundedRotation(float DeltaTime);
 	void UpdateInAirRotation();
 	void SmoothCharacterRotation(FRotator Target, float TargetInterpSpeed, float ActorInterpSpeed);
 	void AddToCharacterRotation(FRotator DeltaRotation);

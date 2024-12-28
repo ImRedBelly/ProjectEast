@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "ProjectEast/Core/Components/Debug/DebugComponent.h"
 #include "ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.h"
 
@@ -68,7 +69,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 	case EMovementState::Grounded:
 		{
 			UpdateCharacterMovement();
-			UpdateGroundedRotation();
+			UpdateGroundedRotation(DeltaTime);
 		}
 		break;
 	case EMovementState::InAir:
@@ -262,7 +263,7 @@ void ABaseCharacter::PlayerStopAimInput(const FInputActionValue& Value)
 {
 	if (ViewMode == EViewMode::ThirdPerson)
 		SetRotationMode(DesiredRotationMode);
-	if (ViewMode == EViewMode::FirstPerson)
+	else if (ViewMode == EViewMode::FirstPerson)
 		SetRotationMode(ERotationMode::LookingDirection);
 }
 
@@ -305,7 +306,7 @@ void ABaseCharacter::OnJumped_Implementation()
 {
 	Super::OnJumped_Implementation();
 	InAirRotation = Speed > 100 ? LastVelocityRotation : GetActorRotation();
-	if(IsValid(MainAnimInstance))
+	if (IsValid(MainAnimInstance))
 		Cast<UBaseCharacterAnimInstance>(MainAnimInstance)->OnJumped();
 }
 
@@ -595,14 +596,19 @@ bool ABaseCharacter::CanSprint() const
 
 float ABaseCharacter::GetMappedSpeed() const
 {
-	float LocWalkSpeed = CurrentMovementSettings.WalkSpeed;
-	float LocRunSpeed = CurrentMovementSettings.RunSpeed;
-	float LocSprintSpeed = CurrentMovementSettings.SprintSpeed;
+	const float LocWalkSpeed = CurrentMovementSettings.WalkSpeed;
+	const float LocRunSpeed = CurrentMovementSettings.RunSpeed;
+	const float LocSprintSpeed = CurrentMovementSettings.SprintSpeed;
 
 	if (Speed > LocRunSpeed)
+	{
 		return FMath::GetMappedRangeValueClamped<float, float>({LocRunSpeed, LocSprintSpeed}, {2.0f, 3.0f}, Speed);
+	}
+
 	if (Speed > LocWalkSpeed)
+	{
 		return FMath::GetMappedRangeValueClamped<float, float>({LocWalkSpeed, LocRunSpeed}, {1.0f, 2.0f}, Speed);
+	}
 
 	return FMath::GetMappedRangeValueClamped<float, float>({0.0f, LocWalkSpeed}, {0.0f, 1.0f}, Speed);
 }
@@ -650,69 +656,69 @@ void ABaseCharacter::SetOverlayState(const EOverlayState NewOverlayState, bool b
 		OnOverlayStateChanged(NewOverlayState);
 }
 
-void ABaseCharacter::UpdateGroundedRotation()
+void ABaseCharacter::UpdateGroundedRotation(float DeltaTime)
 {
-	switch (MovementAction)
+	if (MovementAction == EMovementAction::None)
 	{
-	case EMovementAction::None:
+		if (CanUpdateMovingRotation())
 		{
-			if (CanUpdateMovingRotation())
+			const float GroundedRotationRate = CalculateGroundedRotationRate();
+			if (RotationMode == ERotationMode::VelocityDirection)
 			{
-				switch (RotationMode)
-				{
-				case ERotationMode::VelocityDirection:
-					SmoothCharacterRotation(FRotator(0, LastVelocityRotation.Yaw, 0), 800,
-					                        CalculateGroundedRotationRate());
-					break;
-				case ERotationMode::LookingDirection:
-					{
-						switch (Gait)
-						{
-						case EGait::Walking:
-						case EGait::Running:
-							{
-								SmoothCharacterRotation(
-									FRotator(0, GetControlRotation().Yaw + GetAnimCurveValue("YawOffset"), 0), 500,
-									CalculateGroundedRotationRate());
-							}
-							break;
-						case EGait::Sprinting:
-							SmoothCharacterRotation(FRotator(0, LastVelocityRotation.Yaw, 0), 500,
-							                        CalculateGroundedRotationRate());
-							break;
-						}
-					}
-					break;
-				case ERotationMode::Aiming:
-					SmoothCharacterRotation(FRotator(0, GetControlRotation().Yaw, 0), 1000, 20);
-					break;
-				}
+				SmoothCharacterRotation({0.0f, LastVelocityRotation.Yaw, 0.0f}, 800.0f, GroundedRotationRate);
 			}
-			else
+			else if (RotationMode == ERotationMode::LookingDirection)
 			{
-				if (ViewMode == EViewMode::FirstPerson || (ViewMode == EViewMode::ThirdPerson && RotationMode ==
-					ERotationMode::Aiming))
+				float YawValue;
+				if (Gait == EGait::Sprinting)
 				{
-					LimitRotation(-100, 100, 20);
+					YawValue = LastVelocityRotation.Yaw;
 				}
-				float RotationAmount = GetAnimCurveValue("RotationAmount");
-				if (FMath::Abs(RotationAmount) > 0.001f)
+				else
 				{
-					AddActorWorldRotation(FRotator(0, RotationAmount * GetWorld()->GetDeltaSeconds() / (1.0f / 30.0f),
-					                               0));
-					TargetRotation = GetActorRotation();
+					const float YawOffsetCurveVal = GetAnimCurveValue("YawOffset");
+					YawValue = AimingRotation.Yaw + YawOffsetCurveVal;
 				}
+				SmoothCharacterRotation({0.0f, YawValue, 0.0f}, 500.0f, GroundedRotationRate);
+			}
+			else if (RotationMode == ERotationMode::Aiming)
+			{
+				const float ControlYaw = AimingRotation.Yaw;
+				GEngine->AddOnScreenDebugMessage(-1,.001f, FColor::Red, FString::SanitizeFloat(ControlYaw));
+				SmoothCharacterRotation({0.0f, ControlYaw, 0.0f}, 1000.0f, 20.0f);
 			}
 		}
-		break;
-	case EMovementAction::Rolling:
+		else
 		{
-			if (bHasMovementInput)
+			if ((ViewMode == EViewMode::ThirdPerson && RotationMode == ERotationMode::Aiming) ||
+				ViewMode == EViewMode::FirstPerson)
 			{
-				SmoothCharacterRotation(FRotator(0, LastMovementInputRotation.Yaw, 0), 0, 2);
+				LimitRotation(-100.0f, 100.0f, 20.0f);
+			}
+
+			const float RotAmountCurve = GetAnimCurveValue("RotationAmount");
+
+			if (FMath::Abs(RotAmountCurve) > 0.001f)
+			{
+				if (GetLocalRole() == ROLE_AutonomousProxy)
+				{
+					TargetRotation.Yaw = UKismetMathLibrary::NormalizeAxis(TargetRotation.Yaw + (RotAmountCurve * (DeltaTime / (1.0f / 30.0f))));
+					SetActorRotation(TargetRotation);
+				}
+				else
+				{
+					AddActorWorldRotation({0, RotAmountCurve * (DeltaTime / (1.0f / 30.0f)), 0});
+				}
+				TargetRotation = GetActorRotation();
 			}
 		}
-		break;
+	}
+	else if (MovementAction == EMovementAction::Rolling)
+	{
+		if (bHasMovementInput)
+		{
+			SmoothCharacterRotation({0.0f, LastMovementInputRotation.Yaw, 0.0f}, 0.0f, 2.0f);
+		}
 	}
 }
 
@@ -748,23 +754,15 @@ void ABaseCharacter::AddToCharacterRotation(FRotator DeltaRotation)
 
 void ABaseCharacter::LimitRotation(float AimYawMin, float AimYawMax, float InterpSpeed)
 {
-	FRotator ControlRotation = GetControlRotation();
-	FRotator ActorRotation = GetActorRotation();
+	FRotator Delta = AimingRotation - GetActorRotation();
+	Delta.Normalize();
+	const float RangeVal = Delta.Yaw;
 
-	FRotator DeltaRotation = ControlRotation - ActorRotation;
-
-	if (FMath::IsWithin(DeltaRotation.Yaw, AimYawMin, AimYawMax))
+	if (RangeVal < AimYawMin || RangeVal > AimYawMax)
 	{
-		FRotator TargetRot = ActorRotation;
-		TargetRot.Yaw += FMath::FInterpTo(ActorRotation.Yaw, ControlRotation.Yaw, GetWorld()->GetDeltaSeconds(),
-		                                  InterpSpeed);
-		SetActorRotation(TargetRot);
-	}
-	else
-	{
-		float ClampedYaw = FMath::Clamp(ControlRotation.Yaw, AimYawMin, AimYawMax);
-		FRotator NewRotation = FRotator(ActorRotation.Pitch, ClampedYaw, ActorRotation.Roll);
-		SetActorRotation(NewRotation);
+		const float ControlRotYaw = AimingRotation.Yaw;
+		const float TargetYaw = ControlRotYaw + (RangeVal > 0.0f ? AimYawMin : AimYawMax);
+		SmoothCharacterRotation({0.0f, TargetYaw, 0.0f}, 0.0f, InterpSpeed);
 	}
 }
 
@@ -781,13 +779,15 @@ TTuple<FHitResult*, bool> ABaseCharacter::SetActorLocationAndTargetRotation(
 
 float ABaseCharacter::CalculateGroundedRotationRate() const
 {
-	float MappedValue = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, 300.0f), FVector2D(1.0f, 3.0f), AimYawRate);
-	return CurrentMovementSettings.RotationRateCurve->GetFloatValue(GetMappedSpeed()) * MappedValue;
+	const float MappedSpeedVal = GetMappedSpeed();
+	const float CurveVal =CurrentMovementSettings.RotationRateCurve->GetFloatValue(MappedSpeedVal);
+	const float ClampedAimYawRate = FMath::GetMappedRangeValueClamped<float, float>({0.0f, 300.0f}, {1.0f, 3.0f}, AimYawRate);
+	return CurveVal * ClampedAimYawRate;
 }
 
 bool ABaseCharacter::CanUpdateMovingRotation() const
 {
-	return ((bIsMoving && bHasMovementInput) || Speed > 150) && !HasAnyRootMotion();
+	return ((bIsMoving && bHasMovementInput) || Speed > 150.0f) && !HasAnyRootMotion();
 }
 
 #pragma endregion SetNewStates
@@ -969,17 +969,25 @@ FCameraViewParameters ABaseCharacter::GetCameraParameters()
 
 FVector ABaseCharacter::GetFPCameraTarget()
 {
-	return GetMesh()->GetSocketLocation(SocketFPCamera);
+	//return GetMesh()->GetSocketLocation(SocketFPCamera);
+	return GetMesh()->GetSocketLocation("FP_Camera");
 }
 
 FTransform ABaseCharacter::GetTPPivotTarget()
 {
-	return GetActorTransform();
+	TArray<FVector> AverageVector;
+	AverageVector.Add(GetMesh()->GetSocketLocation("Head"));
+	AverageVector.Add(GetMesh()->GetSocketLocation("root"));
+
+	return FTransform(GetActorRotation(), UKismetMathLibrary::GetVectorArrayAverage(AverageVector));
 }
 
 FTPTraceParams ABaseCharacter::GetTPTraceParams()
 {
-	return FTPTraceParams(GetActorLocation(), 15, ECC_Camera);
+	return FTPTraceParams(
+		GetMesh()->GetSocketLocation(RightShoulder ? "TP_CameraTrace_R" : "TP_CameraTrace_L"),
+		15,
+		ECC_Camera);
 }
 
 FCharacterStates ABaseCharacter::GetCurrentStates()
