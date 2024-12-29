@@ -152,7 +152,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed,
 		                                   this, &ABaseCharacter::PlayerStopSprintInput);
 		// Crouch
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started,
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed,
 		                                   this, &ABaseCharacter::PlayerCrouchInput);
 		// AimAction
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started,
@@ -234,21 +234,21 @@ void ABaseCharacter::PlayerCrouchInput(const FInputActionValue& Value)
 					DesiredStance = EStance::Crouching;
 					Crouch();
 				}
-				if (Stance == EStance::Crouching)
+				else if (Stance == EStance::Crouching)
 				{
 					DesiredStance = EStance::Standing;
 					UnCrouch();
 				}
 			}
-			if (MovementState == EMovementState::InAir)
+			else if (MovementState == EMovementState::InAir)
 				SetBreakFall();
 		}
-		if (IsMultiTapInputCrouch)
+		else
 		{
-			//OnPlayRollAnimation();
+			OnPlayRollAnimation();
 			if (Stance == EStance::Standing)
 				DesiredStance = EStance::Crouching;
-			if (Stance == EStance::Crouching)
+			else if (Stance == EStance::Crouching)
 				DesiredStance = EStance::Standing;
 		}
 	}
@@ -286,7 +286,9 @@ void ABaseCharacter::Jump()
 					Super::Jump();
 					break;
 				case EStance::Crouching:
-					UnCrouch();
+					{
+						UnCrouch();
+					}
 					break;
 				}
 			}
@@ -431,7 +433,9 @@ void ABaseCharacter::OnMovementStateChanged(EMovementState NewMovementState)
 		{
 			InAirRotation = GetActorRotation();
 			if (Stance == EStance::Crouching)
+			{
 				UnCrouch();
+			}
 		}
 		//if (MovementAction == EMovementAction::Rolling)
 		//RagdollStart();
@@ -449,14 +453,22 @@ void ABaseCharacter::OnMovementActionChanged(EMovementAction NewMovementAction)
 	MovementAction = NewMovementAction;
 
 	if (MovementAction == EMovementAction::Rolling)
+	{
 		Crouch();
+	}
 
 	if (PreviousMovementAction == EMovementAction::Rolling)
 	{
 		if (DesiredStance == EStance::Standing)
+		{
+		
 			UnCrouch();
-		if (DesiredStance == EStance::Crouching)
+		}
+		else if (DesiredStance == EStance::Crouching)
+		{
+		
 			Crouch();
+		}
 	}
 }
 
@@ -611,6 +623,19 @@ float ABaseCharacter::GetMappedSpeed() const
 	}
 
 	return FMath::GetMappedRangeValueClamped<float, float>({0.0f, LocWalkSpeed}, {0.0f, 1.0f}, Speed);
+}
+
+void ABaseCharacter::OnPlayRollAnimation()
+{
+	if (IsValid(MainAnimInstance))
+	{
+		MainAnimInstance->Montage_Play(GetRollAnimation(), 1.15f);
+	}
+}
+
+UAnimMontage* ABaseCharacter::GetRollAnimation()
+{
+	return RollAnimMontage;
 }
 
 #pragma region SetNewStates

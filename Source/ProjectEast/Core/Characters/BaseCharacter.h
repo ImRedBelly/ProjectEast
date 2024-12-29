@@ -23,30 +23,28 @@ class PROJECTEAST_API ABaseCharacter : public ACharacter, public ICameraParamete
 	GENERATED_BODY()
 
 public:
-
-	
 	bool HasMovementInput() const { return bHasMovementInput; }
 	bool IsMoving() const { return bIsMoving; }
 
 	float GetAimYawRate() const { return AimYawRate; }
 	float GetSpeed() const { return Speed; }
 	float GetMovementInputAmount() const { return MovementInputAmount; }
-	
+
 	FVector GetAcceleration() const { return Acceleration; }
 	FRotator GetAimingRotation() const { return AimingRotation; }
 
-	
+
 	FVector GetMovementInput() const;
-	
-	
+
+
 	EViewMode GetViewMode() const { return ViewMode; }
 	EMovementState GetPrevMovementState() const { return PreviousMovementState; }
-	int32  GetOverlayOverrideState() const { return OverlayOverrideState ; }
+	int32 GetOverlayOverrideState() const { return OverlayOverrideState; }
 	EMovementState GetMovementState() const { return MovementState; }
 	EMovementAction GetMovementAction() const { return MovementAction; }
 	EStance GetStance() const { return Stance; }
 	ERotationMode GetRotationMode() const { return RotationMode; }
-	EGait  GetGait() const { return Gait; }
+	EGait GetGait() const { return Gait; }
 	EOverlayState GetOverlayState() const { return OverlayState; }
 	EGroundedEntryState GetGroundedEntryState() const { return GroundedEntryState; }
 
@@ -140,7 +138,7 @@ private:
 
 	EStance Stance = EStance::Standing;
 	EStance PreviousStance = EStance::Standing;
-	
+
 	EGroundedEntryState GroundedEntryState = EGroundedEntryState::None;
 
 	bool bIsMoving;
@@ -160,7 +158,7 @@ private:
 	FRotator LastMovementInputRotation;
 	FRotator AimingRotation = FRotator::ZeroRotator;
 	FRotator ReplicatedControlRotation = FRotator::ZeroRotator;
-	
+
 	float Speed;
 	float LocalWalkSpeed;
 	float LocalRunSpeed;
@@ -173,8 +171,8 @@ private:
 	float PreviousAimYaw;
 
 	int32 OverlayOverrideState = 0;
-	
-	
+
+
 	ABaseCharacter(const FObjectInitializer& ObjectInitializer);
 
 	virtual void PostInitializeComponents() override;
@@ -192,6 +190,8 @@ private:
 
 
 #pragma region Input
+
+public:
 	void OnBeginPlay();
 	void ForceUpdateCharacterState();
 
@@ -202,7 +202,7 @@ private:
 	void OnViewModeChanged(EViewMode NewViewMode);
 	void OnOverlayStateChanged(EOverlayState NewOverlayState);
 	void OnStanceChanged(EStance NewStance);
-	
+
 	void SetOverlayOverrideState(int32 NewState);
 	void SetGroundedEntryState(EGroundedEntryState NewState);
 
@@ -230,18 +230,20 @@ private:
 	float GetMappedSpeed() const;
 
 	//void OnPlayBreakfallAnimation();
-	//void OnPlayRollAnimation();
-	//UAnimMontage* GetRollAnimation();
+	void OnPlayRollAnimation();
+	UAnimMontage* GetRollAnimation();
 
 #pragma endregion MovementSystem
 
 #pragma region SetNewStates
+public:
 	void SetMovementState(const EMovementState NewState, bool bForce = false);
 	void SetMovementAction(const EMovementAction NewAction, bool bForce = false);
 	void SetRotationMode(const ERotationMode NewRotation, bool bForce = false);
 	void SetStance(const EStance NewStance, bool bForce = false);
 	void SetGait(const EGait NewGait, bool bForce = false);
 	void SetViewMode(const EViewMode NewViewMode, bool bForce = false);
+	UFUNCTION(BlueprintCallable)
 	void SetOverlayState(const EOverlayState NewOverlayState, bool bForce = false);
 #pragma endregion SetNewStates
 
@@ -355,4 +357,10 @@ private:
 	void DrawDebugShapes();
 	EDrawDebugTrace::Type GetTraceDebugType(EDrawDebugTrace::Type DebugTrace);
 #pragma endregion Debug
+
+protected:
+#pragma region Montages
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* RollAnimMontage;
+#pragma endregion Montages
 };

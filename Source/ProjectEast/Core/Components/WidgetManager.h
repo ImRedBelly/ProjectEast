@@ -5,6 +5,7 @@
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "WidgetManager.generated.h"
 
+class UOverlayStateSwitcher;
 class UVendorWindow;
 class UPopupMessage;
 class UInventoryCore;
@@ -77,6 +78,10 @@ public:
 	void DisplayMessage(const FString Message);
 	void InitializeCraftingStation(UCraftingCore* CraftingCore);
 
+	void OpenMenuOverlayStates();
+	void CloseMenuOverlayStates();
+	void CycleStateOverlayStates(bool bIsUp) const;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<UMainWindow> DefaultMainWindow;
@@ -96,6 +101,8 @@ protected:
 	TSubclassOf<UVendorWindow> VendorWindowClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Popups")
 	TSubclassOf<UPopupMessage> PopupMessageClass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Popups")
+	TSubclassOf<UOverlayStateSwitcher> OverlayStateSwitcherClass;
 
 private:
 	UPROPERTY()
@@ -120,10 +127,12 @@ private:
 	UVendorWindow* CachedVendorWindow;
 	UPROPERTY()
 	UCraftingWindowCore* CachedStationCraftingWindow;
-
 	UPROPERTY()
 	UCraftingCore* CraftingStation;
 
+	UPROPERTY()
+	UOverlayStateSwitcher* CachedOverlayStateSwitcher;
+	
 	EWidgetType ActiveWidget;
 	EWidgetType ActiveTab;
 	EWidgetPopup ActivePopup;

@@ -10,7 +10,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a56fe0a0-f2d9-4475-81d2-e176ec248c14" name="Changes" comment="fix: aiming state? rotation in aiming">
+    <list default="true" id="a56fe0a0-f2d9-4475-81d2-e176ec248c14" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Blueprints/SM_Bucket_2_Blueprint.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Blueprints/SM_CandleStick_Blueprint.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/LowPolyMedievalConstructions/Blueprints/SM_Chandelier_1_Blueprint.uasset" afterDir="false" />
@@ -830,12 +830,29 @@
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/Pistol/Pistol_skelmesh_Skeleton.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_Ladder_30cm.uasset" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Content/UTA/Props/StaticMesh_WindowFrame.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/AnimNotifys/Character/OverlayOverrideNotifyState.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/AnimNotifys/Character/OverlayOverrideNotifyState.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/OverlayStatePanel/OverlayStateButton.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/OverlayStatePanel/OverlayStateButton.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/OverlayStatePanel/OverlayStateSwitcher.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/UI/OverlayStatePanel/OverlayStateSwitcher.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectEast/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Material/Arrow_M.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/OpenWorldLocomotion/Landscape/Meshes/Arch_StaticMesh.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CameraSystem/ABP_PlayerCameraAnimInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CameraSystem/ABP_PlayerCameraAnimInstance.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/BaseCharacterAnimInstance.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Blueprints/CharacterLogic/NewBlueprint1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_LandRoll_F_Montage_Default.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/CharacterAssets/Animation/Actions/ALS_N_LandRoll_F_Montage_Default.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_MainPlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Characters/Player/BP_MainPlayerController.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Inputs/IMC_GeneralInputs.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Inputs/IMC_GeneralInputs.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/Maps/Game.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectEast/UI/LootBar/WBP_LootBar.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectEast/UI/LootBar/WBP_LootBar.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/BaseCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/MainPlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/MainPlayerController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/MainPlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Characters/MainPlayerController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/WidgetManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/WidgetManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/WidgetManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectEast/Core/Components/WidgetManager.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -879,10 +896,7 @@
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ProjectEast/UHT/FIconButtonGameModule.generated.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealGame/Inc/ProjectEast/UHT/InteractableComponent.gen.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Camera/BasePlayerCameraManager.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/BaseCharacter.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/UnrealEngine/Projects/ProjectEast/Source/ProjectEast/Core/Characters/BaseCharacter.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/AnimNotifys/Character/MovementAction_NotifyState.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CameraParameters.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ProjectEast/Core/Characters/Interfaces/CharacterInfo.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -1119,7 +1133,10 @@
       <workItem from="1735106694903" duration="3837000" />
       <workItem from="1735123249901" duration="2380000" />
       <workItem from="1735133530080" duration="3609000" />
-      <workItem from="1735364576347" duration="6302000" />
+      <workItem from="1735364576347" duration="9545000" />
+      <workItem from="1735378162152" duration="12648000" />
+      <workItem from="1735409240281" duration="243000" />
+      <workItem from="1735448871252" duration="2422000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add physic door">
       <option name="closed" value="true" />
@@ -1313,7 +1330,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735370069715</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="fix: toggle walk/speed animation">
+      <option name="closed" value="true" />
+      <created>1735373500160</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1735373500160</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1358,6 +1383,7 @@
     <MESSAGE value="fix: move direction" />
     <MESSAGE value="fix: rotation player after jump" />
     <MESSAGE value="fix: aiming state? rotation in aiming" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: aiming state? rotation in aiming" />
+    <MESSAGE value="fix: toggle walk/speed animation" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: toggle walk/speed animation" />
   </component>
 </project>

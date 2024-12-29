@@ -1,5 +1,6 @@
 ﻿#include "MainPlayerController.h"
 
+#include "EnhancedInputComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ProjectEast/Core/Actors/Other/PlayerCapture.h"
 #include "ProjectEast/Core/Camera/BasePlayerCameraManager.h"
@@ -44,7 +45,7 @@ void AMainPlayerController::OnPossess(APawn* InPawn)
 	InitializeComponents();
 	InteractionComponent->Activate(true);
 
-	if(auto CameraManager = Cast<ABasePlayerCameraManager>(PlayerCameraManager))
+	if (auto CameraManager = Cast<ABasePlayerCameraManager>(PlayerCameraManager))
 		CameraManager->OnPossess(InPawn);
 }
 
@@ -127,6 +128,20 @@ void AMainPlayerController::RemoveInteractionFromObject(UInteractableComponent* 
 		InteractableComponent->OnRemoveInteraction();
 }
 
+void AMainPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		EnhancedInputComponent->BindAction(DebugOpenMenuOverlayStatesAction, ETriggerEvent::Started,
+		                                   this, &AMainPlayerController::OpenMenuOverlayStates);
+		EnhancedInputComponent->BindAction(DebugOpenMenuOverlayStatesAction, ETriggerEvent::Completed,
+		                                   this, &AMainPlayerController::CloseMenuOverlayStates);
+		EnhancedInputComponent->BindAction(DebugCycleMenuOverlayStatesAction, ETriggerEvent::Started,
+		                                   this, &AMainPlayerController::CycleMenuOverlayStatesAction);
+	}
+}
+
 UPlayerInventory* AMainPlayerController::GetPlayerInventory() const
 {
 	return PlayerInventory;
@@ -165,4 +180,20 @@ UPlayerCrafting* AMainPlayerController::GetPlayerCrafting() const
 void AMainPlayerController::ClientInitializeInteractionWithObject(UInteractableComponent* InteractableComponent)
 {
 	InitializeInteraction(InteractableComponent);
+}
+
+void AMainPlayerController::OpenMenuOverlayStates()
+{
+	WidgetManager->OpenMenuOverlayStates();
+}
+
+void AMainPlayerController::CloseMenuOverlayStates()
+{
+	WidgetManager->CloseMenuOverlayStates();
+}
+
+void AMainPlayerController::CycleMenuOverlayStatesAction(const FInputActionValue& Value)
+{
+	float UpDirection = Value.Get<float>();
+	WidgetManager->CycleStateOverlayStates(UpDirection > 0);
 }

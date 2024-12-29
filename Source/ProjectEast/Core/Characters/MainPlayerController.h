@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
 #include "GameFramework/PlayerController.h"
 #include "ProjectEast/Core/Actors/Interfaces/ObjectInteraction.h"
 #include "MainPlayerController.generated.h"
@@ -15,6 +16,7 @@ class UPlayerInventory;
 class UInteractionComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedWidget, EWidgetType, WidgetType);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSwitchedTab, EWidgetType, WidgetType);
 
 UCLASS()
@@ -33,6 +35,8 @@ public:
 	virtual void EndInteractionWithObject(UInteractableComponent* InteractableComponent) override;
 	virtual void RemoveInteractionFromObject(UInteractableComponent* InteractableComponent) override;
 
+	virtual void SetupInputComponent() override;
+
 	UPlayerInventory* GetPlayerInventory() const;
 	UPlayerEquipment* GetPlayerEquipment() const;
 	UConsumableBuffs* GetConsumableBuffs() const;
@@ -44,7 +48,7 @@ public:
 	FOnSwitchedWidget OnSwitchedWidget;
 	FOnSwitchedTab OnSwitchedTab;
 
-protected:	
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInteractionComponent* InteractionComponent;
 
@@ -53,10 +57,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPlayerEquipment* PlayerEquipment;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UConsumableBuffs* ConsumableBuffs;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UCharacterStatsComponent* CharacterStatsComponent;
 
@@ -68,7 +72,19 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UWidgetManager* WidgetManager;
-	
+
+
+#pragma region InputActions
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Debug", meta = (AllowPrivateAccess = "true"))
+	UInputAction* DebugOpenMenuOverlayStatesAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Debug", meta = (AllowPrivateAccess = "true"))
+	UInputAction* DebugCycleMenuOverlayStatesAction;
+
+#pragma endregion InputActions
+
+
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 
@@ -79,4 +95,11 @@ protected:
 private:
 	UPROPERTY()
 	AActor* CachedObject;
+
+	UFUNCTION()
+	void OpenMenuOverlayStates();
+	UFUNCTION()
+	void CloseMenuOverlayStates();
+	UFUNCTION()
+	void CycleMenuOverlayStatesAction(const FInputActionValue& Value);
 };

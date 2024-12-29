@@ -9,6 +9,7 @@
 #include "ProjectEast/Core/UI/HUD/MainWindow.h"
 #include "ProjectEast/Core/UI/Menus/Pause.h"
 #include "ProjectEast/Core/UI/Misc/Popups/PopupMessage.h"
+#include "ProjectEast/Core/UI/OverlayStatePanel/OverlayStateSwitcher.h"
 #include "ProjectEast/Core/UI/PlayerInventory/InventoryWindow.h"
 #include "ProjectEast/Core/UI/PlayerInventory/SplitStackPopup.h"
 #include "ProjectEast/Core/UI/Storage/StorageWindow.h"
@@ -23,12 +24,10 @@ void UWidgetManager::InitializeWidgetManager(AMainPlayerController* InPlayerCont
 	else
 		CachedMainWindow->AddToViewport();
 
-	
+
 	CachedPlayerController = InPlayerController;
 	CachedPlayerCapture = InPlayerCapture;
 	CachedPlayerInventory = InPlayerController->GetPlayerInventory();
-	
-
 }
 
 void UWidgetManager::SetActiveWidget(EWidgetType WidgetType)
@@ -359,6 +358,36 @@ void UWidgetManager::DisplayMessage(const FString Message)
 void UWidgetManager::InitializeCraftingStation(UCraftingCore* CraftingCore)
 {
 	CraftingStation = CraftingCore;
+}
+
+void UWidgetManager::OpenMenuOverlayStates()
+{
+	if (IsValid(OverlayStateSwitcherClass))
+	{
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.35f);
+		CachedOverlayStateSwitcher = CreateWidget<UOverlayStateSwitcher>(
+			CachedPlayerController, OverlayStateSwitcherClass);
+		CachedOverlayStateSwitcher->AddToViewport(1);
+	}
+}
+
+void UWidgetManager::CloseMenuOverlayStates()
+{
+	if (IsValid(CachedOverlayStateSwitcher))
+	{
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+		CachedOverlayStateSwitcher->SelectOverlayState();
+		CachedOverlayStateSwitcher->RemoveFromParent();
+		CachedOverlayStateSwitcher = nullptr;
+	}
+}
+
+void UWidgetManager::CycleStateOverlayStates(bool bIsUp) const
+{
+	if (IsValid(CachedOverlayStateSwitcher))
+	{
+		CachedOverlayStateSwitcher->CycleState(bIsUp);
+	}
 }
 
 bool UWidgetManager::IsAnyMainWidgetOpen() const
