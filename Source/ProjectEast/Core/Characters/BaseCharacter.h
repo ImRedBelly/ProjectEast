@@ -14,6 +14,7 @@
 class UBaseCharacterMovementComponent;
 class UDebugComponent;
 class UInputMappingContext;
+class UWallRunComponent;
 //class UCameraComponent;
 class USpringArmComponent;
 
@@ -48,6 +49,14 @@ public:
 	EOverlayState GetOverlayState() const { return OverlayState; }
 	EGroundedEntryState GetGroundedEntryState() const { return GroundedEntryState; }
 
+	FORCEINLINE UBaseCharacterMovementComponent* GetPlayerMovementComponent() const
+	{
+		return BaseCharacterMovementComponent;
+	}
+	FORCEINLINE UWallRunComponent* GetWallRunComponent() const
+	{
+		return WallRunComponent;
+	}
 protected:
 	UPROPERTY(EditAnywhere)
 	FDataTableRowHandle MovementModel;
@@ -93,6 +102,25 @@ protected:
 	UInputAction* CrouchAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* AimAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractionAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* OpenInventoryAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* PauseAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* UsePocket1Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* UsePocket2Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* UsePocket3Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* UsePocket4Action;
+
 #pragma endregion InputActions
 
 #pragma region MultiTapInputCrouch
@@ -215,10 +243,24 @@ public:
 	void PlayerStartSprintInput(const FInputActionValue& Value);
 	void PlayerStopSprintInput(const FInputActionValue& Value);
 	void PlayerCrouchInput(const FInputActionValue& Value);
+	void PlayerStartJumpInput(const FInputActionValue& Value);
 	void PlayerStartAimInput(const FInputActionValue& Value);
 	void PlayerStopAimInput(const FInputActionValue& Value);
 #pragma endregion Input
 
+#pragma region Interactive
+
+private:
+	void OnInteractive();
+	void OnOpenInventory();
+	void OnPause();
+	void UsePocket1();
+	void UsePocket2();
+	void UsePocket3();
+	void UsePocket4();
+
+#pragma endregion Interactive
+	
 #pragma region MovementSystem
 	void SetMovementModel();
 	void UpdateCharacterMovement();
@@ -232,7 +274,6 @@ public:
 	//void OnPlayBreakfallAnimation();
 	void OnPlayRollAnimation();
 	UAnimMontage* GetRollAnimation();
-
 #pragma endregion MovementSystem
 
 #pragma region SetNewStates
@@ -248,13 +289,15 @@ public:
 #pragma endregion SetNewStates
 
 #pragma region RotationSystem
-
+public:
+	void UpdateValueAirRotation();
 private:
 	FRotator TargetRotation;
 	FRotator InAirRotation;
 	float YawOffset;
 
 	void UpdateGroundedRotation(float DeltaTime);
+	
 	void UpdateInAirRotation();
 	void SmoothCharacterRotation(FRotator Target, float TargetInterpSpeed, float ActorInterpSpeed);
 	void AddToCharacterRotation(FRotator DeltaRotation);
@@ -287,6 +330,11 @@ protected:
 	//void MantleUpdate(float BlendIn);
 	//bool CapsuleHasRoomCheck(UCapsuleComponent* Capsule, FVector TargetLocation, float HeightOffset, float RadiusOffset, EDrawDebugTrace::Type DebugType);
 	//FMantleAsset GetMantleAsset(EMantleType MantleType);
+
+	
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character|Movement")
+	UWallRunComponent* WallRunComponent;
 #pragma endregion MantleSystem
 
 #pragma region RagdollSystem

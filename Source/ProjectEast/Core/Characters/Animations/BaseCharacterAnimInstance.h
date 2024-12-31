@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "ProjectEast/Core/Components/Movement/WallRunComponent.h"
 #include "ProjectEast/Core/Library/ALSAnimationStructLibrary.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
 #include "ProjectEast/Core/Utils/Structurs.h"
@@ -16,6 +17,33 @@ class PROJECTEAST_API UBaseCharacterAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
+protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character animation | Wall Run")
+	bool bIsWallRunning;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character animation | Wall Run")
+	bool bIsWallJumping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character animation | Wall Run")
+	float CurrentArcAngle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character animation | Wall Run")
+	float CurrentTurnRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character animation | Wall Run")
+	float CurrentAnimPlayRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character animation | Wall Run")
+	float WallJumpAnimationSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character animation | Wall Run")
+	float HandCorrectionAdditive;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character animation | Wall Run")
+	EDirectionType DirectionType;
+
+	
 protected:
 	/** Configuration */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Configuration|Main Configuration", Meta = (
@@ -218,6 +246,7 @@ private:
 	//void UpdateCharacterInfo();
 	void UpdateAimingValues(float DeltaSeconds);
 	void UpdateLayerValues();
+	void UpdateWallRunParameters(float DeltaSeconds);
 	void UpdateFootIK(float DeltaSeconds);
 	void UpdateMovementValues(float DeltaSeconds);
 	void UpdateRotationValues();

@@ -2,6 +2,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "ProjectEast/Core/Characters/BaseCharacter.h"
 #include "ProjectEast/Core/Characters/Interfaces/CameraParameters.h"
 #include "ProjectEast/Core/Characters/Interfaces/CharacterInfo.h"
@@ -52,6 +53,7 @@ void UBaseCharacterAnimInstance::NativeInitializeAnimation()
 	}
 }
 
+
 void UBaseCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
@@ -60,6 +62,7 @@ void UBaseCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		return;
 	}
+	
 
 	// Update rest of character information. Others are reflected into anim bp when they're set inside character class
 	CharacterInformation.MovementInputAmount = Character->GetMovementInputAmount();
@@ -94,6 +97,7 @@ void UBaseCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	UpdateAimingValues(DeltaSeconds);
 	UpdateLayerValues();
+	UpdateWallRunParameters(DeltaSeconds);
 	UpdateFootIK(DeltaSeconds);
 
 	if (MovementState == EMovementState::Grounded)
@@ -296,6 +300,27 @@ void UBaseCharacterAnimInstance::UpdateLayerValues()
 	LayerBlendingValues.Arm_L_MS = static_cast<float>(1 - FMath::FloorToInt(LayerBlendingValues.Arm_L_LS));
 	LayerBlendingValues.Arm_R_LS = GetCurveValue(NAME_Layering_Arm_R_LS);
 	LayerBlendingValues.Arm_R_MS = static_cast<float>(1 - FMath::FloorToInt(LayerBlendingValues.Arm_R_LS));
+}
+
+
+void UBaseCharacterAnimInstance::UpdateWallRunParameters(float DeltaSeconds)
+{
+	bIsWallRunning = Character->GetWallRunComponent()->GetIsWallRunning();
+	bIsWallJumping = Character->GetWallRunComponent()->GetIsWallJumping();
+	DirectionType = Character->GetWallRunComponent()->GetDirectionType();
+	CurrentArcAngle = Character->GetWallRunComponent()->GetCurrentArcAngle();
+	CurrentTurnRate = Character->GetWallRunComponent()->GetCurrentTurnRate();
+	CurrentAnimPlayRate = UKismetMathLibrary::MapRangeClamped(Character->GetMovementComponent()->Velocity.Length(), 680.0f, 920.0f, 0.85f, 1.15f);
+
+	float SizeSpeed = FVector(0.0f, Character->GetWallRunComponent()->GetWallJumpHorizontalVelocity(),Character->GetWallRunComponent()->GetWallJumpVerticalVelocity()).Length();
+	WallJumpAnimationSpeed = UKismetMathLibrary::MapRangeClamped(SizeSpeed, 943.0f, 1500.0f, 1.0f,1.5f);
+
+
+	float TargetHandCorrectionAdditive = CurrentArcAngle >= 15? UKismetMathLibrary::MapRangeClamped(CurrentArcAngle, 30.0f, 45.0f, 1.0f, 0.0f)
+	: UKismetMathLibrary::MapRangeClamped(CurrentArcAngle, 0.0f, 30.0f, 0.0f, 1.0f);
+
+	HandCorrectionAdditive = UKismetMathLibrary::FInterpTo(HandCorrectionAdditive, TargetHandCorrectionAdditive,DeltaSeconds, 7.0f);
+	
 }
 
 void UBaseCharacterAnimInstance::UpdateFootIK(float DeltaSeconds)

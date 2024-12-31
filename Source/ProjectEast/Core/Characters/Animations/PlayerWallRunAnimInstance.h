@@ -4,7 +4,7 @@
 #include "Animation/AnimInstance.h"
 #include "PlayerWallRunAnimInstance.generated.h"
 
-class APlayerCharacter;
+class ABaseCharacter;
 enum class EDirectionType : uint8;
 
 UCLASS()
@@ -48,5 +48,5 @@ protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
-	TWeakObjectPtr<APlayerCharacter> CachedPlayerCharacter;
+	TWeakObjectPtr<ABaseCharacter> CachedPlayerCharacter;
 };

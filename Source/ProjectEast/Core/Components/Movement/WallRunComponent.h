@@ -4,6 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "WallRunComponent.generated.h"
 
+class ABaseCharacter;
+
 UENUM(BlueprintType)
 enum class EDirectionType : uint8
 {
@@ -109,7 +111,7 @@ protected:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	TWeakObjectPtr<ACharacter> CachedCharacterOwner;
+	TWeakObjectPtr<ABaseCharacter> CachedCharacterOwner;
 
 	EDirectionType WallSide;
 
@@ -140,7 +142,6 @@ private:
 	bool bIsWallRunning;
 	bool bIsWallJumping;
 	bool bSpeedTooLow;
-	bool DefaultOrientRotation = false;
 	bool WallRunningAvailable = true;
 
 	FTimerHandle DurationCountdownTimer;

@@ -2,13 +2,17 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "MainPlayerController.h"
 #include "Animations/BaseCharacterAnimInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "ProjectEast/Core/Components/WidgetManager.h"
+#include "ProjectEast/Core/Components/CharacterSystems/ConsumableBuffs.h"
 #include "ProjectEast/Core/Components/Debug/DebugComponent.h"
 #include "ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.h"
+#include "ProjectEast/Core/Components/Movement/WallRunComponent.h"
 
 class UEnhancedInputLocalPlayerSubsystem;
 
@@ -29,6 +33,8 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 	bUseControllerRotationYaw = 0;
 	bReplicates = true;
 	SetReplicatingMovement(true);
+
+	WallRunComponent = CreateDefaultSubobject<UWallRunComponent>(TEXT("WallRunComponent"));
 }
 
 void ABaseCharacter::PostInitializeComponents()
@@ -63,7 +69,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	SetEssentialValues(DeltaTime);
 	DrawDebugShapes();
-
+	
 	switch (MovementState)
 	{
 	case EMovementState::Grounded:
@@ -138,7 +144,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started,
-		                                   this, &ACharacter::Jump);
+		                                   this, &ABaseCharacter::PlayerStartJumpInput);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed,
 		                                   this, &ACharacter::StopJumping);
 
@@ -159,6 +165,23 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		                                   this, &ABaseCharacter::PlayerStartAimInput);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed,
 		                                   this, &ABaseCharacter::PlayerStopAimInput);
+
+		//Interaction
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this,
+		                                   &ABaseCharacter::OnInteractive);
+		EnhancedInputComponent->BindAction(OpenInventoryAction, ETriggerEvent::Started, this,
+		                                   &ABaseCharacter::OnOpenInventory);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this,
+		                                   &ABaseCharacter::OnPause);
+
+		EnhancedInputComponent->BindAction(UsePocket1Action, ETriggerEvent::Started, this,
+		                                   &ABaseCharacter::UsePocket1);
+		EnhancedInputComponent->BindAction(UsePocket2Action, ETriggerEvent::Started, this,
+		                                   &ABaseCharacter::UsePocket2);
+		EnhancedInputComponent->BindAction(UsePocket3Action, ETriggerEvent::Started, this,
+		                                   &ABaseCharacter::UsePocket3);
+		EnhancedInputComponent->BindAction(UsePocket4Action, ETriggerEvent::Started, this,
+		                                   &ABaseCharacter::UsePocket4);
 	}
 }
 
@@ -254,6 +277,17 @@ void ABaseCharacter::PlayerCrouchInput(const FInputActionValue& Value)
 	}
 }
 
+void ABaseCharacter::PlayerStartJumpInput(const FInputActionValue& Value)
+{
+	if (WallRunComponent->StartWallJump())
+	{
+	}
+	else
+	{
+		Jump();
+	}
+}
+
 void ABaseCharacter::PlayerStartAimInput(const FInputActionValue& Value)
 {
 	SetRotationMode(ERotationMode::Aiming);
@@ -265,6 +299,48 @@ void ABaseCharacter::PlayerStopAimInput(const FInputActionValue& Value)
 		SetRotationMode(DesiredRotationMode);
 	else if (ViewMode == EViewMode::FirstPerson)
 		SetRotationMode(ERotationMode::LookingDirection);
+}
+
+void ABaseCharacter::OnInteractive()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->OnInteraction();
+}
+
+void ABaseCharacter::OnOpenInventory()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->GetWidgetManager()->OpenNewWidget(EWidgetType::Inventory);
+}
+
+void ABaseCharacter::OnPause()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->GetWidgetManager()->OpenNewWidget(EWidgetType::Pause);
+}
+
+void ABaseCharacter::UsePocket1()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->GetConsumableBuffs()->OnUsePocket(0);
+}
+
+void ABaseCharacter::UsePocket2()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->GetConsumableBuffs()->OnUsePocket(1);
+}
+
+void ABaseCharacter::UsePocket3()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->GetConsumableBuffs()->OnUsePocket(2);
+}
+
+void ABaseCharacter::UsePocket4()
+{
+	if (AMainPlayerController* PlayerController = Cast<AMainPlayerController>(Controller))
+		PlayerController->GetConsumableBuffs()->OnUsePocket(3);
 }
 
 #pragma endregion Input
@@ -461,12 +537,10 @@ void ABaseCharacter::OnMovementActionChanged(EMovementAction NewMovementAction)
 	{
 		if (DesiredStance == EStance::Standing)
 		{
-		
 			UnCrouch();
 		}
 		else if (DesiredStance == EStance::Crouching)
 		{
-		
 			Crouch();
 		}
 	}
@@ -682,7 +756,7 @@ void ABaseCharacter::SetOverlayState(const EOverlayState NewOverlayState, bool b
 }
 
 void ABaseCharacter::UpdateGroundedRotation(float DeltaTime)
-{
+{	
 	if (MovementAction == EMovementAction::None)
 	{
 		if (CanUpdateMovingRotation())
@@ -745,6 +819,11 @@ void ABaseCharacter::UpdateGroundedRotation(float DeltaTime)
 			SmoothCharacterRotation({0.0f, LastMovementInputRotation.Yaw, 0.0f}, 0.0f, 2.0f);
 		}
 	}
+}
+
+void ABaseCharacter::UpdateValueAirRotation()
+{
+	InAirRotation = GetActorRotation();
 }
 
 void ABaseCharacter::UpdateInAirRotation()
@@ -814,6 +893,7 @@ float ABaseCharacter::CalculateGroundedRotationRate() const
 bool ABaseCharacter::CanUpdateMovingRotation() const
 {
 	return ((bIsMoving && bHasMovementInput) || Speed > 150.0f) && !HasAnyRootMotion();
+	//&&(!WallRunComponent->GetIsWallRunning() && !WallRunComponent->GetIsWallJumping());
 }
 
 #pragma endregion SetNewStates
@@ -844,19 +924,19 @@ bool ABaseCharacter::MantleCheck(FMantleTraceSettings TraceSettings, EDrawDebugT
 		FCollisionShape::MakeCapsule(TraceSettings.ForwardTraceRadius, CapsuleHalfHeight),
 		TraceParams);
 
-	if (DebugTrace == EDrawDebugTrace::Type::ForDuration ||
-		DebugTrace == EDrawDebugTrace::Type::ForOneFrame)
-	{
-		DrawDebugCapsule(
-			GetWorld(),
-			(StartLocation + EndLocation) * 0.5f,
-			CapsuleHalfHeight,
-			TraceSettings.ForwardTraceRadius,
-			FQuat::Identity,
-			bHit ? FColor::Green : FColor::Red,
-			false,
-			5.0f);
-	}
+	// if (DebugTrace == EDrawDebugTrace::Type::ForDuration ||
+	// 	DebugTrace == EDrawDebugTrace::Type::ForOneFrame)
+	// {
+	// 	DrawDebugCapsule(
+	// 		GetWorld(),
+	// 		(StartLocation + EndLocation) * 0.5f,
+	// 		CapsuleHalfHeight,
+	// 		TraceSettings.ForwardTraceRadius,
+	// 		FQuat::Identity,
+	// 		bHit ? FColor::Green : FColor::Red,
+	// 		false,
+	// 		5.0f);
+	// }
 
 	bool IsWalkable = GetCharacterMovement()->IsWalkable(HitResult);
 

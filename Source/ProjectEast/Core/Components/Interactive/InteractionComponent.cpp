@@ -2,6 +2,7 @@
 #include "InteractableComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "ProjectEast/Core/Characters/MainPlayerController.h"
 #include "ProjectEast/Core/Utils/GameTypes.h"
@@ -15,7 +16,7 @@ void UInteractionComponent::InitializeInteraction_Implementation(AMainPlayerCont
 
 	GetWorld()->GetTimerManager().ClearTimer(InteractionTimer);
 	GetWorld()->GetTimerManager().SetTimer(InteractionTimer, this, &UInteractionComponent::UpdateInteraction,
-										   InteractionTimerRate, true, 1.0f);
+	                                       InteractionTimerRate, true, 1.0f);
 
 	TArray<FEnhancedActionKeyMapping> FoundMappings = MappingContext->GetMappings();
 	for (const auto& FoundMapping : FoundMappings)
@@ -44,20 +45,32 @@ void UInteractionComponent::UpdateInteraction()
 			CachedPawn = CachedPlayerController->GetPawn();
 
 			FVector StartLocation = CachedPawn->GetActorLocation() + FVector(0, 0, 110);
-
-			UCameraComponent* CameraComponent = Cast<UCameraComponent>(CachedPawn->GetComponentByClass(UCameraComponent::StaticClass()));
-			if(!IsValid(CameraComponent))
-				return;
+		
+			if (!IsValid(CachedPlayerCameraManager))
+			{
+				TArray<AActor*> FoundActors;
+				UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCameraManager::StaticClass(), FoundActors);
+				if (FoundActors.Num() > 0)
+				{
+					CachedPlayerCameraManager = Cast<APlayerCameraManager>(FoundActors[0]);
+				}
+				else
+				{
+					return;
+				}
+			}
 			
-			FVector EndLocation = StartLocation + (CameraComponent->GetForwardVector() * CameraTraceLength);
+			FVector EndLocation = StartLocation + (CachedPlayerCameraManager->GetActorForwardVector() * CameraTraceLength);
 
 			FHitResult Result;
 			UKismetSystemLibrary::CapsuleTraceSingle(GetWorld(), StartLocation, EndLocation, 35, 0.0f,
 			                                         UEngineTypes::ConvertToTraceType(ECC_Interactable), false,
-			                                         TArray<AActor*>(), bIsShowDrawTrace? EDrawDebugTrace::ForDuration: EDrawDebugTrace::None,
+			                                         TArray<AActor*>(),
+			                                         bIsShowDrawTrace
+				                                         ? EDrawDebugTrace::ForDuration
+				                                         : EDrawDebugTrace::None,
 			                                         Result, true);
-
-
+			
 			if (Result.bBlockingHit)
 			{
 				UInteractableComponent* InteractableComponent = Cast<UInteractableComponent>(

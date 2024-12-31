@@ -4,6 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "ProjectEast/Core/Characters/BaseCharacter.h"
 
 UWallRunComponent::UWallRunComponent()
 {
@@ -25,7 +26,7 @@ void UWallRunComponent::BeginPlay()
 
 	checkf(GetOwner() -> IsA<ACharacter>(),
 	       TEXT("ULedgeDetectorComponent::BeginPlay() only a character can use ULedgeDetectorComponent"));
-	CachedCharacterOwner = StaticCast<ACharacter*>(GetOwner());
+	CachedCharacterOwner = StaticCast<ABaseCharacter*>(GetOwner());
 
 	GatherCharacterInformation();
 
@@ -43,7 +44,6 @@ void UWallRunComponent::BeginPlay()
 void UWallRunComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                       FActorComponentTickFunction* ThisTickFunction)
 {
-	return;
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (bIsWallRunning)
@@ -78,12 +78,13 @@ bool UWallRunComponent::StartWallJump()
 		DirectionLaunchCharacter *= CurrentWallRunParameters.WallJumpHorizontalVelocity;
 		DirectionLaunchCharacter.Z = CurrentWallRunParameters.WallJumpVerticalVelocity;
 
+		
 		CachedCharacterOwner->LaunchCharacter(DirectionLaunchCharacter, true, true);
+		CachedCharacterOwner->UpdateValueAirRotation();
 
 		bIsWallJumping = true;
-
+		
 		UCharacterMovementComponent* MovementComponent = CachedCharacterOwner->GetCharacterMovement();
-		MovementComponent->bOrientRotationToMovement = false;
 		MovementComponent->AirControl = 0.0f;
 		DelayedAirControl();
 
@@ -95,10 +96,10 @@ bool UWallRunComponent::StartWallJump()
 void UWallRunComponent::StopWallJump()
 {
 	bIsWallJumping = false;
-	UCharacterMovementComponent* MovementComponent = CachedCharacterOwner->GetCharacterMovement();
-	MovementComponent->bOrientRotationToMovement = DefaultOrientRotation;
-	MovementComponent->AirControl = DefaultAirControl;
-	MovementComponent->MaxAcceleration = DefaultMaxAcceleration;
+	
+	 UCharacterMovementComponent* MovementComponent = CachedCharacterOwner->GetCharacterMovement();
+	 MovementComponent->AirControl = DefaultAirControl;
+	 MovementComponent->MaxAcceleration = DefaultMaxAcceleration;
 
 	if (GetWorld()->GetTimerManager().IsTimerActive(WallJumpAirControlTimer))
 	{
@@ -132,7 +133,6 @@ bool UWallRunComponent::StartWallRun(EDirectionType Direction)
 			WallSide = Direction;
 
 			MovementComponent->MaxFlySpeed = CurrentWallRunParameters.WallRunSpeed;
-			MovementComponent->bOrientRotationToMovement = false;
 			MovementComponent->MaxAcceleration = CurrentWallRunParameters.WallRunAcceleration;
 			MovementComponent->BrakingDecelerationFlying = CurrentWallRunParameters.WallRunBrakingDeceleration;
 			MovementComponent->SetMovementMode(MOVE_Flying, 0);
@@ -157,13 +157,12 @@ void UWallRunComponent::StopWallRun(EMovementMode NewMovementMode, float Tempora
 {
 	bIsWallRunning = false;
 
-	UCharacterMovementComponent* MovementComponent = CachedCharacterOwner->GetCharacterMovement();
-	MovementComponent->MaxFlySpeed = DefaultMaxFlySpeed;
-	MovementComponent->bOrientRotationToMovement = DefaultOrientRotation;
-	MovementComponent->MaxAcceleration = DefaultMaxAcceleration;
-	MovementComponent->BrakingDecelerationFlying = DefaultBrakingDeceleration;
+	 UCharacterMovementComponent* MovementComponent = CachedCharacterOwner->GetCharacterMovement();
+	 MovementComponent->MaxFlySpeed = DefaultMaxFlySpeed;
+	 MovementComponent->MaxAcceleration = DefaultMaxAcceleration;
+	 MovementComponent->BrakingDecelerationFlying = DefaultBrakingDeceleration;
+	 MovementComponent->SetMovementMode(NewMovementMode);
 
-	MovementComponent->SetMovementMode(NewMovementMode);
 	GetWorld()->GetTimerManager().ClearTimer(DurationCountdownTimer);
 	DurationCountdownTimer.Invalidate();
 
@@ -232,7 +231,6 @@ void UWallRunComponent::GatherCharacterInformation()
 
 	UCharacterMovementComponent* MovementComponent = CachedCharacterOwner->GetCharacterMovement();
 	DefaultMaxFlySpeed = MovementComponent->MaxFlySpeed;
-	DefaultOrientRotation = MovementComponent->bOrientRotationToMovement;
 	DefaultMaxAcceleration = MovementComponent->MaxAcceleration;
 	DefaultBrakingDeceleration = MovementComponent->BrakingDecelerationFlying;
 	DefaultAirControl = MovementComponent->AirControl;

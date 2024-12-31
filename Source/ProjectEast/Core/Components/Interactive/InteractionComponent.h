@@ -43,6 +43,7 @@ protected:
 private:
 	UInteractableComponent* CurrentInteractableComponent;
 	AMainPlayerController* CachedPlayerController;
+	APlayerCameraManager* CachedPlayerCameraManager;
 	APawn* CachedPawn;
 
 	FTimerHandle InteractionTimer;
