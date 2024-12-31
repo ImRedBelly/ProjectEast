@@ -319,6 +319,10 @@ public:
 	virtual FTPTraceParams GetTPTraceParams() override;
 
 protected:
+public:
+	void ToggleSideShoulder();
+protected:
+	
 	UPROPERTY(EditAnywhere, Category="Camera System")
 	float ThirdPersonFOV = 80;
 	UPROPERTY(EditAnywhere, Category="Camera System")

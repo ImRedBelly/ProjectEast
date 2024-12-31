@@ -1,5 +1,6 @@
 ﻿#include "MainPlayerController.h"
 
+#include "BaseCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ProjectEast/Core/Actors/Other/PlayerCapture.h"
@@ -133,10 +134,14 @@ void AMainPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
+		EnhancedInputComponent->BindAction(ToggleSideShoulderAction, ETriggerEvent::Completed,
+		                                   this, &AMainPlayerController::ToggleSideShoulder);
+
 		EnhancedInputComponent->BindAction(DebugOpenMenuOverlayStatesAction, ETriggerEvent::Started,
 		                                   this, &AMainPlayerController::OpenMenuOverlayStates);
 		EnhancedInputComponent->BindAction(DebugOpenMenuOverlayStatesAction, ETriggerEvent::Completed,
 		                                   this, &AMainPlayerController::CloseMenuOverlayStates);
+
 		EnhancedInputComponent->BindAction(DebugCycleMenuOverlayStatesAction, ETriggerEvent::Started,
 		                                   this, &AMainPlayerController::CycleMenuOverlayStatesAction);
 	}
@@ -180,6 +185,14 @@ UPlayerCrafting* AMainPlayerController::GetPlayerCrafting() const
 void AMainPlayerController::ClientInitializeInteractionWithObject(UInteractableComponent* InteractableComponent)
 {
 	InitializeInteraction(InteractableComponent);
+}
+
+void AMainPlayerController::ToggleSideShoulder()
+{
+	if (ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(GetCharacter()))
+	{
+		BaseCharacter->ToggleSideShoulder();
+	}
 }
 
 void AMainPlayerController::OpenMenuOverlayStates()

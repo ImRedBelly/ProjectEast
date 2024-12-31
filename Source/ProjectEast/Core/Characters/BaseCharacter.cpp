@@ -726,7 +726,8 @@ void ABaseCharacter::UpdateGroundedRotation(float DeltaTime)
 			{
 				if (GetLocalRole() == ROLE_AutonomousProxy)
 				{
-					TargetRotation.Yaw = UKismetMathLibrary::NormalizeAxis(TargetRotation.Yaw + (RotAmountCurve * (DeltaTime / (1.0f / 30.0f))));
+					TargetRotation.Yaw = UKismetMathLibrary::NormalizeAxis(
+						TargetRotation.Yaw + (RotAmountCurve * (DeltaTime / (1.0f / 30.0f))));
 					SetActorRotation(TargetRotation);
 				}
 				else
@@ -804,8 +805,9 @@ TTuple<FHitResult*, bool> ABaseCharacter::SetActorLocationAndTargetRotation(
 float ABaseCharacter::CalculateGroundedRotationRate() const
 {
 	const float MappedSpeedVal = GetMappedSpeed();
-	const float CurveVal =CurrentMovementSettings.RotationRateCurve->GetFloatValue(MappedSpeedVal);
-	const float ClampedAimYawRate = FMath::GetMappedRangeValueClamped<float, float>({0.0f, 300.0f}, {1.0f, 3.0f}, AimYawRate);
+	const float CurveVal = CurrentMovementSettings.RotationRateCurve->GetFloatValue(MappedSpeedVal);
+	const float ClampedAimYawRate = FMath::GetMappedRangeValueClamped<float, float>(
+		{0.0f, 300.0f}, {1.0f, 3.0f}, AimYawRate);
 	return CurveVal * ClampedAimYawRate;
 }
 
@@ -1012,6 +1014,11 @@ FTPTraceParams ABaseCharacter::GetTPTraceParams()
 		GetMesh()->GetSocketLocation(RightShoulder ? "TP_CameraTrace_R" : "TP_CameraTrace_L"),
 		15,
 		ECC_Camera);
+}
+
+void ABaseCharacter::ToggleSideShoulder()
+{
+	RightShoulder = !RightShoulder;
 }
 
 FCharacterStates ABaseCharacter::GetCurrentStates()

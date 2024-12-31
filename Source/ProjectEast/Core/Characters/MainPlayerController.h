@@ -77,6 +77,9 @@ protected:
 #pragma region InputActions
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Debug", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ToggleSideShoulderAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Debug", meta = (AllowPrivateAccess = "true"))
 	UInputAction* DebugOpenMenuOverlayStatesAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Debug", meta = (AllowPrivateAccess = "true"))
@@ -96,6 +99,8 @@ private:
 	UPROPERTY()
 	AActor* CachedObject;
 
+	UFUNCTION()
+	void ToggleSideShoulder();
 	UFUNCTION()
 	void OpenMenuOverlayStates();
 	UFUNCTION()
