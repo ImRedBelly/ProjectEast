@@ -80,6 +80,9 @@ protected:
 	UInputAction* ToggleSideShoulderAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Debug", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ToggleRagdollAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Debug", meta = (AllowPrivateAccess = "true"))
 	UInputAction* DebugOpenMenuOverlayStatesAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input|Debug", meta = (AllowPrivateAccess = "true"))
@@ -101,6 +104,8 @@ private:
 
 	UFUNCTION()
 	void ToggleSideShoulder();
+	UFUNCTION()
+	void ToggleRagdoll();
 	UFUNCTION()
 	void OpenMenuOverlayStates();
 	UFUNCTION()

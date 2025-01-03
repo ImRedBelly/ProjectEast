@@ -80,14 +80,7 @@ void UBaseCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	CharacterInformation.PrevMovementState = Character->GetPrevMovementState();
 	LayerBlendingValues.OverlayOverrideState = Character->GetOverlayOverrideState();
 	MovementState = Character->GetMovementState();
-
-
-	// auto a =  IsValid(Character);
-	// auto b =  UEnum::GetDisplayValueAsText(Character->GetMovementState());
-	// GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, b.ToString());
-	//
-
-
+	
 	MovementAction = Character->GetMovementAction();
 	Stance = Character->GetStance();
 	RotationMode = Character->GetRotationMode();

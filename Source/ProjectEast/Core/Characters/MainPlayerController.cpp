@@ -137,6 +137,9 @@ void AMainPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(ToggleSideShoulderAction, ETriggerEvent::Completed,
 		                                   this, &AMainPlayerController::ToggleSideShoulder);
 
+		EnhancedInputComponent->BindAction(ToggleRagdollAction, ETriggerEvent::Completed,
+		                                   this, &AMainPlayerController::ToggleRagdoll);
+
 		EnhancedInputComponent->BindAction(DebugOpenMenuOverlayStatesAction, ETriggerEvent::Started,
 		                                   this, &AMainPlayerController::OpenMenuOverlayStates);
 		EnhancedInputComponent->BindAction(DebugOpenMenuOverlayStatesAction, ETriggerEvent::Completed,
@@ -192,6 +195,14 @@ void AMainPlayerController::ToggleSideShoulder()
 	if (ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(GetCharacter()))
 	{
 		BaseCharacter->ToggleSideShoulder();
+	}
+}
+
+void AMainPlayerController::ToggleRagdoll()
+{
+	if (ABaseCharacter* BaseCharacter = Cast<ABaseCharacter>(GetCharacter()))
+	{
+		BaseCharacter->ToggleRagdoll();
 	}
 }
 

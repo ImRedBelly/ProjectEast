@@ -303,7 +303,7 @@ private:
 	void AddToCharacterRotation(FRotator DeltaRotation);
 	void LimitRotation(float AimYawMin, float AimYawMax, float InterpSpeed);
 	TTuple<FHitResult*, bool> SetActorLocationAndTargetRotation(FVector NewLocation, FRotator NewRotation,
-	                                                            bool bSweep, bool bTeleport);
+	                                                            bool bSweep = false, bool bTeleport = false);
 	float CalculateGroundedRotationRate() const;
 	bool CanUpdateMovingRotation() const;
 
@@ -339,19 +339,25 @@ protected:
 
 #pragma region RagdollSystem
 
+protected:
+	UPROPERTY(EditAnywhere)
+	UDataTable* FrontGetUpAnimations;
+	UPROPERTY(EditAnywhere)
+	UDataTable* BackGetUpAnimations;
+
+private:
 	bool bReversedPelvis = false;
 	bool bRagdollOnGround;
 	bool bRagdollFaceUp;
 	FVector LastRagdollVelocity;
 	FVector TargetRagdollLocation;
-
-
+	
 	virtual void RagdollStart();
 	virtual void RagdollEnd();
-	virtual void RagdollUpdate();
+	virtual void RagdollUpdate(float DeltaTime);
 
-	void SetActorLocationDuringRagdoll();
-	UAnimMontage* GetGetUpAnimation(bool bRagdollFaceUpState);
+	void SetActorLocationDuringRagdoll(float DeltaTime);
+	UAnimMontage* GetGetUpAnimation(bool bRagdollFaceUpState) const;
 
 	UFUNCTION(Server, Unreliable)
 	void Server_SetMeshLocationDuringRagdoll(FVector MeshLocation);
@@ -369,6 +375,7 @@ public:
 protected:
 public:
 	void ToggleSideShoulder();
+	void ToggleRagdoll();
 protected:
 	
 	UPROPERTY(EditAnywhere, Category="Camera System")

@@ -13,6 +13,7 @@
 #include "ProjectEast/Core/Components/Debug/DebugComponent.h"
 #include "ProjectEast/Core/Components/Movement/BaseCharacterMovementComponent.h"
 #include "ProjectEast/Core/Components/Movement/WallRunComponent.h"
+#include "ProjectEast/Core/Library/Structurs/Character/GetUpAnimation.h"
 
 class UEnhancedInputLocalPlayerSubsystem;
 
@@ -69,7 +70,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	SetEssentialValues(DeltaTime);
 	DrawDebugShapes();
-	
+
 	switch (MovementState)
 	{
 	case EMovementState::Grounded:
@@ -87,7 +88,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 		break;
 	case EMovementState::Ragdoll:
 		{
-			RagdollUpdate();
+			RagdollUpdate(DeltaTime);
 			break;
 		}
 	default: ;
@@ -756,7 +757,7 @@ void ABaseCharacter::SetOverlayState(const EOverlayState NewOverlayState, bool b
 }
 
 void ABaseCharacter::UpdateGroundedRotation(float DeltaTime)
-{	
+{
 	if (MovementAction == EMovementAction::None)
 	{
 		if (CanUpdateMovingRotation())
@@ -950,23 +951,45 @@ bool ABaseCharacter::MantleCheck(FMantleTraceSettings TraceSettings, EDrawDebugT
 	return false;
 }
 
-UAnimMontage* ABaseCharacter::GetGetUpAnimation(bool bRagdollFaceUpState)
+UAnimMontage* ABaseCharacter::GetGetUpAnimation(bool bRagdollFaceUpState) const
 {
+	if (IsValid(FrontGetUpAnimations) && IsValid(BackGetUpAnimations))
+	{
+		UDataTable* DataTable = (bRagdollFaceUpState ? BackGetUpAnimations : FrontGetUpAnimations);
+
+		for (auto RowName : DataTable->GetRowNames())
+		{
+			FGetUpAnimation* GetUpAnimation = DataTable->FindRow<FGetUpAnimation>(RowName, "");
+			if (GetUpAnimation->OverlayState == OverlayState)
+				return GetUpAnimation->GetUpMontage;
+		}
+	}
+
 	return nullptr;
 }
 
 void ABaseCharacter::RagdollStart()
 {
+	// Step 1: Clear the Character Movement Mode and set the Movement State to Ragdoll
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	SetMovementState(EMovementState::Ragdoll);
 
+	// Step 2: Disable capsule collision and enable mesh physics simulation starting from the pelvis.
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionObjectType(ECC_PhysicsBody);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetAllBodiesBelowSimulatePhysics(NAME_Pelvis, true, true);
 
+	// Step 3: Stop any active montages.
 	if (IsValid(MainAnimInstance))
+	{
 		MainAnimInstance->Montage_Stop(0.2f);
+	}
+
+	// Fixes character mesh is showing default A pose for a split-second just before ragdoll ends in listen server games
+	GetMesh()->bOnlyAllowAutonomousTickPose = true;
+
+	SetReplicateMovement(false);
 }
 
 void ABaseCharacter::RagdollEnd()
@@ -995,25 +1018,44 @@ void ABaseCharacter::RagdollEnd()
 	GetMesh()->SetAllBodiesSimulatePhysics(false);
 }
 
-void ABaseCharacter::RagdollUpdate()
+void ABaseCharacter::RagdollUpdate(float DeltaTime)
 {
 	GetMesh()->bOnlyAllowAutonomousTickPose = false;
 
-	LastRagdollVelocity = GetMesh()->GetPhysicsLinearVelocity(NAME_root);
+	// Set the Last Ragdoll Velocity.
+	const FVector NewRagdollVel = GetMesh()->GetPhysicsLinearVelocity(NAME_root);
+	LastRagdollVelocity = (NewRagdollVel != FVector::ZeroVector || IsLocallyControlled())
+		                      ? NewRagdollVel
+		                      : LastRagdollVelocity / 2;
 
-	const float SpringValue = FMath::GetMappedRangeValueClamped<float, float>(
-		{0.0f, 1000.0f}, {0.0f, 25000.0f}, LastRagdollVelocity.Size());
+	// Use the Ragdoll Velocity to scale the ragdoll's joint strength for physical animation.
+	const float SpringValue = FMath::GetMappedRangeValueClamped<float, float>({0.0f, 1000.0f}, {0.0f, 25000.0f},
+	                                                                          LastRagdollVelocity.Size());
 	GetMesh()->SetAllMotorsAngularDriveParams(SpringValue, 0.0f, 0.0f, false);
 
+	// Disable Gravity if falling faster than -4000 to prevent continual acceleration.
+	// This also prevents the ragdoll from going through the floor.
 	const bool bEnableGrav = LastRagdollVelocity.Z > -4000.0f;
 	GetMesh()->SetEnableGravity(bEnableGrav);
 
-	SetActorLocationDuringRagdoll();
+	// Update the Actor location to follow the ragdoll.
+	SetActorLocationDuringRagdoll(DeltaTime);
 }
 
 
-void ABaseCharacter::SetActorLocationDuringRagdoll()
+void ABaseCharacter::SetActorLocationDuringRagdoll(float DeltaTime)
 {
+	if (IsLocallyControlled())
+	{
+		// Set the pelvis as the target location.
+		TargetRagdollLocation = GetMesh()->GetSocketLocation(NAME_Pelvis);
+		if (!HasAuthority())
+		{
+			Server_SetMeshLocationDuringRagdoll(TargetRagdollLocation);
+		}
+	}
+
+	// Determine whether the ragdoll is facing up or down and set the target rotation accordingly.
 	const FRotator PelvisRot = GetMesh()->GetSocketRotation(NAME_Pelvis);
 
 	if (bReversedPelvis)
@@ -1025,30 +1067,36 @@ void ABaseCharacter::SetActorLocationDuringRagdoll()
 		bRagdollFaceUp = PelvisRot.Roll < 0.0f;
 	}
 
+
 	const FRotator TargetRagdollRotation(0.0f, bRagdollFaceUp ? PelvisRot.Yaw - 180.0f : PelvisRot.Yaw, 0.0f);
 
+	// Trace downward from the target location to offset the target location,
+	// preventing the lower half of the capsule from going through the floor when the ragdoll is laying on the ground.
 	const FVector TraceVect(TargetRagdollLocation.X, TargetRagdollLocation.Y,
 	                        TargetRagdollLocation.Z - GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+
+	UWorld* World = GetWorld();
+	check(World);
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
 	FHitResult HitResult;
-	const bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TargetRagdollLocation, TraceVect,
-	                                                       ECC_Visibility, Params);
+	const bool bHit = World->LineTraceSingleByChannel(HitResult, TargetRagdollLocation, TraceVect,
+	                                                  ECC_Visibility, Params);
 
-	if (DebugComponent && DebugComponent->GetShowTraces())
-	{
-		UDebugComponent::DrawDebugLineTraceSingle(GetWorld(),
-		                                          TargetRagdollLocation,
-		                                          TraceVect,
-		                                          EDrawDebugTrace::Type::ForOneFrame,
-		                                          bHit,
-		                                          HitResult,
-		                                          FLinearColor::Red,
-		                                          FLinearColor::Green,
-		                                          1.0f);
-	}
+	// if (ALSDebugComponent && ALSDebugComponent->GetShowTraces())
+	// {
+	// 	UALSDebugComponent::DrawDebugLineTraceSingle(World,
+	// 	                                             TargetRagdollLocation,
+	// 	                                             TraceVect,
+	// 	                                             EDrawDebugTrace::Type::ForOneFrame,
+	// 	                                             bHit,
+	// 	                                             HitResult,
+	// 	                                             FLinearColor::Red,
+	// 	                                             FLinearColor::Green,
+	// 	                                             1.0f);
+	// }
 
 	bRagdollOnGround = HitResult.IsValidBlockingHit();
 	FVector NewRagdollLoc = TargetRagdollLocation;
@@ -1058,9 +1106,16 @@ void ABaseCharacter::SetActorLocationDuringRagdoll()
 		const float ImpactDistZ = FMath::Abs(HitResult.ImpactPoint.Z - HitResult.TraceStart.Z);
 		NewRagdollLoc.Z += GetCapsuleComponent()->GetScaledCapsuleHalfHeight() - ImpactDistZ + 2.0f;
 	}
-
-	SetActorLocationAndTargetRotation(bRagdollOnGround ? NewRagdollLoc : TargetRagdollLocation, TargetRagdollRotation,
-	                                  false, false);
+	// if (!IsLocallyControlled())
+	// {
+	// 	ServerRagdollPull = FMath::FInterpTo(ServerRagdollPull, 750.0f, DeltaTime, 0.6f);
+	// 	float RagdollSpeed = FVector(LastRagdollVelocity.X, LastRagdollVelocity.Y, 0).Size();
+	// 	FName RagdollSocketPullName = RagdollSpeed > 300 ? NAME_spine_03 : NAME_pelvis;
+	// 	GetMesh()->AddForce(
+	// 		(TargetRagdollLocation - GetMesh()->GetSocketLocation(RagdollSocketPullName)) * ServerRagdollPull,
+	// 		RagdollSocketPullName, true);
+	// }
+	SetActorLocationAndTargetRotation(bRagdollOnGround ? NewRagdollLoc : TargetRagdollLocation, TargetRagdollRotation);
 }
 
 void ABaseCharacter::Server_SetMeshLocationDuringRagdoll_Implementation(FVector MeshLocation)
@@ -1099,6 +1154,14 @@ FTPTraceParams ABaseCharacter::GetTPTraceParams()
 void ABaseCharacter::ToggleSideShoulder()
 {
 	RightShoulder = !RightShoulder;
+}
+
+void ABaseCharacter::ToggleRagdoll()
+{
+	if (MovementState != EMovementState::Ragdoll)
+		RagdollStart();
+	else
+		RagdollEnd();
 }
 
 FCharacterStates ABaseCharacter::GetCurrentStates()
